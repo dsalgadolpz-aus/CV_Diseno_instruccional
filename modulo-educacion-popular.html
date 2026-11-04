@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Módulo 2 · Educación Popular</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root{
+  --blue-50:#EEF3FF;--blue-100:#D9E4FF;--blue-200:#B3CAFE;
+  --blue-500:#2558C4;--blue-600:#1D47A3;--blue-700:#153882;--blue-900:#0A1B42;
+  --gray-0:#FFFFFF;--gray-50:#F8F9FB;--gray-100:#F1F2F5;--gray-150:#E8EAEE;
+  --gray-200:#D8DBE3;--gray-300:#B8BCC8;--gray-400:#8A8FA8;--gray-500:#666B82;
+  --gray-600:#484D63;--gray-700:#353A52;--gray-800:#21253A;--gray-900:#0F1222;--gray-950:#070912;
+  --teal-500:#0D9488;--emerald-500:#059669;--amber-500:#D97706;--violet-500:#7C3AED;
+  --indigo-500:#4F46E5;--rose-500:#E11D48;
+  --bg-canvas:var(--gray-50);--bg-surface:var(--gray-0);--bg-raised:var(--gray-100);
+  --bg-hover:var(--gray-150);--fg-primary:var(--gray-900);--fg-secondary:var(--gray-600);
+  --fg-tertiary:var(--gray-400);--brand:#059669;--brand-hover:#047857;
+  --brand-bg:#ECFDF5;--border:var(--gray-200);--border-strong:var(--gray-300);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.06);--shadow-sm:0 2px 6px rgba(0,0,0,.08);
+  --shadow-md:0 6px 20px rgba(0,0,0,.10);
+  --r1:4px;--r2:6px;--r3:8px;--r4:12px;--r5:16px;--r6:24px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;
+  --s7:28px;--s8:32px;--s9:40px;--s10:48px;--s11:56px;--s12:64px;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg-canvas:var(--gray-950);--bg-surface:var(--gray-900);--bg-raised:var(--gray-800);
+  --bg-hover:var(--gray-700);--fg-primary:var(--gray-50);--fg-secondary:var(--gray-300);
+  --fg-tertiary:var(--gray-500);--brand:#34D399;--brand-hover:#6EE7B7;
+  --brand-bg:#021A0C;--border:var(--gray-700);--border-strong:var(--gray-600);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.3);--shadow-sm:0 2px 6px rgba(0,0,0,.35);
+  --shadow-md:0 6px 20px rgba(0,0,0,.45);color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg-canvas:var(--gray-950);--bg-surface:var(--gray-900);--bg-raised:var(--gray-800);
+  --bg-hover:var(--gray-700);--fg-primary:var(--gray-50);--fg-secondary:var(--gray-300);
+  --fg-tertiary:var(--gray-500);--brand:#34D399;--brand-hover:#6EE7B7;
+  --brand-bg:#021A0C;--border:var(--gray-700);--border-strong:var(--gray-600);color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-canvas);color:var(--fg-primary);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;}
+
+.top-bar{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:var(--shadow-xs);}
+.top-bar-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0;}
+.back-btn{display:inline-flex;align-items:center;gap:var(--s2);font-size:13px;font-weight:500;color:var(--fg-secondary);text-decoration:none;padding:var(--s2) var(--s3);border:1px solid var(--border);border-radius:var(--r3);background:var(--bg-raised);transition:.15s;white-space:nowrap;}
+.back-btn:hover{color:var(--fg-primary);border-color:var(--border-strong);}
+.back-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.bar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--fg-primary);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;}
+.bar-module{font-size:12px;color:var(--fg-tertiary);white-space:nowrap;}
+
+.step-nav{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:49px;z-index:190;}
+.step-nav-inner{max-width:1000px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none;}
+.step-nav-inner::-webkit-scrollbar{display:none;}
+.step-tab{flex-shrink:0;display:flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s5);font-size:13px;font-weight:500;color:var(--fg-secondary);border:none;background:none;cursor:pointer;position:relative;border-bottom:2px solid transparent;transition:color .15s;white-space:nowrap;}
+.step-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.step-tab:hover:not(.active){color:var(--fg-primary);}
+.step-num{width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:grid;place-items:center;background:var(--bg-raised);color:var(--fg-tertiary);border:1px solid var(--border);transition:.15s;flex-shrink:0;}
+.step-tab.active .step-num{background:var(--brand);color:#fff;border-color:var(--brand);}
+.step-tab.done .step-num{background:var(--emerald-500);color:#fff;border-color:var(--emerald-500);}
+.step-tab.done{color:var(--fg-secondary);}
+.progress-bar{height:3px;background:var(--border);}
+.progress-fill{height:100%;background:var(--brand);transition:width .4s ease;}
+
+.step-area{position:relative;overflow:hidden;}
+.step-panel{display:none;animation:slideIn .35s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.active{display:block;}
+.step-panel.exit-left{animation:slideOutLeft .3s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.exit-right{animation:slideOutRight .3s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.enter-right{animation:slideInRight .35s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.enter-left{animation:slideInLeft .35s cubic-bezier(.4,0,.2,1) both;}
+@keyframes slideIn{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+@keyframes slideOutLeft{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-48px)}}
+@keyframes slideOutRight{from{opacity:1;transform:none}to{opacity:0;transform:translateX(48px)}}
+
+.content-wrap{max-width:1000px;margin:0 auto;padding:var(--s8) 0 var(--s12);}
+.step-header{margin-bottom:var(--s7);padding-bottom:var(--s6);border-bottom:1px solid var(--border);}
+.step-type-label{display:inline-flex;align-items:center;gap:var(--s2);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:var(--r6);margin-bottom:var(--s3);}
+.step-type-label.lectura{background:#EEF3FF;color:var(--blue-600);}
+.step-type-label.video{background:#ECFDF5;color:#065F46;}
+.step-type-label.clase{background:#FEF3C7;color:var(--amber-500);}
+.step-type-label.actividad{background:#F3E8FF;color:#7C3AED;}
+.step-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-.01em;line-height:1.2;text-wrap:balance;}
+.step-meta-row{display:flex;flex-wrap:wrap;gap:var(--s3);margin-top:var(--s4);}
+.step-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--fg-tertiary);border:1px solid var(--border);border-radius:var(--r2);padding:3px 8px;background:var(--bg-raised);}
+
+.apa-block{background:var(--bg-surface);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--r3);padding:var(--s4) var(--s5);margin-bottom:var(--s7);box-shadow:var(--shadow-xs);}
+.apa-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-tertiary);margin-bottom:var(--s3);}
+.apa-ref{font-size:14px;line-height:1.65;color:var(--fg-secondary);}
+.apa-ref em{font-style:italic;}
+.reading-fragment{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r4);padding:var(--s7) var(--s8);box-shadow:var(--shadow-sm);margin-bottom:var(--s6);line-height:1.9;font-size:15px;}
+.reading-fragment h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:var(--s4);color:var(--fg-primary);}
+.reading-fragment p{color:var(--fg-secondary);margin-bottom:var(--s4);}
+.reading-fragment p:last-child{margin-bottom:0;}
+.reading-fragment .marginal{background:var(--brand-bg);border-left:3px solid var(--brand);padding:var(--s3) var(--s4);border-radius:0 var(--r3) var(--r3) 0;font-size:13px;color:var(--fg-secondary);margin:var(--s4) 0;font-style:italic;}
+.reading-fragment strong{color:var(--fg-primary);}
+.pdf-btn{display:inline-flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s5);background:var(--brand);color:#fff;border:none;border-radius:var(--r3);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;}
+.pdf-btn:hover{background:var(--brand-hover);}
+.pdf-btn:active{transform:scale(.97);}
+.pdf-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.guia-card{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r4);padding:var(--s5) var(--s6);margin-top:var(--s6);}
+.guia-title{font-size:14px;font-weight:700;margin-bottom:var(--s3);color:var(--fg-primary);}
+.guia-items{list-style:none;display:flex;flex-direction:column;gap:var(--s2);}
+.guia-items li{display:flex;align-items:flex-start;gap:var(--s3);font-size:13px;color:var(--fg-secondary);line-height:1.5;}
+.guia-items li::before{content:'→';color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px;}
+
+.canva-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#064E3B 0%,#059669 50%,#064E3B 100%);border-radius:var(--r5);box-shadow:var(--shadow-md);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s4);margin-bottom:var(--s6);}
+.canva-placeholder-icon{font-size:48px;}
+.canva-placeholder-text{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.85);text-align:center;}
+.canva-placeholder-sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;}
+
+/* ── DIÁLOGO SOCRÁTICO ── */
+.dialogo-container{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r5);overflow:hidden;box-shadow:var(--shadow-md);}
+.dialogo-header{background:linear-gradient(135deg,#064E3B,#059669);padding:var(--s5) var(--s6);display:flex;align-items:center;gap:var(--s4);}
+.freire-avatar{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:2px solid rgba(255,255,255,.3);}
+.freire-info{flex:1;}
+.freire-name{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#fff;}
+.freire-title{font-size:12px;color:rgba(255,255,255,.65);}
+.dialogo-status{width:8px;height:8px;border-radius:50%;background:#34D399;animation:blink 2s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.dialogo-messages{height:380px;overflow-y:auto;padding:var(--s5);display:flex;flex-direction:column;gap:var(--s4);background:var(--bg-canvas);}
+.msg{display:flex;gap:var(--s3);max-width:85%;}
+.msg.user-msg{flex-direction:row-reverse;align-self:flex-end;}
+.msg-bubble{padding:var(--s3) var(--s4);border-radius:var(--r4);font-size:14px;line-height:1.6;}
+.msg.freire-msg .msg-bubble{background:var(--bg-surface);border:1px solid var(--border);color:var(--fg-primary);border-radius:var(--r2) var(--r4) var(--r4) var(--r4);}
+.msg.user-msg .msg-bubble{background:var(--brand);color:#fff;border-radius:var(--r4) var(--r2) var(--r4) var(--r4);}
+.msg-citation{font-size:11px;color:var(--fg-tertiary);margin-top:var(--s1);font-style:italic;}
+.msg.freire-msg .msg-citation{text-align:left;}
+.msg-ava{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.msg.freire-msg .msg-ava{background:linear-gradient(135deg,#064E3B,#059669);font-size:12px;}
+.msg.user-msg .msg-ava{background:var(--bg-raised);border:1px solid var(--border);}
+.dialogo-typing{display:none;padding:var(--s2) var(--s4);background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r2) var(--r4) var(--r4) var(--r4);max-width:120px;}
+.typing-dots{display:flex;gap:4px;align-items:center;}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--fg-tertiary);animation:dot-bounce 1.4s infinite;}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot-bounce{0%,80%,100%{transform:scale(.8);opacity:.4}40%{transform:scale(1.1);opacity:1}}
+.dialogo-input-row{display:flex;gap:var(--s2);padding:var(--s4);border-top:1px solid var(--border);background:var(--bg-surface);}
+.dialogo-qs{display:flex;flex-wrap:wrap;gap:var(--s2);padding:var(--s3) var(--s4) 0;background:var(--bg-surface);}
+.dialogo-q-btn{padding:var(--s2) var(--s3);border:1px solid var(--border);border-radius:var(--r3);font-size:12px;font-weight:500;cursor:pointer;background:var(--bg-raised);color:var(--fg-secondary);transition:.15s;text-align:left;}
+.dialogo-q-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-bg);}
+.dialogo-qs-label{width:100%;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--fg-tertiary);margin-bottom:var(--s1);}
+.dialogo-custom-row{display:flex;gap:var(--s2);padding:var(--s3) var(--s4) var(--s4);}
+.dialogo-input{flex:1;padding:var(--s2) var(--s3);border:1px solid var(--border);border-radius:var(--r3);font-size:13px;background:var(--bg-raised);color:var(--fg-primary);font-family:inherit;}
+.dialogo-input:focus{outline:none;border-color:var(--brand);}
+.dialogo-send{padding:var(--s2) var(--s4);background:var(--brand);color:#fff;border:none;border-radius:var(--r3);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;}
+.dialogo-send:hover{background:var(--brand-hover);}
+
+.step-nav-buttons{display:flex;justify-content:space-between;gap:var(--s4);margin-top:var(--s10);padding-top:var(--s7);border-top:1px solid var(--border);}
+.nav-btn{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s5);font-size:14px;font-weight:600;border:1.5px solid var(--border);border-radius:var(--r3);background:var(--bg-surface);color:var(--fg-secondary);cursor:pointer;transition:.15s;}
+.nav-btn:hover{color:var(--fg-primary);border-color:var(--border-strong);background:var(--bg-raised);}
+.nav-btn-next{background:var(--brand);color:#fff;border-color:var(--brand);}
+.nav-btn-next:hover{background:var(--brand-hover);color:#fff;}
+.nav-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+
+.completion-banner{margin-top:var(--s10);background:linear-gradient(135deg,#064E3B,#059669);border-radius:var(--r5);padding:var(--s10) var(--s8);text-align:center;color:#fff;}
+.completion-icon{font-size:48px;margin-bottom:var(--s4);}
+.completion-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:var(--s3);}
+.completion-desc{font-size:14px;opacity:.8;max-width:480px;margin:0 auto var(--s6);line-height:1.6;}
+.completion-btn{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s6);background:#fff;color:#064E3B;border-radius:var(--r3);font-size:14px;font-weight:700;text-decoration:none;transition:opacity .15s;}
+.completion-btn:hover{opacity:.9;}
+
+@media(max-width:600px){.step-nav-buttons{flex-direction:column;}.dialogo-messages{height:280px;}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="index.html" class="back-btn">
+      <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+      Portafolio
+    </a>
+    <span class="bar-title">Educación Popular</span>
+    <span class="bar-module">Módulo 2 de 6</span>
+  </div>
+</div>
+
+<div class="step-nav">
+  <div class="step-nav-inner" id="stepTabs">
+    <button class="step-tab active" data-step="0"><span class="step-num">1</span> Lectura</button>
+    <button class="step-tab" data-step="1"><span class="step-num">2</span> Presentación</button>
+    <button class="step-tab" data-step="2"><span class="step-num">3</span> Video clase</button>
+    <button class="step-tab" data-step="3"><span class="step-num">4</span> Diálogo con Freire</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:25%"></div></div>
+</div>
+
+<div class="step-area">
+
+  <!-- STEP 1: LECTURA -->
+  <div class="step-panel active" id="step-0">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lectura">📖 Lectura guiada</div>
+        <h1 class="step-title">Educación Popular: diálogo, consciencia y transformación</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ 40 min</span>
+          <span class="step-chip">📄 Freire · Torres · Núñez</span>
+          <span class="step-chip">📌 Módulo 2</span>
+        </div>
+      </div>
+
+      <div class="apa-block">
+        <div class="apa-label">Referencias APA</div>
+        <div class="apa-ref">
+          Freire, P. (1970). <em>Pedagogía del oprimido</em>. Siglo XXI.<br>
+          Freire, P. (1993). <em>Pedagogía de la esperanza: un reencuentro con la pedagogía del oprimido</em>. Siglo XXI.<br>
+          Torres, A. (2007). <em>La educación popular: trayectoria y actualidad</em>. El Búho.<br>
+          Núñez, C. (1992). <em>Educar para transformar, transformar para educar</em>. IMDEC.
+        </div>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>1. La educación bancaria y su crítica</h3>
+        <p>Freire (1970) introduce la metáfora de la <strong>educación bancaria</strong> para nombrar una práctica pedagógica donde el educador "deposita" conocimientos en los educandos, quienes los reciben, memorizan y repiten pasivamente. Esta concepción supone que el educando es un recipiente vacío y que el saber fluye en una sola dirección —del experto hacia el ignorante— reproduciendo las relaciones de dominación de la sociedad más amplia.</p>
+        <div class="marginal">"La narración, cuyo sujeto es el educador, conduce a los educandos a la memorización mecánica del contenido narrado. Más aún, la narración los transforma en 'vasijas', en recipientes que deben ser 'llenados' por el educador." — Freire, 1970, p. 72</div>
+        <p>La crítica de Freire no es simplemente metodológica: no se trata de sustituir la clase magistral por dinámicas participativas. Su crítica es <em>ontológica y política</em>: la educación bancaria niega la vocación de humanización que él considera constitutiva del ser humano. Humanizarse es volverse sujeto de la propia historia; la educación bancaria fabrica objetos.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>2. Diálogo y praxis liberadora</h3>
+        <p>El <strong>diálogo</strong>, para Freire, es la condición de posibilidad de toda educación verdaderamente humanizadora. No es un recurso técnico sino una postura ética que implica el encuentro entre sujetos mediatizados por el mundo. El diálogo exige humildad, fe en las personas, esperanza, pensamiento crítico y amor —amor entendido como compromiso con la causa de los oprimidos.</p>
+        <div class="marginal">"El diálogo es el encuentro entre los hombres, mediatizados por el mundo, para pronunciarlo, no agotándose, por lo tanto, en la relación yo-tú." — Freire, 1970, p. 101</div>
+        <p>La <strong>praxis</strong> es la unidad entre reflexión y acción: sin acción, la reflexión se vuelve verbalismo; sin reflexión, la acción se vuelve activismo irreflexivo. La praxis liberadora es la transformación del mundo a partir de una comprensión crítica de la realidad. En el contexto comunitario, esto significa que las comunidades no son objeto de intervención sino sujetos de su propia transformación.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>3. La investigación temática y los temas generadores</h3>
+        <p>Torres (2007) sistematiza el aporte metodológico de la educación popular: la investigación de los <strong>temas generadores</strong>, aquellos núcleos de sentido que condensan las contradicciones vividas por la comunidad y pueden detonar procesos reflexivos. Identificar temas generadores no es aplicar un instrumento: es un proceso de inmersión en la vida cotidiana, de escucha profunda y de codificación de la experiencia.</p>
+        <div class="marginal">"Los temas generadores no son ideas que el educador lleva a la comunidad; emergen de la observación y el diálogo con la comunidad sobre su propio mundo vivido." — Torres, 2007, p. 134</div>
+        <p>El proceso de codificación-decodificación —representar la realidad vivida en imágenes o situaciones problemáticas y luego analizarla colectivamente— permite que los participantes se distancien de su experiencia inmediata y la vean críticamente. En palabras de Núñez (1992), se trata de transformar la experiencia en conocimiento y el conocimiento en acción.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>4. Educación popular y trabajo comunitario hoy</h3>
+        <p>Las tradiciones de educación popular latinoamericana no son un patrimonio del pasado. Torres (2007) distingue entre la educación popular como <em>movimiento social</em> —con sus redes, sus organizaciones, sus prácticas concretas— y como <em>corriente pedagógica</em> —con sus fundamentos epistemológicos y sus propuestas metodológicas. Esta distinción permite recuperar sus aportes en contextos muy distintos de los que la vieron nacer.</p>
+        <p>Para quien trabaja en diseño de programas sociales o facilitación comunitaria, la educación popular ofrece al menos tres contribuciones irrenunciables: (a) la centralidad del <em>sujeto</em> como productor de conocimiento; (b) la vinculación inseparable entre conocimiento y transformación; y (c) la denuncia de que toda práctica educativa es política —neutral no existe.</p>
+      </div>
+
+      <div style="margin-top:var(--s6)">
+        <button class="pdf-btn" id="downloadPdf">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Descargar fragmento comentado (TXT)
+        </button>
+      </div>
+
+      <div class="guia-card">
+        <div class="guia-title">🧭 Guía de lectura reflexiva</div>
+        <ul class="guia-items">
+          <li>¿Puedes identificar prácticas "bancarias" en experiencias educativas formales o no formales que hayas vivido?</li>
+          <li>¿Qué significa para ti "dialogar" en un proceso de facilitación? ¿Qué lo distingue de simplemente "consultar"?</li>
+          <li>¿Qué temas generadores podrías identificar en la comunidad o contexto donde trabajas?</li>
+          <li>¿En qué sentido tu práctica como facilitador/a es siempre política, aunque no lo parezca?</li>
+        </ul>
+      </div>
+
+      <div class="step-nav-buttons">
+        <span></span>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(1)">Presentación <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: PRESENTACIÓN -->
+  <div class="step-panel" id="step-1">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label video">🎞 Presentación</div>
+        <h1 class="step-title">Educación Popular — Conceptos y método</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">📐 Canva · 9 diapositivas</span>
+          <span class="step-chip">⏱ ~8 min</span>
+          <span class="step-chip">📌 Módulo 2</span>
+        </div>
+      </div>
+      <div class="canva-placeholder">
+        <div class="canva-placeholder-icon">🌱</div>
+        <div class="canva-placeholder-text">Presentación: Educación Popular</div>
+        <div class="canva-placeholder-sub">Próximamente — Sintropía Social · Módulo 2</div>
+      </div>
+      <div class="guia-card">
+        <div class="guia-title">💡 Mientras revisas la presentación</div>
+        <ul class="guia-items">
+          <li>Observa cómo los conceptos de la lectura se visualizan y articulan entre sí.</li>
+          <li>Identifica qué elementos del método de Freire podrías usar en tu propia práctica.</li>
+          <li>En el Paso 4 dialogarás directamente con Freire usando citas reales de su obra.</li>
+        </ul>
+      </div>
+      <div class="step-nav-buttons">
+        <button class="nav-btn" onclick="goToStep(0)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Lectura</button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(2)">Video clase <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: VIDEO CLASE -->
+  <div class="step-panel" id="step-2">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label clase">🎥 Video clase</div>
+        <h1 class="step-title">Clase: Praxis y conciencia crítica</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">📺 YouTube</span>
+          <span class="step-chip">⏱ próximamente</span>
+          <span class="step-chip">📌 Módulo 2</span>
+        </div>
+      </div>
+      <div style="width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,var(--bg-raised),var(--border));border-radius:var(--r5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s4);margin-bottom:var(--s6);border:1px solid var(--border);">
+        <div style="font-size:40px;">🎥</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:var(--fg-secondary);">Video clase disponible próximamente</div>
+        <div style="font-size:13px;color:var(--fg-tertiary);">Se subirá a YouTube y se enlazará aquí</div>
+      </div>
+      <div class="step-nav-buttons">
+        <button class="nav-btn" onclick="goToStep(1)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Presentación</button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(3)">Diálogo con Freire <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: DIÁLOGO SOCRÁTICO -->
+  <div class="step-panel" id="step-3">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label actividad">💬 Diálogo socrático</div>
+        <h1 class="step-title">Conversa con Paulo Freire</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">💬 Simulado · citas reales</span>
+          <span class="step-chip">⏱ ~15 min</span>
+          <span class="step-chip">📚 Pedagogía del oprimido, 1970</span>
+        </div>
+      </div>
+
+      <p style="color:var(--fg-secondary);font-size:14px;margin-bottom:var(--s5);line-height:1.7;">Selecciona una de las preguntas sugeridas o escribe la tuya propia. Las respuestas de Freire están construidas a partir de <strong>citas textuales</strong> de sus obras con referencias APA. Esto no es inteligencia artificial generativa: es un ejercicio pedagógico diseñado para que interactúes con sus ideas.</p>
+
+      <div class="dialogo-container">
+        <div class="dialogo-header">
+          <div class="freire-avatar">👨🏽‍🏫</div>
+          <div class="freire-info">
+            <div class="freire-name">Paulo Freire</div>
+            <div class="freire-title">Educador, filósofo · Recife, 1921 — São Paulo, 1997</div>
+          </div>
+          <div class="dialogo-status"></div>
+        </div>
+
+        <div class="dialogo-messages" id="dialogoMessages">
+          <div class="msg freire-msg">
+            <div class="msg-ava">👨🏽‍🏫</div>
+            <div>
+              <div class="msg-bubble">Buenos días. Estoy aquí para dialogar contigo. Para mí, el diálogo no es un recurso técnico: es una exigencia existencial. Pronúnciate — ¿qué quieres entender hoy?</div>
+              <div class="msg-citation">Freire, P. (1970). Pedagogía del oprimido. Siglo XXI, p. 101</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dialogo-qs" id="dialogoQs">
+          <div class="dialogo-qs-label">Preguntas sugeridas</div>
+        </div>
+
+        <div class="dialogo-custom-row">
+          <input class="dialogo-input" id="dialogoInput" type="text" placeholder="Escribe tu propia pregunta…" maxlength="200">
+          <button class="dialogo-send" id="dialogoSend">Enviar</button>
+        </div>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button class="nav-btn" onclick="goToStep(2)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Video clase</button>
+        <button class="nav-btn nav-btn-next" onclick="showCompletion()">Finalizar módulo ✓ <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+
+      <div class="completion-banner" id="completionBanner" style="display:none">
+        <div class="completion-icon">🌱</div>
+        <div class="completion-title">¡Módulo 2 completado!</div>
+        <p class="completion-desc">Has explorado los fundamentos de la Educación Popular y dialogado con las ideas de Paulo Freire. La transformación siempre comienza por pronunciar el mundo.</p>
+        <a href="index.html" class="completion-btn">← Volver al portafolio</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ══ STEP NAV ══ */
+let currentStep=0,totalSteps=4;const done=new Set();
+function goToStep(next){
+  if(next===currentStep)return;
+  const panels=document.querySelectorAll('.step-panel'),tabs=document.querySelectorAll('.step-tab'),prev=currentStep;
+  done.add(prev);
+  const outCls=next>prev?'exit-left':'exit-right';
+  panels[prev].classList.add(outCls);
+  panels[prev].addEventListener('animationend',()=>panels[prev].classList.remove('active','exit-left','exit-right'),{once:true});
+  const inCls=next>prev?'enter-right':'enter-left';
+  panels[next].classList.add('active',inCls);
+  panels[next].addEventListener('animationend',()=>panels[next].classList.remove('enter-right','enter-left'),{once:true});
+  currentStep=next;
+  tabs.forEach((t,i)=>{t.classList.remove('active','done');if(i===next)t.classList.add('active');else if(done.has(i))t.classList.add('done');});
+  document.getElementById('progressFill').style.width=((next+1)/totalSteps*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('stepTabs').querySelectorAll('.step-tab').forEach(btn=>btn.addEventListener('click',()=>goToStep(+btn.dataset.step)));
+
+/* ══ PDF ══ */
+document.getElementById('downloadPdf').addEventListener('click',()=>{
+  const c=`FRAGMENTO COMENTADO — EDUCACIÓN POPULAR\nMódulo 2 · Diseño instruccional Sintropía Social\n\nREFERENCIAS APA:\nFreire, P. (1970). Pedagogía del oprimido. Siglo XXI.\nFreire, P. (1993). Pedagogía de la esperanza. Siglo XXI.\nTorres, A. (2007). La educación popular: trayectoria y actualidad. El Búho.\nNúñez, C. (1992). Educar para transformar, transformar para educar. IMDEC.\n\nFRAGMENTO 1 — Educación bancaria\n"La narración conduce a los educandos a la memorización mecánica del contenido narrado." (Freire, 1970, p. 72)\n\nFRAGMENTO 2 — Diálogo\n"El diálogo es el encuentro entre los hombres, mediatizados por el mundo, para pronunciarlo." (Freire, 1970, p. 101)\n\nFRAGMENTO 3 — Temas generadores\n"Los temas generadores emergen de la observación y el diálogo con la comunidad sobre su propio mundo vivido." (Torres, 2007, p. 134)\n\nNOTAS:\n[ ] ¿Qué prácticas bancarias identifico en mi contexto?\n[ ] ¿Qué temas generadores surgen de mi comunidad?\n[ ] ¿Mi práctica es verdaderamente dialógica?\n`;
+  const blob=new Blob([c],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='EducacionPopular_Fragmento_Modulo2.txt';a.click();URL.revokeObjectURL(url);
+});
+
+/* ══ DIÁLOGO SOCRÁTICO ══ */
+const FREIRE_RESPONSES = [
+  {
+    keys:['bancaria','depositar','banco','narración','memorizar'],
+    text:'La narración, cuyo sujeto es el educador, conduce a los educandos a la memorización mecánica del contenido narrado. Más aún, la narración los transforma en vasijas, en recipientes que deben ser llenados por el educador. Cuanto más vaya llenando los recipientes con sus depósitos, tanto mejor educador será.',
+    source:'Freire, P. (1970). Pedagogía del oprimido. Siglo XXI, p. 72',
+  },
+  {
+    keys:['diálogo','dialogar','hablar','escuchar','encuentro'],
+    text:'El diálogo es el encuentro entre los hombres, mediatizados por el mundo, para pronunciarlo, no agotándose, por lo tanto, en la relación yo-tú. No puede existir un diálogo si no existe una intensa fe en los hombres. Fe en su poder de hacer y de rehacer, de crear y recrear.',
+    source:'Freire, P. (1970). Pedagogía del oprimido. Siglo XXI, p. 101-104',
+  },
+  {
+    keys:['praxis','acción','reflexión','cambio','transformar','transformación'],
+    text:'La acción y la reflexión de los hombres sobre el mundo para transformarlo. No puede existir la reflexión sin que ella implique la acción; ni la acción sin que implique reflexión. Cuando sacrificamos la acción por la reflexión, la palabra se convierte en palabrería. Cuando sacrificamos la reflexión por la acción, se convierte en activismo.',
+    source:'Freire, P. (1970). Pedagogía del oprimido. Siglo XXI, p. 95',
+  },
+  {
+    keys:['oprimido','opresión','dominación','poder','dominado','libertad','liberar','liberación'],
+    text:'Los oprimidos, en vez de luchar por la liberación, tienden a ser opresores también, o sub-opresores. La estructura de su pensamiento se encuentra condicionada por la contradicción vivida en la situación concreta, existencial, en que se forman. Su ideal es, en verdad, ser hombres; pero para ellos, ser hombres es ser opresores.',
+    source:'Freire, P. (1970). Pedagogía del oprimido. Siglo XXI, p. 41',
+  },
+  {
+    keys:['conciencia','conscientización','realidad','crítica','ver'],
+    text:'La conscientización no puede existir fuera de la praxis, es decir, sin el acto acción-reflexión. Esta unidad dialéctica constituye de manera permanente el modo de ser o de transformar el mundo que caracteriza a los hombres. Por esto mismo, la conscientización es un compromiso histórico.',
+    source:'Freire, P. (1970). Pedagogía del oprimido. Siglo XXI, p. 110',
+  },
+  {
+    keys:['amor','humildad','esperanza','fe','caridad'],
+    text:'No hay diálogo, tampoco, si no hay una intensa fe en los hombres. Fe en su poder de hacer y de rehacer. De crear y recrear. Fe en su vocación de ser más, que no es privilegio de algunos elegidos sino derecho de los hombres. El amor no puede ser sentimental; el amor es un acto de valentía, nunca de temor.',
+    source:'Freire, P. (1970). Pedagogía del oprimido. Siglo XXI, p. 103',
+  },
+  {
+    keys:['comunidad','pueblo','popular','base','participación'],
+    text:'No podemos llegar al pueblo, decir que nuestra presencia es liberadora, y al mismo tiempo silenciar su palabra. No podemos llegar al pueblo, negándolo como ser del verbo. No es posible hacer educación sin saber con quiénes y para qué educamos. La educación popular es educación del pueblo, con el pueblo, para el pueblo.',
+    source:'Freire, P. (1993). Pedagogía de la esperanza. Siglo XXI, p. 68',
+  },
+  {
+    keys:['proyecto','intervención','programa','metodología','método','técnica'],
+    text:'El método, en cuanto medio, en cuanto camino para la praxis, no puede ser separado del proceso. No existe un método en sí; existe el método al servicio de la intención que lo usa. Un método que pretenda ser liberador debe nacer del diálogo con los propios participantes, no imponerse desde afuera como solución universal.',
+    source:'Freire, P. (1993). Pedagogía de la esperanza. Siglo XXI, p. 112',
+  },
+];
+
+const DEFAULT_RESPONSE = {
+  text:'Toda pregunta que nos lleve a mirar críticamente el mundo es ya una acción liberadora. No tengo una respuesta directa a eso, pero te invito a pronunciar tus propias palabras: ¿qué es lo que más te inquieta de tu práctica como educador o facilitador?',
+  source:'Freire, P. (1970). Pedagogía del oprimido. Siglo XXI, p. 101',
+};
+
+const SUGGESTED_QS = [
+  '¿Qué es la educación bancaria?',
+  '¿Por qué dices que el diálogo es una exigencia existencial?',
+  '¿Cómo defines la praxis liberadora?',
+  '¿Qué pasa cuando el oprimido quiere ser opresor?',
+  '¿Cómo se relaciona la conscientización con la acción?',
+  '¿Qué es el amor en tu pedagogía?',
+];
+
+function findResponse(q) {
+  const qLower = q.toLowerCase();
+  for (const r of FREIRE_RESPONSES) {
+    if (r.keys.some(k => qLower.includes(k))) return r;
+  }
+  return DEFAULT_RESPONSE;
+}
+
+function appendMsg(role, text, citation) {
+  const msgs = document.getElementById('dialogoMessages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'freire' ? 'freire-msg' : 'user-msg');
+  const ava = document.createElement('div');
+  ava.className = 'msg-ava';
+  ava.textContent = role === 'freire' ? '👨🏽‍🏫' : '🧑';
+  const right = document.createElement('div');
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+  right.appendChild(bubble);
+  if (citation) {
+    const cite = document.createElement('div');
+    cite.className = 'msg-citation';
+    cite.textContent = citation;
+    right.appendChild(cite);
+  }
+  div.appendChild(ava);
+  div.appendChild(right);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function sendQuestion(q) {
+  if (!q.trim()) return;
+  document.getElementById('dialogoInput').value = '';
+  appendMsg('user', q);
+  // typing indicator
+  const msgs = document.getElementById('dialogoMessages');
+  const typing = document.createElement('div');
+  typing.className = 'msg freire-msg';
+  typing.id = 'typingIndicator';
+  typing.innerHTML = '<div class="msg-ava">👨🏽‍🏫</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => {
+    typing.remove();
+    const r = findResponse(q);
+    appendMsg('freire', r.text, r.source);
+  }, 1200 + Math.random() * 600);
+}
+
+document.getElementById('dialogoSend').addEventListener('click', () => sendQuestion(document.getElementById('dialogoInput').value));
+document.getElementById('dialogoInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendQuestion(e.target.value); });
+
+const qsContainer = document.getElementById('dialogoQs');
+SUGGESTED_QS.forEach(q => {
+  const btn = document.createElement('button');
+  btn.className = 'dialogo-q-btn';
+  btn.textContent = q;
+  btn.addEventListener('click', () => sendQuestion(q));
+  qsContainer.appendChild(btn);
+});
+
+function showCompletion(){
+  document.getElementById('completionBanner').style.display='block';
+  document.getElementById('completionBanner').scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.step-tab').forEach(t=>{done.add(+t.dataset.step);t.classList.add('done');});
+  document.getElementById('progressFill').style.width='100%';
+}
+</script>
+</body>
+</html>

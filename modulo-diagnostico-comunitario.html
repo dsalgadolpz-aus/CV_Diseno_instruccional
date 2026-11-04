@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Módulo 3 · Diagnóstico Comunitario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg-canvas:#F8F9FB;--bg-surface:#fff;--bg-raised:#F1F2F5;--bg-hover:#E8EAEE;
+  --fg-primary:#0F1222;--fg-secondary:#484D63;--fg-tertiary:#8A8FA8;
+  --brand:#0369A1;--brand-hover:#075985;--brand-bg:#EFF6FF;
+  --border:#D8DBE3;--border-strong:#B8BCC8;
+  --shadow-xs:0 1px 2px rgba(0,0,0,.06);--shadow-sm:0 2px 6px rgba(0,0,0,.08);--shadow-md:0 6px 20px rgba(0,0,0,.10);
+  --r2:6px;--r3:8px;--r4:12px;--r5:16px;--r6:24px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;
+  --s7:28px;--s8:32px;--s9:40px;--s10:48px;--s12:64px;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg-canvas:#070912;--bg-surface:#0F1222;--bg-raised:#21253A;--bg-hover:#353A52;
+  --fg-primary:#F8F9FB;--fg-secondary:#B8BCC8;--fg-tertiary:#666B82;
+  --brand:#38BDF8;--brand-hover:#7DD3FC;--brand-bg:#0C1A2E;
+  --border:#353A52;--border-strong:#484D63;color-scheme:dark;
+}}
+:root[data-theme="dark"]{--bg-canvas:#070912;--bg-surface:#0F1222;--bg-raised:#21253A;--bg-hover:#353A52;--fg-primary:#F8F9FB;--fg-secondary:#B8BCC8;--fg-tertiary:#666B82;--brand:#38BDF8;--brand-hover:#7DD3FC;--brand-bg:#0C1A2E;--border:#353A52;--border-strong:#484D63;color-scheme:dark;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-canvas);color:var(--fg-primary);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;}
+.top-bar{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:var(--shadow-xs);}
+.top-bar-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 0;}
+.back-btn{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--fg-secondary);text-decoration:none;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r3);background:var(--bg-raised);transition:.15s;white-space:nowrap;}
+.back-btn:hover{color:var(--fg-primary);}
+.back-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.bar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.bar-module{font-size:12px;color:var(--fg-tertiary);white-space:nowrap;}
+.step-nav{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:49px;z-index:190;}
+.step-nav-inner{max-width:1000px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none;}
+.step-nav-inner::-webkit-scrollbar{display:none;}
+.step-tab{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:12px 20px;font-size:13px;font-weight:500;color:var(--fg-secondary);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s;white-space:nowrap;}
+.step-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.step-tab:hover:not(.active){color:var(--fg-primary);}
+.step-num{width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:grid;place-items:center;background:var(--bg-raised);color:var(--fg-tertiary);border:1px solid var(--border);flex-shrink:0;}
+.step-tab.active .step-num{background:var(--brand);color:#fff;border-color:var(--brand);}
+.step-tab.done .step-num{background:#059669;color:#fff;border-color:#059669;}
+.progress-bar{height:3px;background:var(--border);}
+.progress-fill{height:100%;background:var(--brand);transition:width .4s ease;}
+.step-area{position:relative;overflow:hidden;}
+.step-panel{display:none;animation:slideIn .35s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.active{display:block;}
+.step-panel.exit-left{animation:slideOutLeft .3s ease both;}
+.step-panel.exit-right{animation:slideOutRight .3s ease both;}
+.step-panel.enter-right{animation:slideInRight .35s ease both;}
+.step-panel.enter-left{animation:slideInLeft .35s ease both;}
+@keyframes slideIn{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+@keyframes slideOutLeft{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-48px)}}
+@keyframes slideOutRight{from{opacity:1;transform:none}to{opacity:0;transform:translateX(48px)}}
+.content-wrap{max-width:1000px;margin:0 auto;padding:32px 0 64px;}
+.step-header{margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.step-type-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:var(--r6);margin-bottom:12px;}
+.lbl-lectura{background:#EEF3FF;color:#1D47A3;}
+.lbl-video{background:#EFF6FF;color:#0369A1;}
+.lbl-clase{background:#FEF3C7;color:#D97706;}
+.lbl-actividad{background:#FFF7ED;color:#C2410C;}
+.step-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-.01em;line-height:1.2;text-wrap:balance;}
+.step-meta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;}
+.step-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--fg-tertiary);border:1px solid var(--border);border-radius:var(--r2);padding:3px 8px;background:var(--bg-raised);}
+.apa-block{background:var(--bg-surface);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--r3);padding:16px 20px;margin-bottom:28px;box-shadow:var(--shadow-xs);}
+.apa-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-tertiary);margin-bottom:12px;}
+.apa-ref{font-size:14px;line-height:1.65;color:var(--fg-secondary);}
+.apa-ref em{font-style:italic;}
+.reading-fragment{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r4);padding:28px 32px;box-shadow:var(--shadow-sm);margin-bottom:24px;line-height:1.9;font-size:15px;}
+.reading-fragment h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;}
+.reading-fragment p{color:var(--fg-secondary);margin-bottom:16px;}
+.reading-fragment p:last-child{margin-bottom:0;}
+.marginal{background:var(--brand-bg);border-left:3px solid var(--brand);padding:12px 16px;border-radius:0 var(--r3) var(--r3) 0;font-size:13px;color:var(--fg-secondary);margin:16px 0;font-style:italic;}
+.reading-fragment strong{color:var(--fg-primary);}
+.pdf-btn{display:inline-flex;align-items:center;gap:12px;padding:12px 20px;background:var(--brand);color:#fff;border:none;border-radius:var(--r3);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;}
+.pdf-btn:hover{background:var(--brand-hover);}
+.pdf-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.guia-card{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r4);padding:20px 24px;margin-top:24px;}
+.guia-title{font-size:14px;font-weight:700;margin-bottom:12px;}
+.guia-items{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.guia-items li{display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--fg-secondary);line-height:1.5;}
+.guia-items li::before{content:'→';color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px;}
+.canva-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0C4A6E,#0369A1);border-radius:var(--r5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;}
+.canva-placeholder-icon{font-size:48px;}
+.canva-placeholder-text{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.85);}
+.canva-placeholder-sub{font-size:13px;color:rgba(255,255,255,.5);}
+/* FICHA */
+.ficha-wrap{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r5);box-shadow:var(--shadow-md);overflow:hidden;}
+.ficha-top{background:linear-gradient(135deg,#0C4A6E,#0369A1);padding:20px 24px;color:#fff;}
+.ficha-top-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px;}
+.ficha-top-sub{font-size:13px;opacity:.7;}
+.ficha-body{padding:24px;}
+.ficha-section{margin-bottom:24px;}
+.ficha-section-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--fg-primary);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.ficha-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px;}
+.ficha-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:200px;}
+.ficha-field label{font-size:12px;font-weight:600;color:var(--fg-tertiary);letter-spacing:.04em;text-transform:uppercase;}
+.ficha-input,.ficha-textarea,.ficha-select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r3);font-size:14px;background:var(--bg-raised);color:var(--fg-primary);font-family:inherit;transition:border-color .15s;}
+.ficha-input:focus,.ficha-textarea:focus,.ficha-select:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(3,105,161,.12);}
+.ficha-textarea{min-height:80px;resize:vertical;}
+.ficha-select{cursor:pointer;}
+.ficha-obs-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+.ficha-check-label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--fg-secondary);cursor:pointer;padding:6px 10px;border:1px solid var(--border);border-radius:var(--r3);background:var(--bg-raised);transition:.15s;}
+.ficha-check-label:hover{border-color:var(--brand);}
+.ficha-check-label input{accent-color:var(--brand);}
+.ficha-counter{display:flex;align-items:center;gap:8px;}
+.ficha-counter input{width:70px;text-align:center;}
+.ficha-actions{display:flex;gap:12px;padding:16px 24px;border-top:1px solid var(--border);background:var(--bg-raised);flex-wrap:wrap;}
+.ficha-btn{padding:10px 20px;border-radius:var(--r3);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg-surface);color:var(--fg-primary);transition:.15s;}
+.ficha-btn:hover{background:var(--bg-hover);}
+.ficha-btn.primary{background:var(--brand);color:#fff;border-color:var(--brand);}
+.ficha-btn.primary:hover{background:var(--brand-hover);}
+.ficha-preview{margin-top:16px;padding:16px;background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r3);font-size:13px;color:var(--fg-secondary);line-height:1.8;display:none;}
+.ficha-preview.visible{display:block;}
+.ficha-preview pre{white-space:pre-wrap;font-family:inherit;}
+.nav-buttons{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:28px;border-top:1px solid var(--border);}
+.nav-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;font-size:14px;font-weight:600;border:1.5px solid var(--border);border-radius:var(--r3);background:var(--bg-surface);color:var(--fg-secondary);cursor:pointer;transition:.15s;}
+.nav-btn:hover{color:var(--fg-primary);border-color:var(--border-strong);}
+.nav-btn-next{background:var(--brand);color:#fff;border-color:var(--brand);}
+.nav-btn-next:hover{background:var(--brand-hover);color:#fff;}
+.nav-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.completion-banner{margin-top:48px;background:linear-gradient(135deg,#0C4A6E,#0369A1);border-radius:var(--r5);padding:48px 32px;text-align:center;color:#fff;}
+.completion-icon{font-size:48px;margin-bottom:16px;}
+.completion-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:12px;}
+.completion-desc{font-size:14px;opacity:.8;max-width:480px;margin:0 auto 24px;line-height:1.6;}
+.completion-link{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#fff;color:#0C4A6E;border-radius:var(--r3);font-size:14px;font-weight:700;text-decoration:none;}
+.completion-link:hover{opacity:.9;}
+@media(max-width:600px){.nav-buttons{flex-direction:column;}.ficha-field{min-width:100%;}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="index.html" class="back-btn"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>Portafolio</a>
+    <span class="bar-title">Diagnóstico Comunitario</span>
+    <span class="bar-module">Módulo 3 de 6</span>
+  </div>
+</div>
+
+<div class="step-nav">
+  <div class="step-nav-inner" id="stepTabs">
+    <button class="step-tab active" data-step="0"><span class="step-num">1</span> Lectura</button>
+    <button class="step-tab" data-step="1"><span class="step-num">2</span> Presentación</button>
+    <button class="step-tab" data-step="2"><span class="step-num">3</span> Video clase</button>
+    <button class="step-tab" data-step="3"><span class="step-num">4</span> Ficha de observación</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:25%"></div></div>
+</div>
+
+<div class="step-area">
+
+  <!-- STEP 1: LECTURA -->
+  <div class="step-panel active" id="step-0">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-lectura">📖 Lectura guiada</div>
+        <h1 class="step-title">Diagnóstico comunitario participativo: de la fotografía a la praxis</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ 40 min</span>
+          <span class="step-chip">📄 Montañés · Rueda · Chambers</span>
+          <span class="step-chip">📌 Módulo 3</span>
+        </div>
+      </div>
+
+      <div class="apa-block">
+        <div class="apa-label">Referencias APA</div>
+        <div class="apa-ref">
+          Montañés, M. (2009). <em>Metodología y técnica participativa: teoría y práctica de una estrategia de investigación participativa</em>. Editorial UOC.<br>
+          Chambers, R. (1994). The origins and practice of participatory rural appraisal. <em>World Development, 22</em>(7), 953–969. https://doi.org/10.1016/0305-750X(94)90141-4<br>
+          Rueda, E. (2011). <em>Diagnóstico comunitario: guía metodológica</em>. CREFAL.<br>
+          Villasante, T. R. (2006). <em>Desbordes creativos: estilos y estrategias para la transformación social</em>. Catarata.
+        </div>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>1. ¿Qué es y para qué sirve un diagnóstico comunitario?</h3>
+        <p>Un diagnóstico comunitario no es un estudio técnico externo sobre una comunidad. Es un proceso <strong>participativo</strong> mediante el cual la propia comunidad identifica, analiza y jerarquiza sus problemas, necesidades y potencialidades, con miras a orientar la acción colectiva. Rueda (2011) lo define como "el conocimiento colectivo de la realidad construido desde adentro" (p. 23), diferenciándolo radicalmente del diagnóstico de expertos.</p>
+        <div class="marginal">"El diagnóstico participativo no descubre una realidad preexistente: la construye colectivamente. Esa construcción es ya, en sí misma, parte del proceso de transformación." — Montañés, 2009, p. 78</div>
+        <p>Esta distinción es fundamental: el diagnóstico tradicional convierte a la comunidad en objeto de estudio; el diagnóstico participativo la convierte en sujeto del mismo. Desde la perspectiva de la educación popular, el acto de nombrar los propios problemas es ya un acto político.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>2. La observación participante como técnica central</h3>
+        <p>Chambers (1994) sistematizó el Diagnóstico Rural Participativo (DRP o PRA por sus siglas en inglés), un conjunto de métodos que permiten a comunidades rurales —y luego urbanas— analizar su propia situación. Entre las técnicas fundamentales, la <strong>observación participante</strong> ocupa un lugar privilegiado: el/la investigador/a no solo observa desde fuera sino que se involucra en la vida cotidiana de la comunidad, participando de sus actividades, espacios y relaciones.</p>
+        <div class="marginal">"PRA enables local people to do their own appraisal, analysis and planning, and to implement and monitor their own projects." — Chambers, 1994, p. 953</div>
+        <p>La observación participante requiere un registro sistemático pero no mecánico: una <em>ficha de observación</em> que capture no solo hechos sino también las interpretaciones que los propios participantes hacen de ellos, las tensiones entre discurso y práctica, y las ausencias significativas —lo que no se dice, lo que no se ve, lo que no se hace en presencia del observador.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>3. Triángulación de fuentes y validación comunitaria</h3>
+        <p>Ningún diagnóstico se sostiene en una sola técnica o en una sola voz. Villasante (2006) propone la <strong>triangulación</strong> —cruce de distintas fuentes, métodos y perspectivas— como condición mínima de rigor en la investigación participativa. Un buen diagnóstico comunitario combina observación, entrevistas, grupos de discusión, revisión documental y cartografía social, contrastando lo que dicen distintos actores sobre la misma realidad.</p>
+        <p>La <strong>validación comunitaria</strong> —devolver los hallazgos a la comunidad para que los contraste, corrija y enriquezca— cierra el ciclo y convierte el diagnóstico en un bien común, no en el informe de un técnico externo. Esta devolución es también un momento pedagógico: al verse reflejados en el análisis, los participantes acceden a una mirada sistémica de su propia situación.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>4. Del diagnóstico a la priorización: la matriz FODA comunitaria</h3>
+        <p>Una vez recogida la información, el diagnóstico requiere herramientas de análisis que sean accesibles a los participantes. La adaptación comunitaria de la <strong>matriz FODA</strong> —Fortalezas, Oportunidades, Debilidades, Amenazas— permite organizar colectivamente la información y priorizar las áreas de intervención. Lo crucial no es la herramienta sino la validez del proceso: que los actores más vulnerables de la comunidad tengan voz en la priorización, y que la jerarquización resultante sea legitimada colectivamente, no impuesta por los facilitadores.</p>
+      </div>
+
+      <div style="margin-top:24px">
+        <button class="pdf-btn" id="downloadPdf">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Descargar fragmento comentado (TXT)
+        </button>
+      </div>
+
+      <div class="guia-card">
+        <div class="guia-title">🧭 Guía de lectura reflexiva</div>
+        <ul class="guia-items">
+          <li>¿Qué diferencia hay entre un diagnóstico "para" la comunidad y uno "con" la comunidad?</li>
+          <li>¿Qué te puede impedir ver con objetividad durante una observación participante?</li>
+          <li>¿Cómo garantizas que los actores más silenciados tengan voz en la priorización?</li>
+          <li>¿En qué se diferencia "ausencia significativa" de "dato faltante"?</li>
+        </ul>
+      </div>
+
+      <div class="nav-buttons">
+        <span></span>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(1)">Presentación <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: PRESENTACIÓN -->
+  <div class="step-panel" id="step-1">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-video">🎞 Presentación</div>
+        <h1 class="step-title">Diagnóstico Comunitario — Método y técnicas</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">📐 Canva · 9 diapositivas</span>
+          <span class="step-chip">⏱ ~8 min</span>
+          <span class="step-chip">📌 Módulo 3</span>
+        </div>
+      </div>
+      <div class="canva-placeholder">
+        <div class="canva-placeholder-icon">🗂️</div>
+        <div class="canva-placeholder-text">Presentación: Diagnóstico Comunitario</div>
+        <div class="canva-placeholder-sub">Próximamente — Sintropía Social · Módulo 3</div>
+      </div>
+      <div class="guia-card">
+        <div class="guia-title">💡 Mientras revisas la presentación</div>
+        <ul class="guia-items">
+          <li>Identifica las técnicas que ya conoces y las que son nuevas para ti.</li>
+          <li>Piensa en un contexto concreto donde podrías aplicar la observación participante.</li>
+          <li>En el Paso 4 completarás una ficha de observación real con tus propios datos.</li>
+        </ul>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(0)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Lectura</button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(2)">Video clase <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: VIDEO -->
+  <div class="step-panel" id="step-2">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-clase">🎥 Video clase</div>
+        <h1 class="step-title">Clase: Técnicas de observación participante</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">📺 YouTube</span>
+          <span class="step-chip">⏱ próximamente</span>
+          <span class="step-chip">📌 Módulo 3</span>
+        </div>
+      </div>
+      <div style="width:100%;aspect-ratio:16/9;background:var(--bg-raised);border-radius:var(--r5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;border:1px solid var(--border);">
+        <div style="font-size:40px;">🎥</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:var(--fg-secondary);">Video clase disponible próximamente</div>
+        <div style="font-size:13px;color:var(--fg-tertiary);">Se subirá a YouTube y se enlazará aquí</div>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(1)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Presentación</button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(3)">Ficha de observación <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: FICHA DE OBSERVACIÓN -->
+  <div class="step-panel" id="step-3">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-actividad">📋 Ficha de observación</div>
+        <h1 class="step-title">Registra tu observación participante</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">✍️ Formulario guiado</span>
+          <span class="step-chip">⏱ ~20 min</span>
+          <span class="step-chip">📄 Genera reporte descargable</span>
+        </div>
+      </div>
+
+      <p style="color:var(--fg-secondary);font-size:14px;margin-bottom:20px;line-height:1.7;">Completa esta ficha a partir de una observación real (o un escenario imaginado si aún no tienes contexto de campo). Al terminar, puedes descargar el reporte completo con tus notas.</p>
+
+      <div class="ficha-wrap">
+        <div class="ficha-top">
+          <div class="ficha-top-title">📋 Ficha de Observación Participante</div>
+          <div class="ficha-top-sub">Basada en Chambers (1994) y Rueda (2011)</div>
+        </div>
+        <div class="ficha-body">
+
+          <div class="ficha-section">
+            <div class="ficha-section-title">1. Datos de contexto</div>
+            <div class="ficha-row">
+              <div class="ficha-field">
+                <label>Nombre del observador/a</label>
+                <input class="ficha-input" id="f-observador" type="text" placeholder="Tu nombre">
+              </div>
+              <div class="ficha-field">
+                <label>Fecha de observación</label>
+                <input class="ficha-input" id="f-fecha" type="date">
+              </div>
+            </div>
+            <div class="ficha-row">
+              <div class="ficha-field">
+                <label>Comunidad / Territorio</label>
+                <input class="ficha-input" id="f-comunidad" type="text" placeholder="Nombre del barrio, colonia, localidad…">
+              </div>
+              <div class="ficha-field">
+                <label>Espacio específico</label>
+                <input class="ficha-input" id="f-espacio" type="text" placeholder="Parque, asamblea, mercado, escuela…">
+              </div>
+            </div>
+            <div class="ficha-row">
+              <div class="ficha-field">
+                <label>Duración de la observación</label>
+                <select class="ficha-select" id="f-duracion">
+                  <option value="">Selecciona…</option>
+                  <option>Menos de 30 minutos</option>
+                  <option>30 min – 1 hora</option>
+                  <option>1 – 2 horas</option>
+                  <option>Más de 2 horas</option>
+                </select>
+              </div>
+              <div class="ficha-field">
+                <label>Rol del observador/a</label>
+                <select class="ficha-select" id="f-rol">
+                  <option value="">Selecciona…</option>
+                  <option>Observador/a no participante</option>
+                  <option>Observador/a participante parcial</option>
+                  <option>Participante pleno/a</option>
+                  <option>Facilitador/a de la actividad</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="ficha-section">
+            <div class="ficha-section-title">2. Descripción del escenario</div>
+            <div class="ficha-field" style="margin-bottom:12px">
+              <label>Descripción física del espacio</label>
+              <textarea class="ficha-textarea" id="f-espacio-desc" placeholder="Describe el lugar: dimensiones, estado físico, elementos presentes, condiciones ambientales…"></textarea>
+            </div>
+            <div class="ficha-row">
+              <div class="ficha-field">
+                <label>Número aproximado de personas</label>
+                <input class="ficha-input" id="f-personas" type="number" min="0" placeholder="0">
+              </div>
+              <div class="ficha-field">
+                <label>Rango de edad predominante</label>
+                <select class="ficha-select" id="f-edad">
+                  <option value="">Selecciona…</option>
+                  <option>Niñas y niños (0-12)</option>
+                  <option>Adolescentes (13-17)</option>
+                  <option>Jóvenes adultos/as (18-30)</option>
+                  <option>Adultos/as (31-60)</option>
+                  <option>Personas mayores (60+)</option>
+                  <option>Mixto / Diverso</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="ficha-section">
+            <div class="ficha-section-title">3. Observaciones descriptivas</div>
+            <div class="ficha-field" style="margin-bottom:12px">
+              <label>¿Qué ocurre? (descripción objetiva de lo observado)</label>
+              <textarea class="ficha-textarea" id="f-que-ocurre" style="min-height:100px" placeholder="Describe las acciones, interacciones y comportamientos sin interpretarlos todavía…"></textarea>
+            </div>
+            <div class="ficha-field" style="margin-bottom:12px">
+              <label>Dinámica de interacciones (¿quién habla con quién? ¿quién lidera? ¿quién calla?)</label>
+              <textarea class="ficha-textarea" id="f-interacciones" placeholder="Observa patrones de comunicación, jerarquías informales, silencios significativos…"></textarea>
+            </div>
+          </div>
+
+          <div class="ficha-section">
+            <div class="ficha-section-title">4. Dimensiones temáticas</div>
+            <div style="font-size:13px;color:var(--fg-secondary);margin-bottom:12px;">Marca las dimensiones que observaste en este espacio:</div>
+            <div class="ficha-obs-row">
+              <label class="ficha-check-label"><input type="checkbox" class="dim-check" value="Uso y apropiación del espacio"> Uso del espacio</label>
+              <label class="ficha-check-label"><input type="checkbox" class="dim-check" value="Relaciones de poder y jerarquía"> Relaciones de poder</label>
+              <label class="ficha-check-label"><input type="checkbox" class="dim-check" value="Redes de solidaridad y apoyo mutuo"> Redes de solidaridad</label>
+              <label class="ficha-check-label"><input type="checkbox" class="dim-check" value="Conflictos y tensiones visibles"> Conflictos visibles</label>
+              <label class="ficha-check-label"><input type="checkbox" class="dim-check" value="Prácticas de cuidado comunitario"> Prácticas de cuidado</label>
+              <label class="ficha-check-label"><input type="checkbox" class="dim-check" value="Exclusiones y ausencias significativas"> Exclusiones/ausencias</label>
+              <label class="ficha-check-label"><input type="checkbox" class="dim-check" value="Recursos y potencialidades locales"> Recursos locales</label>
+            </div>
+          </div>
+
+          <div class="ficha-section">
+            <div class="ficha-section-title">5. Interpretación reflexiva</div>
+            <div class="ficha-field" style="margin-bottom:12px">
+              <label>¿Qué te llama la atención? ¿Qué te sorprende?</label>
+              <textarea class="ficha-textarea" id="f-interpretacion" placeholder="Ahora sí puedes interpretar: ¿qué significan lo que observaste? ¿qué hipótesis te genera?"></textarea>
+            </div>
+            <div class="ficha-field" style="margin-bottom:12px">
+              <label>¿Qué NO viste, qué no ocurrió, qué estuvo ausente? (ausencias significativas)</label>
+              <textarea class="ficha-textarea" id="f-ausencias" placeholder="Las ausencias pueden ser tan significativas como las presencias…"></textarea>
+            </div>
+            <div class="ficha-field">
+              <label>¿Cómo afectó tu presencia a lo observado? (reflexividad)</label>
+              <textarea class="ficha-textarea" id="f-reflexividad" placeholder="¿Cómo te percibió la comunidad? ¿Qué cambió por el hecho de que estuvieras tú ahí?"></textarea>
+            </div>
+          </div>
+
+          <div class="ficha-section">
+            <div class="ficha-section-title">6. Próximos pasos</div>
+            <div class="ficha-field">
+              <label>¿Qué necesitas observar con más detalle? ¿Qué fuentes deberías contrastar?</label>
+              <textarea class="ficha-textarea" id="f-proximos" placeholder="Triangulación: ¿con quién deberías hablar? ¿qué documentos revisar? ¿qué actividad repetir?"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="ficha-actions">
+          <button class="ficha-btn primary" id="fichaGenerate">📄 Generar reporte</button>
+          <button class="ficha-btn" id="fichaReset">↺ Limpiar</button>
+        </div>
+
+        <div class="ficha-preview" id="fichaPreview">
+          <strong>Vista previa de tu reporte:</strong><br><br>
+          <pre id="fichaPreviewText"></pre>
+          <br>
+          <button class="ficha-btn primary" id="fichaDownload">⬇️ Descargar reporte (.txt)</button>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(2)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Video clase</button>
+        <button class="nav-btn nav-btn-next" onclick="showCompletion()">Finalizar módulo ✓ <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+
+      <div class="completion-banner" id="completionBanner" style="display:none">
+        <div class="completion-icon">🗂️</div>
+        <div class="completion-title">¡Módulo 3 completado!</div>
+        <p class="completion-desc">Has explorado el diagnóstico comunitario participativo y registrado tu propia observación de campo. El conocimiento construido desde adentro es el más transformador.</p>
+        <a href="index.html" class="completion-link">← Volver al portafolio</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let currentStep=0,totalSteps=4;const done=new Set();
+function goToStep(next){
+  if(next===currentStep)return;
+  const panels=document.querySelectorAll('.step-panel'),tabs=document.querySelectorAll('.step-tab'),prev=currentStep;
+  done.add(prev);
+  panels[prev].classList.add(next>prev?'exit-left':'exit-right');
+  panels[prev].addEventListener('animationend',()=>panels[prev].classList.remove('active','exit-left','exit-right'),{once:true});
+  panels[next].classList.add('active',next>prev?'enter-right':'enter-left');
+  panels[next].addEventListener('animationend',()=>panels[next].classList.remove('enter-right','enter-left'),{once:true});
+  currentStep=next;
+  tabs.forEach((t,i)=>{t.classList.remove('active','done');if(i===next)t.classList.add('active');else if(done.has(i))t.classList.add('done');});
+  document.getElementById('progressFill').style.width=((next+1)/totalSteps*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('stepTabs').querySelectorAll('.step-tab').forEach(b=>b.addEventListener('click',()=>goToStep(+b.dataset.step)));
+
+document.getElementById('downloadPdf').addEventListener('click',()=>{
+  const c=`FRAGMENTO — DIAGNÓSTICO COMUNITARIO\nMódulo 3 · Sintropía Social\n\nREFERENCIAS:\nMontañés, M. (2009). Metodología y técnica participativa. Editorial UOC.\nChambers, R. (1994). The origins and practice of participatory rural appraisal. World Development, 22(7), 953–969.\nRueda, E. (2011). Diagnóstico comunitario: guía metodológica. CREFAL.\nVillasante, T.R. (2006). Desbordes creativos. Catarata.\n\nFRAGMENTO 1\n"El diagnóstico participativo no descubre una realidad preexistente: la construye colectivamente." (Montañés, 2009, p. 78)\n\nFRAGMENTO 2\n"PRA enables local people to do their own appraisal, analysis and planning." (Chambers, 1994, p. 953)\n\nNOTAS:\n[ ] ¿Qué diferencia hay entre diagnóstico "para" y "con" la comunidad?\n[ ] ¿Cómo garantizo que los actores más silenciados tengan voz?\n[ ] Triangulación: ¿qué fuentes debo cruzar?\n`;
+  const blob=new Blob([c],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='DiagnosticoComunitario_Fragmento.txt';a.click();URL.revokeObjectURL(url);
+});
+
+function getV(id){return(document.getElementById(id)||{}).value||'';}
+function getDims(){return Array.from(document.querySelectorAll('.dim-check:checked')).map(c=>c.value).join(', ')||'(ninguna seleccionada)';}
+
+document.getElementById('fichaGenerate').addEventListener('click',()=>{
+  const obs=getV('f-observador'),fecha=getV('f-fecha'),com=getV('f-comunidad'),esp=getV('f-espacio');
+  const dur=getV('f-duracion'),rol=getV('f-rol'),edesc=getV('f-espacio-desc');
+  const pers=getV('f-personas'),edad=getV('f-edad');
+  const ocurre=getV('f-que-ocurre'),inter=getV('f-interacciones');
+  const dims=getDims(),interp=getV('f-interpretacion'),aus=getV('f-ausencias'),refl=getV('f-reflexividad'),prox=getV('f-proximos');
+  const text=`FICHA DE OBSERVACIÓN PARTICIPANTE
+Basada en Chambers (1994) y Rueda (2011)
+Sintropía Social — Módulo 3: Diagnóstico Comunitario
+${'='.repeat(60)}
+
+OBSERVADOR/A: ${obs||'(no especificado)'}
+FECHA: ${fecha||'(no especificada)'}
+COMUNIDAD/TERRITORIO: ${com||'(no especificado)'}
+ESPACIO ESPECÍFICO: ${esp||'(no especificado)'}
+DURACIÓN: ${dur||'(no especificada)'}
+ROL: ${rol||'(no especificado)'}
+
+${'─'.repeat(60)}
+1. DESCRIPCIÓN DEL ESCENARIO
+${'─'.repeat(60)}
+Espacio físico: ${edesc||'(sin descripción)'}
+Personas presentes: ${pers||'(no especificado)'}
+Rango de edad: ${edad||'(no especificado)'}
+
+${'─'.repeat(60)}
+2. OBSERVACIONES DESCRIPTIVAS
+${'─'.repeat(60)}
+¿Qué ocurre?
+${ocurre||'(sin registro)'}
+
+Dinámicas de interacción:
+${inter||'(sin registro)'}
+
+${'─'.repeat(60)}
+3. DIMENSIONES OBSERVADAS
+${'─'.repeat(60)}
+${dims}
+
+${'─'.repeat(60)}
+4. INTERPRETACIÓN REFLEXIVA
+${'─'.repeat(60)}
+¿Qué llama la atención / sorprende?
+${interp||'(sin registro)'}
+
+Ausencias significativas:
+${aus||'(sin registro)'}
+
+Reflexividad (efecto de mi presencia):
+${refl||'(sin registro)'}
+
+${'─'.repeat(60)}
+5. PRÓXIMOS PASOS
+${'─'.repeat(60)}
+${prox||'(sin registro)'}
+
+${'='.repeat(60)}
+Reporte generado en módulo de Diagnóstico Comunitario
+Sintropía Social — Diseño Instruccional David Salgado López`;
+  document.getElementById('fichaPreviewText').textContent=text.substring(0,600)+(text.length>600?'\n...(continúa)':'');
+  document.getElementById('fichaPreview').classList.add('visible');
+  document.getElementById('fichaPreview').scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('fichaDownload').onclick=()=>{
+    const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='Ficha_Observacion_Participante.txt';a.click();URL.revokeObjectURL(url);
+  };
+});
+
+document.getElementById('fichaReset').addEventListener('click',()=>{
+  ['f-observador','f-fecha','f-comunidad','f-espacio','f-espacio-desc','f-personas','f-que-ocurre','f-interacciones','f-interpretacion','f-ausencias','f-reflexividad','f-proximos'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-duracion','f-rol','f-edad'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
+  document.querySelectorAll('.dim-check').forEach(c=>c.checked=false);
+  document.getElementById('fichaPreview').classList.remove('visible');
+});
+
+function showCompletion(){
+  document.getElementById('completionBanner').style.display='block';
+  document.getElementById('completionBanner').scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.step-tab').forEach(t=>{done.add(+t.dataset.step);t.classList.add('done');});
+  document.getElementById('progressFill').style.width='100%';
+}
+</script>
+</body>
+</html>

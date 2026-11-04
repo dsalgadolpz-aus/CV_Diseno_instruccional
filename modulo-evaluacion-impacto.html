@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Módulo 4 · Evaluación de Impacto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg-canvas:#F8F9FB;--bg-surface:#fff;--bg-raised:#F1F2F5;--bg-hover:#E8EAEE;
+  --fg-primary:#0F1222;--fg-secondary:#484D63;--fg-tertiary:#8A8FA8;
+  --brand:#7C3AED;--brand-hover:#6D28D9;--brand-bg:#F5F3FF;
+  --border:#D8DBE3;--border-strong:#B8BCC8;
+  --shadow-xs:0 1px 2px rgba(0,0,0,.06);--shadow-sm:0 2px 6px rgba(0,0,0,.08);--shadow-md:0 6px 20px rgba(0,0,0,.10);
+  --r2:6px;--r3:8px;--r4:12px;--r5:16px;--r6:24px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg-canvas:#070912;--bg-surface:#0F1222;--bg-raised:#21253A;--bg-hover:#353A52;
+  --fg-primary:#F8F9FB;--fg-secondary:#B8BCC8;--fg-tertiary:#666B82;
+  --brand:#A78BFA;--brand-hover:#C4B5FD;--brand-bg:#1A0F2E;
+  --border:#353A52;--border-strong:#484D63;color-scheme:dark;
+}}
+:root[data-theme="dark"]{--bg-canvas:#070912;--bg-surface:#0F1222;--bg-raised:#21253A;--bg-hover:#353A52;--fg-primary:#F8F9FB;--fg-secondary:#B8BCC8;--fg-tertiary:#666B82;--brand:#A78BFA;--brand-hover:#C4B5FD;--brand-bg:#1A0F2E;--border:#353A52;--border-strong:#484D63;color-scheme:dark;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-canvas);color:var(--fg-primary);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;}
+.top-bar{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:var(--shadow-xs);}
+.top-bar-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 0;}
+.back-btn{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--fg-secondary);text-decoration:none;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r3);background:var(--bg-raised);transition:.15s;white-space:nowrap;}
+.back-btn:hover{color:var(--fg-primary);}
+.back-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.bar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.bar-module{font-size:12px;color:var(--fg-tertiary);white-space:nowrap;}
+.step-nav{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:49px;z-index:190;}
+.step-nav-inner{max-width:1000px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none;}
+.step-nav-inner::-webkit-scrollbar{display:none;}
+.step-tab{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:12px 20px;font-size:13px;font-weight:500;color:var(--fg-secondary);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s;white-space:nowrap;}
+.step-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.step-tab:hover:not(.active){color:var(--fg-primary);}
+.step-num{width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:grid;place-items:center;background:var(--bg-raised);color:var(--fg-tertiary);border:1px solid var(--border);flex-shrink:0;}
+.step-tab.active .step-num{background:var(--brand);color:#fff;border-color:var(--brand);}
+.step-tab.done .step-num{background:#059669;color:#fff;border-color:#059669;}
+.progress-bar{height:3px;background:var(--border);}
+.progress-fill{height:100%;background:var(--brand);transition:width .4s ease;}
+.step-area{position:relative;overflow:hidden;}
+.step-panel{display:none;animation:slideIn .35s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.active{display:block;}
+.step-panel.exit-left{animation:slideOutLeft .3s ease both;}
+.step-panel.exit-right{animation:slideOutRight .3s ease both;}
+.step-panel.enter-right{animation:slideInRight .35s ease both;}
+.step-panel.enter-left{animation:slideInLeft .35s ease both;}
+@keyframes slideIn{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+@keyframes slideOutLeft{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-48px)}}
+@keyframes slideOutRight{from{opacity:1;transform:none}to{opacity:0;transform:translateX(48px)}}
+.content-wrap{max-width:1000px;margin:0 auto;padding:32px 0 64px;}
+.step-header{margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.step-type-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:var(--r6);margin-bottom:12px;}
+.lbl-lectura{background:#EEF3FF;color:#1D47A3;}
+.lbl-video{background:#F5F3FF;color:#5B21B6;}
+.lbl-clase{background:#FEF3C7;color:#D97706;}
+.lbl-actividad{background:#FDF4FF;color:#7E22CE;}
+.step-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-.01em;line-height:1.2;text-wrap:balance;}
+.step-meta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;}
+.step-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--fg-tertiary);border:1px solid var(--border);border-radius:var(--r2);padding:3px 8px;background:var(--bg-raised);}
+.apa-block{background:var(--bg-surface);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--r3);padding:16px 20px;margin-bottom:28px;box-shadow:var(--shadow-xs);}
+.apa-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-tertiary);margin-bottom:12px;}
+.apa-ref{font-size:14px;line-height:1.65;color:var(--fg-secondary);}
+.apa-ref em{font-style:italic;}
+.reading-fragment{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r4);padding:28px 32px;box-shadow:var(--shadow-sm);margin-bottom:24px;line-height:1.9;font-size:15px;}
+.reading-fragment h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;}
+.reading-fragment p{color:var(--fg-secondary);margin-bottom:16px;}
+.reading-fragment p:last-child{margin-bottom:0;}
+.marginal{background:var(--brand-bg);border-left:3px solid var(--brand);padding:12px 16px;border-radius:0 var(--r3) var(--r3) 0;font-size:13px;color:var(--fg-secondary);margin:16px 0;font-style:italic;}
+.reading-fragment strong{color:var(--fg-primary);}
+.pdf-btn{display:inline-flex;align-items:center;gap:12px;padding:12px 20px;background:var(--brand);color:#fff;border:none;border-radius:var(--r3);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;}
+.pdf-btn:hover{background:var(--brand-hover);}
+.pdf-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.guia-card{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r4);padding:20px 24px;margin-top:24px;}
+.guia-title{font-size:14px;font-weight:700;margin-bottom:12px;}
+.guia-items{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.guia-items li{display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--fg-secondary);line-height:1.5;}
+.guia-items li::before{content:'→';color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px;}
+.canva-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#2E1065,#7C3AED);border-radius:var(--r5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;}
+.canva-placeholder-icon{font-size:48px;}
+.canva-placeholder-text{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.85);}
+.canva-placeholder-sub{font-size:13px;color:rgba(255,255,255,.5);}
+/* THEORY OF CHANGE SIMULATOR */
+.toc-wrap{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r5);box-shadow:var(--shadow-md);overflow:hidden;}
+.toc-header{background:linear-gradient(135deg,#2E1065,#7C3AED);padding:20px 24px;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.toc-header-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;}
+.toc-header-sub{font-size:12px;opacity:.7;margin-top:2px;}
+.toc-toolbar{display:flex;gap:8px;flex-wrap:wrap;}
+.toc-btn{padding:6px 14px;border-radius:var(--r3);font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;transition:.15s;}
+.toc-btn:hover{background:rgba(255,255,255,.22);}
+.toc-btn.accent{background:#fff;color:#5B21B6;}
+.toc-chain{display:flex;overflow-x:auto;padding:24px;gap:0;scrollbar-width:thin;min-height:340px;align-items:flex-start;}
+.toc-chain::-webkit-scrollbar{height:6px;}.toc-chain::-webkit-scrollbar-track{background:var(--bg-raised);}.toc-chain::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px;}
+.toc-col{flex-shrink:0;width:180px;display:flex;flex-direction:column;gap:0;}
+.toc-col-header{text-align:center;padding:8px 12px;border-radius:var(--r3) var(--r3) 0 0;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;}
+.toc-arrow{flex-shrink:0;width:36px;display:flex;align-items:flex-start;padding-top:38px;justify-content:center;color:var(--fg-tertiary);font-size:20px;line-height:1;}
+.toc-cards{display:flex;flex-direction:column;gap:8px;min-height:200px;padding:4px;border:2px dashed var(--border);border-radius:var(--r3);transition:border-color .2s,background .2s;}
+.toc-cards.drag-over{border-color:var(--brand);background:var(--brand-bg);}
+.toc-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r3);padding:10px 12px;font-size:13px;font-weight:500;cursor:grab;user-select:none;box-shadow:var(--shadow-xs);transition:box-shadow .15s,transform .15s;line-height:1.4;position:relative;}
+.toc-card:hover{box-shadow:var(--shadow-sm);}
+.toc-card.dragging{opacity:.5;cursor:grabbing;}
+.toc-card .del-btn{position:absolute;top:4px;right:4px;width:18px;height:18px;border-radius:50%;border:none;background:transparent;color:var(--fg-tertiary);font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;}
+.toc-card:hover .del-btn{display:flex;}
+.toc-card .del-btn:hover{background:var(--bg-hover);color:var(--fg-primary);}
+.bank-row{padding:16px 24px;border-top:1px solid var(--border);background:var(--bg-raised);}
+.bank-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-tertiary);margin-bottom:10px;}
+.bank-cards{display:flex;flex-wrap:wrap;gap:8px;}
+.toc-add-row{padding:12px 24px 16px;border-top:1px solid var(--border);}
+.toc-add-form{display:flex;gap:8px;flex-wrap:wrap;}
+.toc-input{flex:1;min-width:140px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r3);font-size:13px;background:var(--bg-raised);color:var(--fg-primary);font-family:inherit;}
+.toc-input:focus{outline:none;border-color:var(--brand);}
+.toc-col-select{padding:8px 12px;border:1px solid var(--border);border-radius:var(--r3);font-size:13px;background:var(--bg-raised);color:var(--fg-primary);font-family:inherit;cursor:pointer;}
+.toc-col-select:focus{outline:none;border-color:var(--brand);}
+.toc-add-btn{padding:8px 16px;border-radius:var(--r3);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--brand);background:var(--brand);color:#fff;}
+.toc-analysis{padding:16px 24px;border-top:1px solid var(--border);}
+.analysis-box{background:var(--brand-bg);border:1px solid var(--brand);border-radius:var(--r4);padding:16px 20px;font-size:13px;line-height:1.75;color:var(--fg-secondary);}
+.analysis-box h4{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--fg-primary);margin-bottom:8px;}
+.col-insumos .toc-col-header{background:#FEF3C7;color:#92400E;}
+.col-actividades .toc-col-header{background:#DBEAFE;color:#1E40AF;}
+.col-productos .toc-col-header{background:#D1FAE5;color:#065F46;}
+.col-resultados .toc-col-header{background:#FEE2E2;color:#991B1B;}
+.col-impacto .toc-col-header{background:#F5F3FF;color:#4C1D95;}
+@media(prefers-color-scheme:dark){
+  .col-insumos .toc-col-header{background:#451A03;color:#FDE68A;}
+  .col-actividades .toc-col-header{background:#1E3A5F;color:#93C5FD;}
+  .col-productos .toc-col-header{background:#064E3B;color:#6EE7B7;}
+  .col-resultados .toc-col-header{background:#450A0A;color:#FCA5A5;}
+  .col-impacto .toc-col-header{background:#1A0F2E;color:#C4B5FD;}
+}
+.nav-buttons{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:28px;border-top:1px solid var(--border);}
+.nav-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;font-size:14px;font-weight:600;border:1.5px solid var(--border);border-radius:var(--r3);background:var(--bg-surface);color:var(--fg-secondary);cursor:pointer;transition:.15s;}
+.nav-btn:hover{color:var(--fg-primary);border-color:var(--border-strong);}
+.nav-btn-next{background:var(--brand);color:#fff;border-color:var(--brand);}
+.nav-btn-next:hover{background:var(--brand-hover);color:#fff;}
+.nav-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.completion-banner{margin-top:48px;background:linear-gradient(135deg,#2E1065,#7C3AED);border-radius:var(--r5);padding:48px 32px;text-align:center;color:#fff;}
+.completion-icon{font-size:48px;margin-bottom:16px;}
+.completion-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:12px;}
+.completion-desc{font-size:14px;opacity:.8;max-width:480px;margin:0 auto 24px;line-height:1.6;}
+.completion-link{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#fff;color:#2E1065;border-radius:var(--r3);font-size:14px;font-weight:700;text-decoration:none;}
+.completion-link:hover{opacity:.9;}
+@media(max-width:600px){.nav-buttons{flex-direction:column;}.toc-chain{padding:16px 12px;}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="index.html" class="back-btn"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>Portafolio</a>
+    <span class="bar-title">Evaluación de Impacto en Proyectos Sociales</span>
+    <span class="bar-module">Módulo 4 de 6</span>
+  </div>
+</div>
+
+<div class="step-nav">
+  <div class="step-nav-inner" id="stepTabs">
+    <button class="step-tab active" data-step="0"><span class="step-num">1</span> Lectura</button>
+    <button class="step-tab" data-step="1"><span class="step-num">2</span> Presentación</button>
+    <button class="step-tab" data-step="2"><span class="step-num">3</span> Video clase</button>
+    <button class="step-tab" data-step="3"><span class="step-num">4</span> Simulador</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:25%"></div></div>
+</div>
+
+<div class="step-area">
+
+  <!-- STEP 1: LECTURA -->
+  <div class="step-panel active" id="step-0">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-lectura">📖 Lectura guiada</div>
+        <h1 class="step-title">Evaluación de impacto: de la medición a la comprensión del cambio social</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ 40 min</span>
+          <span class="step-chip">📄 Rogers · Mayne · Weiss</span>
+          <span class="step-chip">📌 Módulo 4</span>
+        </div>
+      </div>
+
+      <div class="apa-block">
+        <div class="apa-label">Referencias APA</div>
+        <div class="apa-ref">
+          Rogers, P. J. (2008). Using programme theory to evaluate complicated and complex aspects of interventions. <em>Evaluation, 14</em>(1), 29–48. https://doi.org/10.1177/1356389007084674<br>
+          Mayne, J. (2011). Contribution analysis: Addressing cause and effect. En K. Forss, M. Marra & R. Schwartz (Eds.), <em>Evaluating the complex</em> (pp. 53–96). Transaction Publishers.<br>
+          Weiss, C. H. (1997). Theory-based evaluation: Past, present, and future. <em>New Directions for Evaluation, 1997</em>(76), 41–55. https://doi.org/10.1002/ev.1086<br>
+          Funnell, S. C., &amp; Rogers, P. J. (2011). <em>Purposeful program theory: Effective use of theories of change and logic models</em>. Jossey-Bass.
+        </div>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>1. Evaluar el impacto: una tarea epistémicamente difícil</h3>
+        <p>Evaluar el impacto de un proyecto social implica responder a la pregunta más difícil en ciencias sociales aplicadas: ¿este proyecto <strong>causó</strong> los cambios observados? No basta con documentar que algo mejoró después de la intervención —correlación no es causalidad—. La evaluación de impacto busca establecer una relación causal entre el proyecto y el cambio, controlando todos los demás factores que también podrían haberlo producido.</p>
+        <div class="marginal">"The fundamental problem of causal inference is that we can observe the treated outcome or the counterfactual, but never both at the same time." — Angrist & Pischke, parafraseados en Rogers, 2008, p. 29</div>
+        <p>Los diseños experimentales aleatorios (RCT por sus siglas en inglés) ofrecen la forma más robusta de control, pero son costosos, éticamente problemáticos en contextos de exclusión social, y frecuentemente inaplicables en proyectos comunitarios. Las evaluaciones quasi-experimentales y los enfoques basados en teorías del cambio ofrecen alternativas más viables para organizaciones de desarrollo social.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>2. La Teoría del Cambio (ToC): del qué al cómo y por qué</h3>
+        <p>La <strong>Teoría del Cambio</strong> —Theory of Change (ToC)— es una representación explícita de cómo y por qué se espera que un conjunto de actividades produzca los resultados e impactos deseados. Weiss (1997) la define como "las hipótesis causales —verificables— que subyacen a un programa" (p. 42). No es simplemente un diagrama de flujo: es un mapa argumentado de la causalidad que hace visibles las suposiciones del programa.</p>
+        <div class="marginal">"A theory of change is not just a list of activities leading to outcomes. It is an account of how and why change is expected to happen." — Weiss, 1997, p. 42</div>
+        <p>La cadena de resultados clásica articula cinco eslabones: <strong>Insumos → Actividades → Productos → Resultados → Impacto</strong>. Cada eslabón implica una hipótesis: si ponemos estos insumos en estas actividades, produciremos estos productos; si logramos estos productos, obtendremos estos resultados; y si consolidamos estos resultados, generaremos este impacto. Las suposiciones que justifican cada "si…entonces…" son el corazón de la teoría.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>3. Análisis de contribución: más allá de la atribución</h3>
+        <p>Mayne (2011) propone el <strong>análisis de contribución</strong> como alternativa al imposible ideal de la atribución total en contextos complejos. En lugar de preguntarse "¿fue esto causa de aquello?", el análisis de contribución pregunta: "¿contribuyó este proyecto al resultado observado, y si es así, en qué medida?". Esta distinción no es cosmética: reconoce que el cambio social es multifactorial y que pretender monopolizar la causalidad frecuentemente distorsiona la evidencia.</p>
+        <p>El proceso requiere: (1) construir la teoría del cambio antes de la intervención; (2) recoger evidencia de que las actividades se implementaron según lo planeado; (3) documentar que los cambios observados son consistentes con la ToC; (4) explorar y descartar explicaciones alternativas; y (5) elaborar una narrativa de contribución que sea creíble y honesta sobre la incertidumbre residual.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>4. Tipos de impacto en proyectos sociales</h3>
+        <p>Funnell y Rogers (2011) distinguen entre resultados <strong>intermedios</strong> (cambios en conocimientos, actitudes, habilidades o comportamientos de los participantes directos), resultados <strong>finales</strong> (cambios en las condiciones de vida de la población objetivo) e impactos (transformaciones en sistemas, estructuras o condiciones generales de mayor alcance). Esta distinción es operativa: los resultados intermedios son más fáciles de medir y más directamente atribuibles al proyecto; los impactos requieren mayor tiempo, recursos y sofisticación metodológica para documentar.</p>
+        <p>Una evaluación honesta del impacto en proyectos sociales de escala media suele trabajar con resultados intermedios y finales, construyendo una narrativa de contribución plausible hacia impactos más amplios, en lugar de pretender medir el impacto sistémico directamente.</p>
+      </div>
+
+      <div style="margin-top:24px">
+        <button class="pdf-btn" id="downloadPdf">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Descargar fragmento comentado (TXT)
+        </button>
+      </div>
+
+      <div class="guia-card">
+        <div class="guia-title">🧭 Guía de lectura reflexiva</div>
+        <ul class="guia-items">
+          <li>¿Puedes distinguir entre outputs (productos) y outcomes (resultados) en un proyecto que conozcas?</li>
+          <li>¿Qué suposiciones implícitas tiene ese proyecto? ¿Cuáles son las más frágiles?</li>
+          <li>¿Cómo diferenciarías cambios causados por el proyecto de cambios que hubieran ocurrido de todas formas?</li>
+          <li>¿En qué se diferencia una Teoría del Cambio de un Marco Lógico?</li>
+        </ul>
+      </div>
+
+      <div class="nav-buttons">
+        <span></span>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(1)">Presentación <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: PRESENTACIÓN -->
+  <div class="step-panel" id="step-1">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-video">🎞 Presentación</div>
+        <h1 class="step-title">Evaluación de Impacto — Teoría del Cambio</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">📐 Canva · 10 diapositivas</span>
+          <span class="step-chip">⏱ ~10 min</span>
+          <span class="step-chip">📌 Módulo 4</span>
+        </div>
+      </div>
+      <div class="canva-placeholder">
+        <div class="canva-placeholder-icon">🔗</div>
+        <div class="canva-placeholder-text">Presentación: Evaluación de Impacto</div>
+        <div class="canva-placeholder-sub">Próximamente — Sintropía Social · Módulo 4</div>
+      </div>
+      <div class="guia-card">
+        <div class="guia-title">💡 Mientras revisas la presentación</div>
+        <ul class="guia-items">
+          <li>Identifica la diferencia visual entre la cadena de resultados y un mapa de impacto complejo.</li>
+          <li>Observa cómo se documentan las suposiciones en cada eslabón de la cadena.</li>
+          <li>En el Paso 4 construirás tu propia Teoría del Cambio con el simulador.</li>
+        </ul>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(0)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Lectura</button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(2)">Video clase <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: VIDEO -->
+  <div class="step-panel" id="step-2">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-clase">🎥 Video clase</div>
+        <h1 class="step-title">Clase: Construyendo una Teoría del Cambio</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">📺 YouTube</span>
+          <span class="step-chip">⏱ próximamente</span>
+          <span class="step-chip">📌 Módulo 4</span>
+        </div>
+      </div>
+      <div style="width:100%;aspect-ratio:16/9;background:var(--bg-raised);border-radius:var(--r5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;border:1px solid var(--border);">
+        <div style="font-size:40px;">🎥</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:var(--fg-secondary);">Video clase disponible próximamente</div>
+        <div style="font-size:13px;color:var(--fg-tertiary);">Se subirá a YouTube y se enlazará aquí</div>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(1)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Presentación</button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(3)">Simulador <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: SIMULADOR TEORÍA DEL CAMBIO -->
+  <div class="step-panel" id="step-3">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-actividad">🔗 Simulador</div>
+        <h1 class="step-title">Construye tu Teoría del Cambio</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">🧩 Drag &amp; drop</span>
+          <span class="step-chip">⏱ ~25 min</span>
+          <span class="step-chip">📄 Genera cadena exportable</span>
+        </div>
+      </div>
+
+      <p style="color:var(--fg-secondary);font-size:14px;margin-bottom:20px;line-height:1.7;">Arrastra las tarjetas del banco hacia la columna correcta de la cadena de resultados, o escribe tus propios elementos. Al terminar, genera un análisis de tu Teoría del Cambio y descárgala.</p>
+
+      <div class="toc-wrap">
+        <div class="toc-header">
+          <div>
+            <div class="toc-header-title">🔗 Simulador — Teoría del Cambio</div>
+            <div class="toc-header-sub">Cadena de resultados: Insumos → Actividades → Productos → Resultados → Impacto</div>
+          </div>
+          <div class="toc-toolbar">
+            <button class="toc-btn" id="analyzeBtn">📊 Analizar</button>
+            <button class="toc-btn accent" id="exportBtn">⬇️ Exportar</button>
+            <button class="toc-btn" id="resetBtn">↺ Limpiar</button>
+          </div>
+        </div>
+
+        <div class="toc-chain" id="tocChain">
+          <!-- Rendered by JS -->
+        </div>
+
+        <div class="bank-row">
+          <div class="bank-label">🃏 Banco de tarjetas — arrastra hacia la columna correcta</div>
+          <div class="bank-cards" id="bankCards"></div>
+        </div>
+
+        <div class="toc-add-row">
+          <div style="font-size:12px;font-weight:600;color:var(--fg-tertiary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Agregar elemento propio</div>
+          <div class="toc-add-form">
+            <input class="toc-input" id="addText" placeholder="Describe el elemento…" maxlength="80">
+            <select class="toc-col-select" id="addCol">
+              <option value="0">Insumos</option>
+              <option value="1">Actividades</option>
+              <option value="2">Productos</option>
+              <option value="3">Resultados</option>
+              <option value="4">Impacto</option>
+            </select>
+            <button class="toc-add-btn" id="addBtn">+ Agregar</button>
+          </div>
+        </div>
+
+        <div class="toc-analysis" id="tocAnalysis" style="display:none">
+          <div class="analysis-box" id="analysisContent"></div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(2)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Video clase</button>
+        <button class="nav-btn nav-btn-next" onclick="showCompletion()">Finalizar módulo ✓ <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+
+      <div class="completion-banner" id="completionBanner" style="display:none">
+        <div class="completion-icon">🏆</div>
+        <div class="completion-title">¡Módulo 4 completado!</div>
+        <p class="completion-desc">Has construido tu propia Teoría del Cambio y comprendido cómo evaluar el impacto de proyectos sociales. La evaluación rigurosa transforma la práctica.</p>
+        <a href="index.html" class="completion-link">← Volver al portafolio</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ---- Navigation ----
+let currentStep=0,totalSteps=4;const done=new Set();
+function goToStep(next){
+  if(next===currentStep)return;
+  const panels=document.querySelectorAll('.step-panel'),tabs=document.querySelectorAll('.step-tab'),prev=currentStep;
+  done.add(prev);
+  panels[prev].classList.add(next>prev?'exit-left':'exit-right');
+  panels[prev].addEventListener('animationend',()=>panels[prev].classList.remove('active','exit-left','exit-right'),{once:true});
+  panels[next].classList.add('active',next>prev?'enter-right':'enter-left');
+  panels[next].addEventListener('animationend',()=>panels[next].classList.remove('enter-right','enter-left'),{once:true});
+  currentStep=next;
+  tabs.forEach((t,i)=>{t.classList.remove('active','done');if(i===next)t.classList.add('active');else if(done.has(i))t.classList.add('done');});
+  document.getElementById('progressFill').style.width=((next+1)/totalSteps*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('stepTabs').querySelectorAll('.step-tab').forEach(b=>b.addEventListener('click',()=>goToStep(+b.dataset.step)));
+
+// ---- PDF ----
+document.getElementById('downloadPdf').addEventListener('click',()=>{
+  const c=`FRAGMENTO — EVALUACIÓN DE IMPACTO EN PROYECTOS SOCIALES\nMódulo 4 · Sintropía Social\n\nREFERENCIAS:\nRogers, P.J. (2008). Using programme theory to evaluate complicated and complex aspects of interventions. Evaluation, 14(1), 29–48.\nMayne, J. (2011). Contribution analysis: Addressing cause and effect. En K. Forss et al. (Eds.), Evaluating the complex. Transaction Publishers.\nWeiss, C.H. (1997). Theory-based evaluation: Past, present, and future. New Directions for Evaluation, 1997(76), 41–55.\nFunnell, S.C., & Rogers, P.J. (2011). Purposeful program theory. Jossey-Bass.\n\nFRAGMENTO 1\n"A theory of change is not just a list of activities leading to outcomes. It is an account of how and why change is expected to happen." (Weiss, 1997, p. 42)\n\nFRAGMENTO 2\nCadena de resultados: Insumos → Actividades → Productos → Resultados → Impacto\nCada eslabón implica una hipótesis causal explícita con sus suposiciones.\n\nNOTAS:\n[ ] ¿Cuál es la diferencia entre outputs y outcomes?\n[ ] ¿Qué significa "análisis de contribución" vs "atribución"?\n[ ] ¿Qué suposiciones implícitas tiene el proyecto que conozco?\n`;
+  const blob=new Blob([c],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='EvaluacionImpacto_Fragmento.txt';a.click();URL.revokeObjectURL(url);
+});
+
+// ---- Theory of Change Simulator ----
+const COLS=[
+  {id:'insumos',label:'Insumos',cls:'col-insumos',emoji:'🧱'},
+  {id:'actividades',label:'Actividades',cls:'col-actividades',emoji:'⚙️'},
+  {id:'productos',label:'Productos',cls:'col-productos',emoji:'📦'},
+  {id:'resultados',label:'Resultados',cls:'col-resultados',emoji:'📈'},
+  {id:'impacto',label:'Impacto',cls:'col-impacto',emoji:'🌍'},
+];
+
+const BANK_CARDS=[
+  {id:'b1',text:'Financiamiento del proyecto',col:null},
+  {id:'b2',text:'Equipo profesional capacitado',col:null},
+  {id:'b3',text:'Alianzas con organizaciones locales',col:null},
+  {id:'b4',text:'Talleres de capacitación comunitaria',col:null},
+  {id:'b5',text:'Campañas de sensibilización',col:null},
+  {id:'b6',text:'Sesiones de formación realizadas',col:null},
+  {id:'b7',text:'Material educativo distribuido',col:null},
+  {id:'b8',text:'Número de personas capacitadas',col:null},
+  {id:'b9',text:'Mejora en conocimientos y actitudes',col:null},
+  {id:'b10',text:'Cambio en prácticas comunitarias',col:null},
+  {id:'b11',text:'Reducción de brechas de desigualdad',col:null},
+  {id:'b12',text:'Mayor autonomía comunitaria',col:null},
+];
+
+// State
+const state={cols:[[], [], [], [], []], bank:[...BANK_CARDS]};
+let dragItem=null,dragSource=null;
+
+function renderChain(){
+  const chain=document.getElementById('tocChain');
+  chain.innerHTML='';
+  COLS.forEach((col,ci)=>{
+    const colEl=document.createElement('div');
+    colEl.className=`toc-col ${col.cls}`;
+    colEl.innerHTML=`<div class="toc-col-header">${col.emoji} ${col.label}</div>`;
+    const cards=document.createElement('div');
+    cards.className='toc-cards';
+    cards.dataset.col=ci;
+    state.cols[ci].forEach(card=>{
+      cards.appendChild(makeCard(card,ci));
+    });
+    colEl.appendChild(cards);
+    chain.appendChild(colEl);
+    if(ci<COLS.length-1){
+      const arr=document.createElement('div');arr.className='toc-arrow';arr.textContent='→';chain.appendChild(arr);
+    }
+    setupDrop(cards,ci);
+  });
+}
+
+function renderBank(){
+  const bank=document.getElementById('bankCards');
+  bank.innerHTML='';
+  state.bank.forEach(card=>{
+    const el=makeCard(card,'bank');
+    bank.appendChild(el);
+  });
+  if(!state.bank.length){
+    bank.innerHTML='<span style="font-size:13px;color:var(--fg-tertiary);font-style:italic;">Todas las tarjetas han sido ubicadas ✓</span>';
+  }
+}
+
+function makeCard(card,src){
+  const el=document.createElement('div');
+  el.className='toc-card';
+  el.dataset.id=card.id;
+  el.innerHTML=card.text;
+  const del=document.createElement('button');
+  del.className='del-btn';del.title='Quitar';del.textContent='×';
+  del.addEventListener('click',e=>{e.stopPropagation();removeCard(card.id,src);});
+  el.appendChild(del);
+  el.draggable=true;
+  el.addEventListener('dragstart',e=>{dragItem=card;dragSource=src;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+  el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.querySelectorAll('.toc-cards').forEach(c=>c.classList.remove('drag-over'));});
+  // touch
+  let tx,ty;
+  el.addEventListener('touchstart',e=>{dragItem=card;dragSource=src;tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+  el.addEventListener('touchmove',e=>{e.preventDefault();tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:false});
+  el.addEventListener('touchend',()=>{
+    const target=document.elementFromPoint(tx,ty);
+    if(!target)return;
+    const colEl=target.closest('.toc-cards');
+    if(colEl){const ci=+colEl.dataset.col;dropCard(dragItem,dragSource,ci);}
+  });
+  return el;
+}
+
+function setupDrop(el,ci){
+  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('drag-over');});
+  el.addEventListener('dragleave',()=>el.classList.remove('drag-over'));
+  el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('drag-over');if(dragItem)dropCard(dragItem,dragSource,ci);});
+}
+
+function dropCard(card,src,targetCol){
+  if(src==='bank'){
+    state.bank=state.bank.filter(c=>c.id!==card.id);
+  } else if(typeof src==='number'){
+    state.cols[src]=state.cols[src].filter(c=>c.id!==card.id);
+  }
+  if(!state.cols[targetCol].find(c=>c.id===card.id)) state.cols[targetCol].push(card);
+  dragItem=null;dragSource=null;
+  renderChain();renderBank();
+}
+
+function removeCard(id,src){
+  if(typeof src==='number'){state.cols[src]=state.cols[src].filter(c=>c.id!==id);}
+  else{state.bank=state.bank.filter(c=>c.id!==id);}
+  renderChain();renderBank();
+}
+
+document.getElementById('addBtn').addEventListener('click',()=>{
+  const txt=document.getElementById('addText').value.trim();
+  const ci=+document.getElementById('addCol').value;
+  if(!txt)return;
+  const card={id:'u'+Date.now(),text:txt};
+  state.cols[ci].push(card);
+  document.getElementById('addText').value='';
+  renderChain();renderBank();
+});
+document.getElementById('addText').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('addBtn').click();});
+
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  state.cols.forEach((_,i)=>state.cols[i]=[]);
+  state.bank=[...BANK_CARDS];
+  renderChain();renderBank();
+  document.getElementById('tocAnalysis').style.display='none';
+});
+
+document.getElementById('analyzeBtn').addEventListener('click',()=>{
+  const counts=state.cols.map(c=>c.length);
+  const total=counts.reduce((a,b)=>a+b,0);
+  const empty=counts.filter(c=>c===0).length;
+  const colNames=['Insumos','Actividades','Productos','Resultados','Impacto'];
+  let html=`<h4>📊 Análisis de tu Teoría del Cambio</h4>`;
+  if(total===0){html+=`<p>Aún no has ubicado ningún elemento. Arrastra tarjetas del banco hacia las columnas de la cadena, o agrega tus propios elementos.</p>`;
+  }else{
+    html+=`<p><strong>Total de elementos ubicados:</strong> ${total}</p>`;
+    counts.forEach((c,i)=>{
+      const status=c===0?'⚠️ vacío':c<=2?'✓ básico':'✓✓ desarrollado';
+      html+=`<p>${COLS[i].emoji} <strong>${colNames[i]}:</strong> ${c} elemento(s) — <em>${status}</em></p>`;
+    });
+    if(empty>0) html+=`<p>⚠️ ${empty} columna(s) vacía(s). Una cadena completa requiere al menos un elemento por eslabón.</p>`;
+    if(empty===0) html+=`<p>✅ <strong>Cadena completa.</strong> Todos los eslabones tienen al menos un elemento. Recuerda documentar también las <em>suposiciones</em> que conectan cada par de eslabones.</p>`;
+    html+=`<p style="margin-top:12px;font-size:12px;color:var(--fg-tertiary);">Referencia: Funnell &amp; Rogers (2011). <em>Purposeful program theory</em>. Jossey-Bass.</p>`;
+  }
+  document.getElementById('analysisContent').innerHTML=html;
+  document.getElementById('tocAnalysis').style.display='block';
+  document.getElementById('tocAnalysis').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const colNames=['INSUMOS','ACTIVIDADES','PRODUCTOS','RESULTADOS','IMPACTO'];
+  let txt=`TEORÍA DEL CAMBIO — CADENA DE RESULTADOS\nSintropía Social · Módulo 4: Evaluación de Impacto\n${'='.repeat(60)}\n\n`;
+  COLS.forEach((col,i)=>{
+    txt+=`${col.emoji} ${colNames[i]}\n${'─'.repeat(40)}\n`;
+    if(state.cols[i].length) state.cols[i].forEach((c,j)=>txt+=`${j+1}. ${c.text}\n`);
+    else txt+=`(sin elementos)\n`;
+    if(i<COLS.length-1) txt+=`\n       ↓\n\n`;
+  });
+  txt+=`\n${'='.repeat(60)}\nReferencia metodológica:\nWeiss (1997): "A theory of change is not just a list of activities leading to outcomes."\nMayne (2011): Análisis de contribución como alternativa a la atribución total.\nFunnell & Rogers (2011): Cadena de resultados y suposiciones explícitas.\n`;
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='Teoria_del_Cambio.txt';a.click();URL.revokeObjectURL(url);
+});
+
+function showCompletion(){
+  document.getElementById('completionBanner').style.display='block';
+  document.getElementById('completionBanner').scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.step-tab').forEach(t=>{done.add(+t.dataset.step);t.classList.add('done');});
+  document.getElementById('progressFill').style.width='100%';
+}
+
+// Init
+renderChain();
+renderBank();
+</script>
+</body>
+</html>

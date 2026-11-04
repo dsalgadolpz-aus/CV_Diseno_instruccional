@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Módulo 1 · Teoría del Campo Social</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* ── TOKENS ── */
+:root{
+  --blue-50:#EEF3FF;--blue-100:#D9E4FF;--blue-200:#B3CAFE;
+  --blue-500:#2558C4;--blue-600:#1D47A3;--blue-700:#153882;--blue-900:#0A1B42;
+  --gray-0:#FFFFFF;--gray-50:#F8F9FB;--gray-100:#F1F2F5;--gray-150:#E8EAEE;
+  --gray-200:#D8DBE3;--gray-300:#B8BCC8;--gray-400:#8A8FA8;--gray-500:#666B82;
+  --gray-600:#484D63;--gray-700:#353A52;--gray-800:#21253A;--gray-900:#0F1222;--gray-950:#070912;
+  --teal-500:#0D9488;--emerald-500:#059669;--amber-500:#D97706;--violet-500:#7C3AED;
+  --indigo-500:#4F46E5;--rose-500:#E11D48;
+
+  --bg-canvas:var(--gray-50);--bg-surface:var(--gray-0);--bg-raised:var(--gray-100);
+  --bg-hover:var(--gray-150);--fg-primary:var(--gray-900);--fg-secondary:var(--gray-600);
+  --fg-tertiary:var(--gray-400);--brand:var(--indigo-500);--brand-hover:#4338CA;
+  --brand-bg:#EEF2FF;--border:var(--gray-200);--border-strong:var(--gray-300);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.06);--shadow-sm:0 2px 6px rgba(0,0,0,.08);
+  --shadow-md:0 6px 20px rgba(0,0,0,.10);
+  --r1:4px;--r2:6px;--r3:8px;--r4:12px;--r5:16px;--r6:24px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;
+  --s7:28px;--s8:32px;--s9:40px;--s10:48px;--s11:56px;--s12:64px;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg-canvas:var(--gray-950);--bg-surface:var(--gray-900);--bg-raised:var(--gray-800);
+  --bg-hover:var(--gray-700);--fg-primary:var(--gray-50);--fg-secondary:var(--gray-300);
+  --fg-tertiary:var(--gray-500);--brand:#818CF8;--brand-hover:#A5B4FC;
+  --brand-bg:#1E1B4B;--border:var(--gray-700);--border-strong:var(--gray-600);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.3);--shadow-sm:0 2px 6px rgba(0,0,0,.35);
+  --shadow-md:0 6px 20px rgba(0,0,0,.45);color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg-canvas:var(--gray-950);--bg-surface:var(--gray-900);--bg-raised:var(--gray-800);
+  --bg-hover:var(--gray-700);--fg-primary:var(--gray-50);--fg-secondary:var(--gray-300);
+  --fg-tertiary:var(--gray-500);--brand:#818CF8;--brand-hover:#A5B4FC;
+  --brand-bg:#1E1B4B;--border:var(--gray-700);--border-strong:var(--gray-600);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg-canvas);color:var(--fg-primary);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;
+}
+
+/* ── TOP BAR ── */
+.top-bar{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:var(--shadow-xs);}
+.top-bar-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:var(--s4);padding:var(--s3) 0;}
+.back-btn{display:inline-flex;align-items:center;gap:var(--s2);font-size:13px;font-weight:500;color:var(--fg-secondary);text-decoration:none;padding:var(--s2) var(--s3);border:1px solid var(--border);border-radius:var(--r3);background:var(--bg-raised);transition:.15s;white-space:nowrap;}
+.back-btn:hover{color:var(--fg-primary);border-color:var(--border-strong);}
+.back-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.bar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--fg-primary);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;}
+.bar-module{font-size:12px;color:var(--fg-tertiary);white-space:nowrap;}
+
+/* ── STEP NAV ── */
+.step-nav{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:49px;z-index:190;}
+.step-nav-inner{max-width:1000px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none;gap:0;padding:0;}
+.step-nav-inner::-webkit-scrollbar{display:none;}
+.step-tab{flex-shrink:0;display:flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s5);font-size:13px;font-weight:500;color:var(--fg-secondary);border:none;background:none;cursor:pointer;position:relative;border-bottom:2px solid transparent;transition:color .15s;white-space:nowrap;}
+.step-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.step-tab:hover:not(.active){color:var(--fg-primary);}
+.step-num{width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:grid;place-items:center;background:var(--bg-raised);color:var(--fg-tertiary);border:1px solid var(--border);transition:.15s;flex-shrink:0;}
+.step-tab.active .step-num{background:var(--brand);color:#fff;border-color:var(--brand);}
+.step-tab.done .step-num{background:var(--emerald-500);color:#fff;border-color:var(--emerald-500);}
+.step-tab.done{color:var(--fg-secondary);}
+
+/* ── STEP PROGRESS ── */
+.progress-bar{height:3px;background:var(--border);}
+.progress-fill{height:100%;background:var(--brand);transition:width .4s ease;}
+
+/* ── STEP CONTENT AREA ── */
+.step-area{position:relative;overflow:hidden;}
+.step-panel{display:none;animation:slideIn .35s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.active{display:block;}
+.step-panel.exit-left{animation:slideOutLeft .3s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.exit-right{animation:slideOutRight .3s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.enter-right{animation:slideInRight .35s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.enter-left{animation:slideInLeft .35s cubic-bezier(.4,0,.2,1) both;}
+@keyframes slideIn{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+@keyframes slideOutLeft{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-48px)}}
+@keyframes slideOutRight{from{opacity:1;transform:none}to{opacity:0;transform:translateX(48px)}}
+
+/* ── CONTENT WRAPPER ── */
+.content-wrap{max-width:1000px;margin:0 auto;padding:var(--s8) 0 var(--s12);}
+
+/* ── STEP HEADER ── */
+.step-header{margin-bottom:var(--s7);padding-bottom:var(--s6);border-bottom:1px solid var(--border);}
+.step-type-label{display:inline-flex;align-items:center;gap:var(--s2);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:var(--r6);margin-bottom:var(--s3);}
+.step-type-label.lectura{background:#EEF3FF;color:var(--blue-600);}
+.step-type-label.video{background:#EEF2FF;color:var(--indigo-500);}
+.step-type-label.clase{background:#FEF3C7;color:var(--amber-500);}
+.step-type-label.actividad{background:#ECFDF5;color:var(--emerald-500);}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .step-type-label.lectura{background:#0F1A35;color:var(--blue-200);}
+  :root:not([data-theme="light"]) .step-type-label.video{background:#1E1B4B;color:#A5B4FC;}
+  :root:not([data-theme="light"]) .step-type-label.clase{background:#1A1000;color:#FCD34D;}
+  :root:not([data-theme="light"]) .step-type-label.actividad{background:#021A0C;color:#6EE7B7;}
+}
+:root[data-theme="dark"] .step-type-label.lectura{background:#0F1A35;color:var(--blue-200);}
+:root[data-theme="dark"] .step-type-label.video{background:#1E1B4B;color:#A5B4FC;}
+:root[data-theme="dark"] .step-type-label.clase{background:#1A1000;color:#FCD34D;}
+:root[data-theme="dark"] .step-type-label.actividad{background:#021A0C;color:#6EE7B7;}
+.step-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-.01em;line-height:1.2;text-wrap:balance;}
+.step-meta-row{display:flex;flex-wrap:wrap;gap:var(--s3);margin-top:var(--s4);}
+.step-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--fg-tertiary);border:1px solid var(--border);border-radius:var(--r2);padding:3px 8px;background:var(--bg-raised);}
+
+/* ── LECTURA ── */
+.apa-block{background:var(--bg-surface);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--r3);padding:var(--s4) var(--s5);margin-bottom:var(--s7);box-shadow:var(--shadow-xs);}
+.apa-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-tertiary);margin-bottom:var(--s3);}
+.apa-ref{font-size:14px;line-height:1.65;color:var(--fg-secondary);}
+.apa-ref em{font-style:italic;}
+.reading-fragment{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r4);padding:var(--s7) var(--s8);box-shadow:var(--shadow-sm);margin-bottom:var(--s6);line-height:1.9;font-size:15px;}
+.reading-fragment h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:var(--s4);color:var(--fg-primary);}
+.reading-fragment p{color:var(--fg-secondary);margin-bottom:var(--s4);}
+.reading-fragment p:last-child{margin-bottom:0;}
+.reading-fragment .marginal{background:var(--brand-bg);border-left:3px solid var(--brand);padding:var(--s3) var(--s4);border-radius:0 var(--r3) var(--r3) 0;font-size:13px;color:var(--fg-secondary);margin:var(--s4) 0;font-style:italic;}
+.reading-fragment strong{color:var(--fg-primary);}
+.pdf-btn{display:inline-flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s5);background:var(--brand);color:#fff;border:none;border-radius:var(--r3);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;text-decoration:none;}
+.pdf-btn:hover{background:var(--brand-hover);}
+.pdf-btn:active{transform:scale(.97);}
+.pdf-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.guia-card{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r4);padding:var(--s5) var(--s6);margin-top:var(--s6);}
+.guia-title{font-size:14px;font-weight:700;margin-bottom:var(--s3);color:var(--fg-primary);}
+.guia-items{list-style:none;display:flex;flex-direction:column;gap:var(--s2);}
+.guia-items li{display:flex;align-items:flex-start;gap:var(--s3);font-size:13px;color:var(--fg-secondary);line-height:1.5;}
+.guia-items li::before{content:'→';color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px;}
+
+/* ── PRESENTACIÓN (iframe Canva) ── */
+.canva-wrapper{width:100%;border-radius:var(--r5);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:var(--s6);aspect-ratio:16/9;background:#1E1B4B;}
+.canva-wrapper iframe{width:100%;height:100%;border:none;display:block;}
+.canva-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1E1B4B 0%,#312E81 50%,#1E1B4B 100%);border-radius:var(--r5);box-shadow:var(--shadow-md);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--s4);margin-bottom:var(--s6);}
+.canva-placeholder-icon{font-size:48px;}
+.canva-placeholder-text{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.85);text-align:center;}
+.canva-placeholder-sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;}
+.canva-link{display:inline-flex;align-items:center;gap:var(--s2);font-size:13px;color:var(--brand);text-decoration:none;padding:var(--s2) var(--s3);border:1px solid var(--border);border-radius:var(--r3);background:var(--bg-raised);}
+.canva-link:hover{border-color:var(--brand);}
+
+/* ── MAPA INTERACTIVO (actividad) ── */
+.field-map-container{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r4);padding:var(--s6);box-shadow:var(--shadow-sm);}
+.field-map-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin-bottom:var(--s2);color:var(--fg-primary);}
+.field-map-desc{font-size:13px;color:var(--fg-secondary);margin-bottom:var(--s5);line-height:1.5;}
+.field-map-canvas{position:relative;width:100%;height:520px;background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r4);overflow:hidden;margin-bottom:var(--s4);}
+/* Concentric circles */
+.field-zone{position:absolute;border-radius:50%;border:2px dashed;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.field-zone-label{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;padding:2px 8px;border-radius:var(--r6);}
+.zone-center{inset:calc(50% - 60px) calc(50% - 60px);width:120px;height:120px;border-color:#E11D48;background:rgba(225,29,72,.07);}
+.zone-center .field-zone-label{background:#FFE4E6;color:#BE123C;font-size:10px;}
+.zone-mid{inset:calc(50% - 160px) calc(50% - 160px);width:320px;height:320px;border-color:#D97706;background:rgba(217,119,6,.04);}
+.zone-mid .field-zone-label{background:#FEF3C7;color:#92400E;}
+.zone-outer{inset:calc(50% - 240px) calc(50% - 240px);width:480px;height:480px;border-color:#4F46E5;background:rgba(79,70,229,.03);}
+.zone-outer .field-zone-label{background:#EEF2FF;color:#3730A3;}
+/* Actor cards */
+.actor-card{position:absolute;cursor:grab;user-select:none;background:var(--bg-surface);border:1.5px solid var(--border);border-radius:var(--r3);padding:6px 10px;font-size:12px;font-weight:600;color:var(--fg-primary);box-shadow:var(--shadow-sm);transition:box-shadow .15s,transform .1s;white-space:nowrap;z-index:10;touch-action:none;}
+.actor-card:hover{box-shadow:var(--shadow-md);border-color:var(--border-strong);}
+.actor-card.dragging{cursor:grabbing;box-shadow:0 12px 32px rgba(0,0,0,.18);transform:scale(1.05);z-index:100;border-color:var(--brand);}
+.actor-card.placed{border-color:var(--brand);background:var(--brand-bg);}
+.actors-bank{display:flex;flex-wrap:wrap;gap:var(--s2);padding:var(--s4);background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r3);margin-bottom:var(--s4);}
+.actors-bank-label{width:100%;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--fg-tertiary);margin-bottom:var(--s1);}
+.field-map-actions{display:flex;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s4);}
+.field-btn{padding:var(--s2) var(--s4);border:1px solid var(--border);border-radius:var(--r3);font-size:13px;font-weight:600;cursor:pointer;background:var(--bg-surface);color:var(--fg-primary);transition:.15s;}
+.field-btn:hover{background:var(--bg-hover);}
+.field-btn.primary{background:var(--brand);color:#fff;border-color:var(--brand);}
+.field-btn.primary:hover{background:var(--brand-hover);}
+.field-feedback{background:var(--brand-bg);border:1px solid var(--brand);border-radius:var(--r3);padding:var(--s4) var(--s5);font-size:14px;line-height:1.6;color:var(--fg-secondary);display:none;}
+.field-feedback.visible{display:block;}
+.field-feedback strong{color:var(--fg-primary);}
+
+/* ── NAV BUTTONS ── */
+.step-nav-buttons{display:flex;justify-content:space-between;gap:var(--s4);margin-top:var(--s10);padding-top:var(--s7);border-top:1px solid var(--border);}
+.nav-btn{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s5);font-size:14px;font-weight:600;border:1.5px solid var(--border);border-radius:var(--r3);background:var(--bg-surface);color:var(--fg-secondary);cursor:pointer;transition:.15s;}
+.nav-btn:hover{color:var(--fg-primary);border-color:var(--border-strong);background:var(--bg-raised);}
+.nav-btn-next{background:var(--brand);color:#fff;border-color:var(--brand);}
+.nav-btn-next:hover{background:var(--brand-hover);color:#fff;}
+.nav-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── Q&A ACCORDION ── */
+.qa-item{border:1px solid var(--border);border-radius:var(--r3);overflow:hidden;margin-bottom:var(--s3);}
+.qa-question{width:100%;display:flex;justify-content:space-between;align-items:center;gap:var(--s4);padding:var(--s4) var(--s5);font-size:14px;font-weight:600;color:var(--fg-primary);background:var(--bg-surface);border:none;cursor:pointer;text-align:left;transition:background .15s;}
+.qa-question:hover{background:var(--bg-raised);}
+.qa-arrow{flex-shrink:0;font-size:16px;transition:transform .25s;}
+.qa-item.open .qa-arrow{transform:rotate(180deg);}
+.qa-answer{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0 var(--s5);font-size:14px;color:var(--fg-secondary);line-height:1.75;background:var(--bg-raised);}
+.qa-item.open .qa-answer{max-height:400px;padding:var(--s4) var(--s5);}
+
+/* ── COMPLETION ── */
+.completion-banner{margin-top:var(--s10);background:linear-gradient(135deg,#312E81,#4F46E5);border-radius:var(--r5);padding:var(--s10) var(--s8);text-align:center;color:#fff;}
+.completion-icon{font-size:48px;margin-bottom:var(--s4);}
+.completion-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:var(--s3);}
+.completion-desc{font-size:14px;opacity:.8;max-width:480px;margin:0 auto var(--s6);line-height:1.6;}
+.completion-btn{display:inline-flex;align-items:center;gap:var(--s2);padding:var(--s3) var(--s6);background:#fff;color:#312E81;border-radius:var(--r3);font-size:14px;font-weight:700;text-decoration:none;transition:opacity .15s;}
+.completion-btn:hover{opacity:.9;}
+
+@media(max-width:600px){
+  .step-nav-buttons{flex-direction:column;}
+  .field-map-canvas{height:360px;}
+  .zone-mid{inset:calc(50% - 120px) calc(50% - 120px);width:240px;height:240px;}
+  .zone-outer{inset:calc(50% - 170px) calc(50% - 170px);width:340px;height:340px;}
+  .zone-center{inset:calc(50% - 45px) calc(50% - 45px);width:90px;height:90px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="index.html" class="back-btn">
+      <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+      Portafolio
+    </a>
+    <span class="bar-title">Teoría del Campo Social</span>
+    <span class="bar-module">Módulo 1 de 6</span>
+  </div>
+</div>
+
+<!-- STEP NAV -->
+<div class="step-nav">
+  <div class="step-nav-inner" id="stepTabs">
+    <button class="step-tab active" data-step="0">
+      <span class="step-num">1</span> Lectura
+    </button>
+    <button class="step-tab" data-step="1">
+      <span class="step-num">2</span> Presentación
+    </button>
+    <button class="step-tab" data-step="2">
+      <span class="step-num">3</span> Mapa de campo
+    </button>
+    <button class="step-tab" data-step="3">
+      <span class="step-num">4</span> Actividad
+    </button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:25%"></div></div>
+</div>
+
+<div class="step-area">
+
+  <!-- ═══════════ STEP 1: LECTURA ═══════════ -->
+  <div class="step-panel active" id="step-0">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lectura">📖 Lectura guiada</div>
+        <h1 class="step-title">El campo social como espacio de lucha y posición</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ 40 min de lectura</span>
+          <span class="step-chip">📄 Bourdieu, 1984 · Wacquant, 1992</span>
+          <span class="step-chip">📌 Módulo 1 · Fundamentos</span>
+        </div>
+      </div>
+
+      <div class="apa-block">
+        <div class="apa-label">Referencias APA</div>
+        <div class="apa-ref">
+          Bourdieu, P. (1984). <em>Homo academicus</em>. Les Éditions de Minuit.<br>
+          Bourdieu, P., &amp; Wacquant, L. (1992). <em>An invitation to reflexive sociology</em>. University of Chicago Press.<br>
+          Bourdieu, P. (1990). <em>The logic of practice</em> (R. Nice, Trad.). Stanford University Press.<br>
+          Fligstein, N., &amp; McAdam, D. (2012). <em>A theory of fields</em>. Oxford University Press.
+        </div>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>1. La lógica del campo: estructura y disputa</h3>
+        <p>Para Bourdieu, un <strong>campo</strong> es una red o configuración de relaciones objetivas entre posiciones. Estas posiciones se definen por su situación actual y potencial en la estructura de distribución de las diferentes especies de capital (poder). El campo no es simplemente un espacio físico o institucional: es un espacio de fuerzas y, simultáneamente, un campo de luchas por la conservación o transformación de dicho espacio de fuerzas.</p>
+        <div class="marginal">"Un campo puede ser definido como una red o configuración de relaciones objetivas entre posiciones históricamente constituidas." — Bourdieu &amp; Wacquant, 1992, p. 97</div>
+        <p>Cada campo posee una lógica interna particular —su <em>nomos</em>— que define lo que está en juego y los principios de visión y división que organizan la competencia en su interior. Entrar en un campo implica aceptar, aunque sea tácitamente, sus reglas de juego: el <em>illusio</em>, la creencia en que el juego vale la pena ser jugado.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>2. Tipos de campos y su autonomía relativa</h3>
+        <p>Los campos sociales son relativamente autónomos entre sí: el campo científico, el artístico, el político, el religioso y el comunitario operan cada uno con sus propias jerarquías y formas de capital. No obstante, están articulados en la estructura social más amplia: el campo del poder —donde se concentra el capital económico y político— irradia efectos sobre todos los demás campos.</p>
+        <div class="marginal">"Los campos son el producto de un proceso de diferenciación social que confiere a cada uno una lógica propia." — Bourdieu, 1990, p. 87</div>
+        <p>En el contexto del trabajo comunitario, esta autonomía relativa es crucial: una intervención que ignora la lógica interna del campo comunitario —sus jerarquías, sus disputas simbólicas, sus formas de legitimidad local— está condenada a reproducir o agravar las asimetrías existentes, por más bienintencionada que sea.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>3. Homología estructural y efecto de campo</h3>
+        <p>Fligstein y McAdam (2012) extienden la noción de campo hacia lo que denominan <strong>campos de acción estratégica</strong> (SAFs, por sus siglas en inglés): unidades mesonivel del orden social en las que actores con recursos y marcos interpretativos negocian el significado de sus acciones. Esta extensión permite analizar campos emergentes, en disputa o en proceso de institucionalización, como los movimientos sociales o las redes de organizaciones civiles.</p>
+        <div class="marginal">"Los actores en un SAF desarrollan habilidades sociales para percibir el campo, comprender a los otros actores y producir acciones cooperativas." — Fligstein &amp; McAdam, 2012, p. 17</div>
+        <p>El <strong>efecto de campo</strong> refiere a la presión estructural que el campo ejerce sobre las prácticas de sus participantes, independientemente de sus intenciones conscientes. Un facilitador que entra a un barrio no es neutro: ocupa una posición en ese campo (outsider con capital cultural institucional), y esa posición condiciona lo que puede percibir, decir y hacer.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>4. Capital en el campo: volumen y estructura</h3>
+        <p>No todos los capitales son igualmente valorados en todos los campos. Lo que vale en el campo académico —el capital cultural institucionalizado, los títulos— puede no traducirse en capital simbólico en un campo comunitario donde la autoridad moral se gana por trayectoria de lucha local. Bourdieu distingue entre el <strong>volumen total de capital</strong> de un agente y la <strong>estructura de ese capital</strong> (qué tipo de capital predomina).</p>
+        <p>Mapear un campo implica, por tanto, identificar: (a) qué formas de capital circulan y cuál es la tasa de conversión entre ellas; (b) qué posiciones existen y quiénes las ocupan; (c) qué está en disputa (el capital específico del campo); y (d) cuáles son las estrategias de conservación versus subversión que despliegan los distintos agentes.</p>
+      </div>
+
+      <div style="margin-top:var(--s6)">
+        <button class="pdf-btn" id="downloadPdf">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Descargar fragmento comentado (TXT)
+        </button>
+      </div>
+
+      <div class="guia-card">
+        <div class="guia-title">🧭 Guía de lectura reflexiva</div>
+        <ul class="guia-items">
+          <li>¿Puedes identificar al menos dos campos sociales distintos en el contexto comunitario donde trabajas o has trabajado?</li>
+          <li>¿Qué formas de capital dominan en ese campo y quiénes las concentran?</li>
+          <li>¿Qué disputa central organiza las relaciones en ese campo (qué está verdaderamente "en juego")?</li>
+          <li>¿Cuál es tu posición como facilitador/investigador en ese campo? ¿Qué capital llevas contigo?</li>
+        </ul>
+      </div>
+
+      <div class="step-nav-buttons">
+        <span></span>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(1)">
+          Presentación
+          <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ STEP 2: PRESENTACIÓN CANVA ═══════════ -->
+  <div class="step-panel" id="step-1">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label video">🎞 Presentación</div>
+        <h1 class="step-title">Teoría del Campo Social — Conceptos clave</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">📐 Canva · 9 diapositivas</span>
+          <span class="step-chip">⏱ ~8 min</span>
+          <span class="step-chip">📌 Módulo 1</span>
+        </div>
+      </div>
+
+      <!-- Canva embed — reemplazar CANVA_ID con el ID real del diseño -->
+      <div class="canva-placeholder" id="canvaPresentation">
+        <div class="canva-placeholder-icon">🗺️</div>
+        <div class="canva-placeholder-text">Presentación: Teoría del Campo Social</div>
+        <div class="canva-placeholder-sub">Próximamente — Sintropía Social · Módulo 1</div>
+      </div>
+
+      <div class="guia-card">
+        <div class="guia-title">💡 Mientras revisas la presentación</div>
+        <ul class="guia-items">
+          <li>Identifica los conceptos que ya reconocías de la lectura y los que son nuevos para ti.</li>
+          <li>Toma nota de los ejemplos visuales que resuenan con tu práctica concreta.</li>
+          <li>En el Paso 3 usarás estos conceptos para construir tu propio mapa de campo.</li>
+        </ul>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button class="nav-btn nav-btn-prev" onclick="goToStep(0)">
+          <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+          Lectura
+        </button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(2)">
+          Mapa de campo
+          <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ STEP 3: MAPA INTERACTIVO ═══════════ -->
+  <div class="step-panel" id="step-2">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label clase">🗺️ Mapa de posiciones</div>
+        <h1 class="step-title">Construye tu mapa de campo</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">🖱️ Drag &amp; drop</span>
+          <span class="step-chip">⏱ ~15 min</span>
+          <span class="step-chip">🧩 Actividad visual</span>
+        </div>
+      </div>
+
+      <div class="field-map-container">
+        <div class="field-map-title">Mapa de posiciones en el campo comunitario</div>
+        <div class="field-map-desc">Arrastra cada actor desde el banco hacia la zona del campo que mejor representa su posición según el capital que concentra. <strong>Centro:</strong> actores con capital dominante en el campo. <strong>Intermedio:</strong> actores con capital medio / en disputa. <strong>Periferia:</strong> actores con bajo capital en este campo.</div>
+
+        <div class="actors-bank" id="actorsBank">
+          <div class="actors-bank-label">Banco de actores — arrastra al mapa</div>
+        </div>
+
+        <div class="field-map-canvas" id="fieldCanvas">
+          <div class="field-zone zone-outer"><div class="field-zone-label">Periferia del campo</div></div>
+          <div class="field-zone zone-mid"><div class="field-zone-label">Posición intermedia</div></div>
+          <div class="field-zone zone-center"><div class="field-zone-label">Centro</div></div>
+        </div>
+
+        <div class="field-map-actions">
+          <button class="field-btn primary" id="fieldAnalyze">🔍 Analizar mi mapa</button>
+          <button class="field-btn" id="fieldReset">↺ Reiniciar</button>
+        </div>
+        <div class="field-feedback" id="fieldFeedback"></div>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button class="nav-btn nav-btn-prev" onclick="goToStep(1)">
+          <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+          Presentación
+        </button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(3)">
+          Actividad
+          <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ STEP 4: ACTIVIDAD Q&A ═══════════ -->
+  <div class="step-panel" id="step-3">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label actividad">✍️ Actividad</div>
+        <h1 class="step-title">Preguntas de profundización</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">❓ 5 preguntas</span>
+          <span class="step-chip">⏱ ~10 min</span>
+          <span class="step-chip">📌 Teoría del Campo</span>
+        </div>
+      </div>
+
+      <div class="qa-container" id="qaContainer"></div>
+
+      <div class="step-nav-buttons">
+        <button class="nav-btn nav-btn-prev" onclick="goToStep(2)">
+          <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+          Mapa de campo
+        </button>
+        <button class="nav-btn nav-btn-next" onclick="showCompletion()">
+          Finalizar módulo ✓
+          <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
+        </button>
+      </div>
+
+      <div class="completion-banner" id="completionBanner" style="display:none">
+        <div class="completion-icon">🎉</div>
+        <div class="completion-title">¡Módulo 1 completado!</div>
+        <p class="completion-desc">Has explorado la Teoría del Campo Social de Bourdieu, construiste tu propio mapa de posiciones y reflexionaste sobre el lugar que ocupas como facilitador en el campo comunitario.</p>
+        <a href="index.html" class="completion-btn">← Volver al portafolio</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /step-area -->
+
+<script>
+/* ══════════════════════════════════
+   STEP NAVIGATION
+══════════════════════════════════ */
+let currentStep = 0;
+const totalSteps = 4;
+const done = new Set();
+
+function goToStep(next) {
+  if (next === currentStep) return;
+  const panels = document.querySelectorAll('.step-panel');
+  const tabs = document.querySelectorAll('.step-tab');
+  const prev = currentStep;
+  done.add(prev);
+  const outCls = next > prev ? 'exit-left' : 'exit-right';
+  panels[prev].classList.add(outCls);
+  panels[prev].addEventListener('animationend', () => {
+    panels[prev].classList.remove('active','exit-left','exit-right');
+  }, { once: true });
+  const inCls = next > prev ? 'enter-right' : 'enter-left';
+  panels[next].classList.add('active', inCls);
+  panels[next].addEventListener('animationend', () => {
+    panels[next].classList.remove('enter-right','enter-left');
+  }, { once: true });
+  currentStep = next;
+  tabs.forEach((t, i) => {
+    t.classList.remove('active','done');
+    if (i === next) t.classList.add('active');
+    else if (done.has(i)) t.classList.add('done');
+  });
+  document.getElementById('progressFill').style.width = ((next + 1) / totalSteps * 100) + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('stepTabs').querySelectorAll('.step-tab').forEach(btn => {
+  btn.addEventListener('click', () => goToStep(+btn.dataset.step));
+});
+
+/* ══════════════════════════════════
+   PDF DOWNLOAD
+══════════════════════════════════ */
+document.getElementById('downloadPdf').addEventListener('click', () => {
+  const content = `FRAGMENTO COMENTADO — TEORÍA DEL CAMPO SOCIAL
+Módulo 1 · Diseño instruccional Sintropía Social
+David Salgado López
+
+REFERENCIAS APA:
+Bourdieu, P. (1984). Homo academicus. Les Éditions de Minuit.
+Bourdieu, P., & Wacquant, L. (1992). An invitation to reflexive sociology. University of Chicago Press.
+Bourdieu, P. (1990). The logic of practice (R. Nice, Trad.). Stanford University Press.
+Fligstein, N., & McAdam, D. (2012). A theory of fields. Oxford University Press.
+
+---
+FRAGMENTO 1 — La lógica del campo
+"Un campo puede ser definido como una red o configuración de relaciones objetivas entre posiciones históricamente constituidas." (Bourdieu & Wacquant, 1992, p. 97)
+
+FRAGMENTO 2 — Tipos de campos
+"Los campos son el producto de un proceso de diferenciación social que confiere a cada uno una lógica propia." (Bourdieu, 1990, p. 87)
+
+FRAGMENTO 3 — Campos de acción estratégica
+"Los actores en un SAF desarrollan habilidades sociales para percibir el campo, comprender a los otros actores y producir acciones cooperativas." (Fligstein & McAdam, 2012, p. 17)
+
+---
+NOTAS DE ESTUDIO:
+[ ] Identificar campos sociales en mi contexto de trabajo
+[ ] Mapear capital dominante y quién lo concentra
+[ ] Reflexionar sobre mi posición como facilitador/a
+[ ] ¿Qué está "en disputa" en el campo que intervengo?
+`;
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'CampoSocial_Fragmento_Modulo1.txt';
+  a.click(); URL.revokeObjectURL(url);
+});
+
+/* ══════════════════════════════════
+   MAPA DE CAMPO — DRAG & DROP
+══════════════════════════════════ */
+const ACTORS = [
+  { id:'a1', label:'🏛️ Gobierno municipal', capital:'político' },
+  { id:'a2', label:'🏘️ Líder vecinal', capital:'simbólico' },
+  { id:'a3', label:'🎓 ONG externa', capital:'cultural' },
+  { id:'a4', label:'👩‍👦 Madres organizadas', capital:'social' },
+  { id:'a5', label:'🏪 Comerciantes locales', capital:'económico' },
+  { id:'a6', label:'🧑‍🏫 Facilitador/a social', capital:'cultural' },
+  { id:'a7', label:'📿 Líderes religiosos', capital:'simbólico' },
+  { id:'a8', label:'🧒 Jóvenes en situación de riesgo', capital:'bajo' },
+];
+
+const IDEAL_ZONES = {
+  a1: 'center', a2: 'center', a3: 'mid', a4: 'mid',
+  a5: 'mid', a6: 'mid', a7: 'center', a8: 'outer',
+};
+
+const FEEDBACK = {
+  a1: 'El gobierno municipal concentra capital político y simbólico: tiene poder de decisión formal sobre el territorio.',
+  a2: 'El líder vecinal acumula capital simbólico local que puede superar al gobierno en términos de legitimidad comunitaria.',
+  a3: 'La ONG externa lleva capital cultural (metodológico) pero parte de una posición periférica en las dinámicas de confianza locales.',
+  a4: 'Las madres organizadas tienen capital social denso (redes de cuidado) y simbólico —pero a menudo invisibilizado.',
+  a5: 'Los comerciantes concentran capital económico que les da poder real en el campo, aunque no siempre reconocido formalmente.',
+  a6: 'El/la facilitador/a llega con capital cultural institucional pero debe negociar su legitimidad desde fuera del campo.',
+  a7: 'Los líderes religiosos concentran capital simbólico y social de alta densidad: legitimidad moral y redes de confianza.',
+  a8: 'Los jóvenes en situación de riesgo son frecuentemente excluidos de las posiciones con capital —su voz tiene bajo peso en las decisiones del campo.',
+};
+
+let cardPositions = {}; // id -> {x, y, zone}
+
+function buildActorsBank() {
+  const bank = document.getElementById('actorsBank');
+  ACTORS.forEach(actor => {
+    const card = document.createElement('div');
+    card.className = 'actor-card';
+    card.id = 'actor-' + actor.id;
+    card.textContent = actor.label;
+    card.dataset.id = actor.id;
+    bank.appendChild(card);
+    makeDraggable(card);
+  });
+}
+
+function makeDraggable(el) {
+  let startX, startY, origParent, origPos = {};
+  let isDragging = false;
+
+  function onDown(cx, cy) {
+    isDragging = true;
+    el.classList.add('dragging');
+    origParent = el.parentElement;
+    const rect = el.getBoundingClientRect();
+    startX = cx - rect.left;
+    startY = cy - rect.top;
+    // move to body overlay
+    const absRect = el.getBoundingClientRect();
+    el.style.position = 'fixed';
+    el.style.left = absRect.left + 'px';
+    el.style.top = absRect.top + 'px';
+    el.style.width = absRect.width + 'px';
+    document.body.appendChild(el);
+  }
+
+  function onMove(cx, cy) {
+    if (!isDragging) return;
+    el.style.left = (cx - startX) + 'px';
+    el.style.top = (cy - startY) + 'px';
+  }
+
+  function onUp(cx, cy) {
+    if (!isDragging) return;
+    isDragging = false;
+    el.classList.remove('dragging');
+    el.style.position = '';
+    el.style.left = '';
+    el.style.top = '';
+    el.style.width = '';
+
+    const canvas = document.getElementById('fieldCanvas');
+    const canvasRect = canvas.getBoundingClientRect();
+
+    if (cx >= canvasRect.left && cx <= canvasRect.right && cy >= canvasRect.top && cy <= canvasRect.bottom) {
+      // dropped on canvas
+      const x = cx - canvasRect.left;
+      const y = cy - canvasRect.top;
+      const cx2 = canvasRect.width / 2;
+      const cy2 = canvasRect.height / 2;
+      const dist = Math.sqrt((x - cx2) ** 2 + (y - cy2) ** 2);
+      let zone = 'outer';
+      if (dist < 70) zone = 'center';
+      else if (dist < 170) zone = 'mid';
+
+      el.style.position = 'absolute';
+      el.style.left = (x - 50) + 'px';
+      el.style.top = (y - 16) + 'px';
+      el.classList.add('placed');
+      canvas.appendChild(el);
+      cardPositions[el.dataset.id] = { x, y, zone };
+    } else {
+      // return to bank
+      el.classList.remove('placed');
+      delete cardPositions[el.dataset.id];
+      document.getElementById('actorsBank').appendChild(el);
+    }
+  }
+
+  // Mouse
+  el.addEventListener('mousedown', e => { e.preventDefault(); onDown(e.clientX, e.clientY); });
+  document.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  document.addEventListener('mouseup', e => onUp(e.clientX, e.clientY));
+
+  // Touch
+  el.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; onDown(t.clientX, t.clientY); }, { passive: false });
+  el.addEventListener('touchmove', e => { e.preventDefault(); const t = e.touches[0]; onMove(t.clientX, t.clientY); }, { passive: false });
+  el.addEventListener('touchend', e => { const t = e.changedTouches[0]; onUp(t.clientX, t.clientY); });
+}
+
+document.getElementById('fieldAnalyze').addEventListener('click', () => {
+  const fb = document.getElementById('fieldFeedback');
+  const placed = Object.keys(cardPositions);
+  if (placed.length === 0) {
+    fb.innerHTML = '⚠️ Arrastra al menos un actor al mapa para analizar.';
+    fb.classList.add('visible');
+    return;
+  }
+  let html = '<strong>📊 Análisis de tu mapa de campo:</strong><br><br>';
+  placed.forEach(id => {
+    const zone = cardPositions[id].zone;
+    const ideal = IDEAL_ZONES[id];
+    const actor = ACTORS.find(a => a.id === id);
+    const match = zone === ideal ? '✅' : zone === 'center' && ideal === 'mid' ? '🔶' : '🔸';
+    html += `${match} <strong>${actor.label}</strong> — ${FEEDBACK[id]}<br><br>`;
+  });
+  html += `<em>Has ubicado ${placed.length} de ${ACTORS.length} actores. Recuerda: no hay una única respuesta correcta — lo importante es poder argumentar tu colocación con base en el tipo de capital que concentra cada actor.</em>`;
+  fb.innerHTML = html;
+  fb.classList.add('visible');
+  fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+document.getElementById('fieldReset').addEventListener('click', () => {
+  cardPositions = {};
+  document.getElementById('fieldFeedback').classList.remove('visible');
+  const canvas = document.getElementById('fieldCanvas');
+  const bank = document.getElementById('actorsBank');
+  canvas.querySelectorAll('.actor-card').forEach(c => {
+    c.style.position = '';
+    c.style.left = '';
+    c.style.top = '';
+    c.classList.remove('placed');
+    bank.appendChild(c);
+  });
+});
+
+/* ══════════════════════════════════
+   Q&A ACCORDION
+══════════════════════════════════ */
+const qaData = [
+  {
+    q: '¿Cuál es la diferencia entre un campo y una institución?',
+    a: 'Una <strong>institución</strong> es una organización formal (una escuela, un hospital, un municipio). Un <strong>campo</strong> es el espacio social de relaciones en el que esas instituciones operan y compiten. Una institución puede ser parte de varios campos simultáneamente, y un campo puede no tener ninguna institución formal que lo represente —como ocurre con muchas redes comunitarias informales.',
+  },
+  {
+    q: '¿Qué significa que un campo tenga "autonomía relativa"?',
+    a: 'Significa que el campo tiene sus propias reglas internas que no son directamente reducibles a las de otros campos —especialmente el económico. El campo artístico, por ejemplo, tiene sus propias formas de capital (prestigio crítico, originalidad) que no siempre se convierten en dinero. Sin embargo, esa autonomía es <em>relativa</em>: el campo del poder económico y político siempre ejerce presión, aunque de forma mediada por la lógica interna del campo.',
+  },
+  {
+    q: '¿Cómo identifico qué está "en juego" en un campo comunitario específico?',
+    a: 'Pregúntate: ¿por qué pelean los distintos actores? ¿qué es lo que todos quieren —aunque lo llamen de distintas maneras? Puede ser reconocimiento, control del territorio, acceso a financiamiento, legitimidad para hablar en nombre de la comunidad. Ese objeto de disputa —el <strong>capital específico del campo</strong>— es lo que está verdaderamente en juego, más allá de los conflictos aparentes.',
+  },
+  {
+    q: '¿Puede un agente estar en varios campos simultáneamente?',
+    a: 'Sí, y eso es lo habitual. Una trabajadora social, por ejemplo, opera en el campo profesional de las ciencias sociales, en el campo institucional de la organización que la contrata y en el campo comunitario donde interviene. Su posición y su capital son distintos en cada uno. Bourdieu llama <strong>trayectoria</strong> al recorrido de un agente a través de distintos campos a lo largo de su vida.',
+  },
+  {
+    q: '¿Qué es el "illusio" y por qué importa para la facilitación?',
+    a: 'El <strong>illusio</strong> es la adhesión práctica al juego del campo: la creencia, generalmente tácita, de que lo que está en juego vale la pena. Para participar en un campo hay que reconocer su valor. Para el facilitador, comprender el illusio de un campo comunitario significa entender qué es lo que sus miembros consideran legítimo, valioso y digno de lucha —incluso cuando eso no coincide con los objetivos del proyecto de intervención.',
+  },
+];
+
+const qaContainer = document.getElementById('qaContainer');
+qaData.forEach(item => {
+  const div = document.createElement('div');
+  div.className = 'qa-item';
+  div.innerHTML = `<button class="qa-question"><span>${item.q}</span><span class="qa-arrow">▾</span></button><div class="qa-answer">${item.a}</div>`;
+  div.querySelector('.qa-question').addEventListener('click', () => div.classList.toggle('open'));
+  qaContainer.appendChild(div);
+});
+
+/* ══════════════════════════════════
+   COMPLETION
+══════════════════════════════════ */
+function showCompletion() {
+  document.getElementById('completionBanner').style.display = 'block';
+  document.getElementById('completionBanner').scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('.step-tab').forEach(t => { done.add(+t.dataset.step); t.classList.add('done'); });
+  document.getElementById('progressFill').style.width = '100%';
+}
+
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+buildActorsBank();
+</script>
+</body>
+</html>
