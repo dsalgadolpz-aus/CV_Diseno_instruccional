@@ -373,8 +373,26 @@ nav.tabs-bar {
   width: 100%;
   height: 100%;
 }
-.curso-cover-content { position: relative; z-index: 1; }
-.curso-cover-content .t-label { color: rgba(255,255,255,.65); margin-bottom: var(--s1); }
+.curso-cover-content { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--s2); }
+.curso-cover-content .t-label { color: rgba(255,255,255,.65); margin-bottom: 0; }
+.curso-cover-btn {
+  margin-top: var(--s3);
+  align-self: flex-start;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.45);
+  border-radius: var(--r2);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background .15s;
+  backdrop-filter: blur(4px);
+}
+.curso-cover-btn:hover { background: rgba(255,255,255,.32); }
 .curso-cover-content .curso-title {
   font-family: var(--ff-display);
   font-size: clamp(16px, 3vw, 20px);
@@ -549,6 +567,21 @@ nav.tabs-bar {
   flex-shrink: 0;
 }
 .modal-close:hover { background: var(--bg-raised); color: var(--fg-primary); }
+.modal-full-btn {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--brand);
+  background: var(--brand-subtle);
+  border: 1px solid var(--brand);
+  border-radius: var(--r2);
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.modal-full-btn:hover { background: var(--brand); color: #fff; }
 
 /* Modal body */
 .modal-body { padding: var(--s3) var(--s5) var(--s6); }
@@ -1718,6 +1751,7 @@ cursos.forEach(c => {
       <div class="curso-cover-content">
         <div class="t-label">${c.categoria}</div>
         <div class="curso-title">${c.title}</div>
+        <button class="curso-cover-btn" data-curso="${c.id}">Ver módulo de muestra →</button>
       </div>
     </div>
     <div class="curso-body">
@@ -2088,6 +2122,10 @@ function openModuloModal(cursoId) {
             </div>
           </div>`).join('')}
       </div>
+
+      <div style="margin-top:var(--s8);padding-top:var(--s5);border-top:1px solid var(--border);text-align:center;">
+        <button class="modal-full-btn" onclick="openModuloPage('${c.id}')">Ver módulo completo ↗</button>
+      </div>
     </div>`;
 
   // draw canvas cover
@@ -2106,9 +2144,163 @@ function closeModal() {
   modalCanvas = null;
 }
 
-// Open on button click
+function openModuloPage(cursoId) {
+  const c = cursos.find(x => x.id === cursoId);
+  if (!c) return;
+
+  const gradientStop1 = c.c1;
+  const gradientStop2 = c.c2;
+
+  const actividadesHTML = c.modulo.actividades.map((a, i) => `
+    <div class="act-row">
+      <div class="act-left">
+        <div class="act-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="act-line"></div>
+      </div>
+      <div class="act-content">
+        <div class="act-tipo">${a.tipo}</div>
+        ${a.titulo ? `<div class="act-titulo">${a.titulo}</div>` : ''}
+        <div class="act-desc">${a.desc}</div>
+        ${a.meta ? `<div class="act-meta">◷ ${a.meta}</div>` : ''}
+      </div>
+    </div>`).join('');
+
+  const youtubeSection = c.youtubeId ? `
+    <section class="section">
+      <div class="eyebrow">Video del módulo</div>
+      <div class="yt-wrap">
+        <iframe src="https://www.youtube-nocookie.com/embed/${c.youtubeId}"
+          title="Video — ${c.title}" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen loading="lazy"></iframe>
+      </div>
+    </section>` : '';
+
+  const html = `<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${c.modulo.num} — ${c.title}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lato:wght@300;400;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#18181B;--soft:#52525B;--muted:#A1A1AA;--paper:#FAFAF8;--surface:#F4F4F2;
+  --border:#E4E4E7;--brand:${gradientStop1};
+  --ff-d:'Playfair Display',Georgia,serif;
+  --ff-b:'Lato',sans-serif;
+  --ff-m:'DM Mono','Courier New',monospace;
+}
+@media(prefers-color-scheme:dark){:root{
+  --ink:#E8ECFF;--soft:#A8B0CC;--muted:#606680;--paper:#0F1117;--surface:#181C2E;
+  --border:#2A2F45;
+}}
+body{font-family:var(--ff-b);background:var(--paper);color:var(--ink);font-size:16px;line-height:1.6;}
+img{max-width:100%}
+a{color:var(--brand)}
+
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,${gradientStop1},${gradientStop2});
+  padding:64px max(24px,5vw) 48px;
+  position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 70% 40%,rgba(255,255,255,.12) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero-eyebrow{font-family:var(--ff-m);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:12px;}
+.hero-title{font-family:var(--ff-d);font-size:clamp(26px,5vw,40px);font-weight:700;color:#fff;line-height:1.15;max-width:700px;margin-bottom:16px;}
+.hero-curso{font-family:var(--ff-m);font-size:12px;color:rgba(255,255,255,.55);letter-spacing:.05em;}
+
+/* WRAPPER */
+.wrap{max-width:760px;margin-inline:auto;padding:0 max(24px,5vw);}
+
+/* SECTION */
+.section{padding:40px 0;border-bottom:1px solid var(--border);}
+.section:last-child{border-bottom:none;}
+.eyebrow{font-family:var(--ff-m);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.section-title{font-family:var(--ff-d);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.25;}
+.objetivo{font-size:15px;color:var(--soft);line-height:1.7;padding:16px 20px;border-left:3px solid var(--brand);background:var(--surface);border-radius:0 6px 6px 0;margin-bottom:0;}
+.desc{font-size:15px;color:var(--soft);line-height:1.75;}
+
+/* YOUTUBE */
+.yt-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.12);}
+.yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;}
+
+/* ACTIVIDADES */
+.act-row{display:flex;gap:20px;padding:20px 0;}
+.act-left{display:flex;flex-direction:column;align-items:center;width:36px;flex-shrink:0;}
+.act-num{font-family:var(--ff-m);font-size:11px;font-weight:500;color:var(--muted);width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.act-line{flex:1;width:1px;background:var(--border);margin-top:6px;}
+.act-row:last-child .act-line{display:none;}
+.act-content{flex:1;min-width:0;padding-top:4px;}
+.act-tipo{font-family:var(--ff-m);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:6px;}
+.act-titulo{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.act-desc{font-size:14px;color:var(--soft);line-height:1.7;margin-bottom:8px;}
+.act-meta{font-family:var(--ff-m);font-size:11px;color:var(--muted);}
+
+/* BACK */
+.back-bar{padding:16px max(24px,5vw);border-bottom:1px solid var(--border);background:var(--surface);}
+.back-btn{font-family:var(--ff-m);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color .15s;}
+.back-btn:hover{color:var(--ink);}
+
+/* FOOTER */
+.page-footer{padding:32px max(24px,5vw);background:var(--surface);border-top:1px solid var(--border);font-family:var(--ff-m);font-size:11px;color:var(--muted);letter-spacing:.04em;}
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-btn" href="javascript:history.back()">← Volver al portafolio</a>
+</div>
+
+<div class="hero">
+  <div class="wrap" style="padding-block:0;">
+    <div class="hero-eyebrow">${c.modulo.num}</div>
+    <h1 class="hero-title">${c.modulo.title}</h1>
+    <div class="hero-curso">${c.title} · ${c.categoria}</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="section">
+    <div class="eyebrow">Objetivo del módulo</div>
+    <p class="objetivo">${c.modulo.objetivo}</p>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">Acerca de este módulo</div>
+    <p class="desc">${c.modulo.desc}</p>
+  </section>
+
+  ${youtubeSection}
+
+  <section class="section">
+    <div class="eyebrow">Secuencia de aprendizaje · ${c.modulo.actividades.length} actividades</div>
+    <div class="act-list">
+      ${actividadesHTML}
+    </div>
+  </section>
+
+</div>
+
+<footer class="page-footer">
+  David Salgado López · Diseño Instruccional · Sintropía Social
+</footer>
+
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  if (w) { w.document.open(); w.document.write(html); w.document.close(); }
+}
+
+// Open on button click (cover btn + legacy footer btn)
 cursosList.addEventListener('click', e => {
-  const btn = e.target.closest('.curso-footer-btn');
+  const btn = e.target.closest('.curso-footer-btn, .curso-cover-btn');
   if (btn) openModuloModal(btn.dataset.curso);
 });
 
