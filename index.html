@@ -1,604 +1,1726 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Portafolio DI · David Salgado</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+
 <style>
-/* ── PRIMITIVE TOKENS ── */
+/* ═══════════════════════════════════════
+   DESIGN TOKENS — Figma-style system
+   ═══════════════════════════════════════ */
 :root {
-  --blue-50:#EEF3FF; --blue-100:#D9E4FF; --blue-200:#B3CAFE;
-  --blue-500:#2558C4; --blue-600:#1D47A3; --blue-700:#153882;
-  --blue-900:#0A1B42;
-  --violet-500:#7C3AED; --teal-500:#0D9488;
-  --amber-500:#D97706; --rose-500:#E11D48; --emerald-500:#059669;
-  --gray-0:#FFFFFF; --gray-50:#F8F9FB; --gray-100:#F1F2F5;
-  --gray-150:#E8EAEE; --gray-200:#D8DBE3; --gray-300:#B8BCC8;
-  --gray-400:#8A8FA8; --gray-500:#666B82; --gray-600:#484D63;
-  --gray-700:#353A52; --gray-800:#21253A; --gray-900:#0F1222;
-  --gray-950:#070912;
+  /* Primitives */
+  --blue-50:  #EBF2FF;
+  --blue-100: #CCDEFF;
+  --blue-500: #3B6FD4;
+  --blue-600: #2558C4;
+  --blue-700: #1A44A8;
+  --gray-0:   #FFFFFF;
+  --gray-50:  #F5F6F8;
+  --gray-100: #ECEEF2;
+  --gray-200: #DDE0E8;
+  --gray-300: #C4C9D6;
+  --gray-500: #7A8099;
+  --gray-700: #3D4258;
+  --gray-900: #181C2E;
+  --violet-500: #7C5CBF;
+  --teal-500:   #1A8C82;
+  --amber-500:  #C07B1A;
+  --rose-500:   #C43B5A;
 
-  /* ── SEMANTIC TOKENS ── */
-  --bg-canvas:var(--gray-50); --bg-surface:var(--gray-0);
-  --bg-raised:var(--gray-100); --bg-hover:var(--gray-150);
-  --fg-primary:var(--gray-900); --fg-secondary:var(--gray-600);
-  --fg-tertiary:var(--gray-400); --fg-inverse:var(--gray-0);
-  --brand:var(--blue-500); --brand-hover:var(--blue-600);
-  --brand-bg:var(--blue-50);
-  --border:var(--gray-200); --border-strong:var(--gray-300);
-  --shadow-xs:0 1px 2px rgba(0,0,0,.06);
-  --shadow-sm:0 2px 6px rgba(0,0,0,.08);
-  --shadow-md:0 6px 20px rgba(0,0,0,.10);
+  /* Semantic */
+  --bg-canvas:   var(--gray-50);
+  --bg-surface:  var(--gray-0);
+  --bg-raised:   var(--gray-50);
+  --fg-primary:  var(--gray-900);
+  --fg-secondary: var(--gray-700);
+  --fg-tertiary: var(--gray-500);
+  --border:      var(--gray-200);
+  --border-strong: var(--gray-300);
+  --brand:       var(--blue-600);
+  --brand-hover: var(--blue-700);
+  --brand-subtle: var(--blue-50);
 
-  /* ── TYPE SCALE ── */
-  --text-xs:11px; --text-sm:13px; --text-base:15px; --text-lg:17px;
-  --text-xl:20px; --text-2xl:24px; --text-3xl:30px; --text-4xl:38px;
+  /* Typography */
+  --ff-ui:      'Inter', system-ui, sans-serif;
+  --ff-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
 
-  /* ── SPACING (8pt) ── */
-  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px;
-  --s7:28px; --s8:32px; --s9:40px; --s10:48px; --s11:56px; --s12:64px;
+  /* Spacing (8-pt grid) */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px;
+  --s6: 24px; --s8: 32px; --s10: 40px; --s12: 48px;
 
-  /* ── RADII ── */
-  --r1:4px; --r2:6px; --r3:8px; --r4:12px; --r5:16px; --r6:24px;
+  /* Radius */
+  --r1: 4px; --r2: 6px; --r3: 8px; --r4: 12px; --r5: 16px;
+
+  /* Shadow */
+  --shadow-xs: 0 1px 2px rgba(24,28,46,.06);
+  --shadow-sm: 0 1px 4px rgba(24,28,46,.08), 0 0 0 1px rgba(24,28,46,.04);
+  --shadow-md: 0 4px 16px rgba(24,28,46,.10), 0 0 0 1px rgba(24,28,46,.04);
 
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-canvas:var(--gray-950); --bg-surface:var(--gray-900);
-    --bg-raised:var(--gray-800); --bg-hover:var(--gray-700);
-    --fg-primary:var(--gray-50); --fg-secondary:var(--gray-300);
-    --fg-tertiary:var(--gray-500); --fg-inverse:var(--gray-900);
-    --brand:var(--blue-200); --brand-hover:var(--blue-100);
-    --brand-bg:#0F1A35;
-    --border:var(--gray-700); --border-strong:var(--gray-600);
-    --shadow-xs:0 1px 2px rgba(0,0,0,.3);
-    --shadow-sm:0 2px 6px rgba(0,0,0,.35);
-    --shadow-md:0 6px 20px rgba(0,0,0,.45);
+    --bg-canvas:   #0F1117;
+    --bg-surface:  #181C2E;
+    --bg-raised:   #1E2235;
+    --fg-primary:  #E8ECFF;
+    --fg-secondary: #A8B0CC;
+    --fg-tertiary: #606680;
+    --border:      #2A2F45;
+    --border-strong: #363C55;
+    --brand:       #6B9EFF;
+    --brand-hover: #8BB5FF;
+    --brand-subtle: #1A2340;
+    --shadow-xs: 0 1px 2px rgba(0,0,0,.3);
+    --shadow-sm: 0 1px 4px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.04);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg-canvas:var(--gray-950); --bg-surface:var(--gray-900);
-  --bg-raised:var(--gray-800); --bg-hover:var(--gray-700);
-  --fg-primary:var(--gray-50); --fg-secondary:var(--gray-300);
-  --fg-tertiary:var(--gray-500); --fg-inverse:var(--gray-900);
-  --brand:var(--blue-200); --brand-hover:var(--blue-100);
-  --brand-bg:#0F1A35;
-  --border:var(--gray-700); --border-strong:var(--gray-600);
-  --shadow-xs:0 1px 2px rgba(0,0,0,.3);
-  --shadow-sm:0 2px 6px rgba(0,0,0,.35);
-  --shadow-md:0 6px 20px rgba(0,0,0,.45);
+  --bg-canvas: #0F1117; --bg-surface: #181C2E; --bg-raised: #1E2235;
+  --fg-primary: #E8ECFF; --fg-secondary: #A8B0CC; --fg-tertiary: #606680;
+  --border: #2A2F45; --border-strong: #363C55;
+  --brand: #6B9EFF; --brand-hover: #8BB5FF; --brand-subtle: #1A2340;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.04);
   color-scheme: dark;
 }
 
-/* ── RESET ── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:'Inter',system-ui,sans-serif;
-  background:var(--bg-canvas);
-  color:var(--fg-primary);
-  font-size:var(--text-base);
-  line-height:1.6;
-  -webkit-font-smoothing:antialiased;
-  min-height:100vh;
-  padding-left:max(var(--s4),env(safe-area-inset-left,0px));
-  padding-right:max(var(--s4),env(safe-area-inset-right,0px));
-  padding-block:0;
+/* ═══════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--ff-ui);
+  background: var(--bg-canvas);
+  color: var(--fg-primary);
+  font-size: 14px;
+  line-height: 1.6;
+  padding-left: max(var(--s4), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--s4), env(safe-area-inset-right, 0px));
+  padding-block: 0;
 }
 
-/* ── HEADER ── */
-.site-header{
-  background:var(--bg-surface);
-  border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:100;
-  box-shadow:var(--shadow-xs);
-}
-.header-inner{
-  max-width:1120px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:var(--s4) 0;
-}
-.logo{
-  display:flex;align-items:center;gap:var(--s3);
-}
-.logo-mark{
-  width:32px;height:32px;border-radius:var(--r3);
-  background:var(--blue-500);
-  display:grid;place-items:center;
-  font-family:'Space Grotesk',sans-serif;
-  font-weight:700;font-size:14px;color:#fff;
-  letter-spacing:-.5px;
-}
-.logo-text{font-family:'Space Grotesp',sans-serif;font-weight:600;font-size:var(--text-sm);color:var(--fg-primary);}
-.logo-sub{font-size:var(--text-xs);color:var(--fg-tertiary);margin-top:1px;}
+img { max-width: 100%; display: block; }
+p { color: var(--fg-secondary); max-width: 60ch; }
+a { color: var(--brand); text-underline-offset: 3px; }
 
-.header-actions{display:flex;align-items:center;gap:var(--s3);}
-.theme-btn{
-  width:32px;height:32px;border:1px solid var(--border);
-  border-radius:var(--r3);background:var(--bg-raised);
-  cursor:pointer;display:grid;place-items:center;
-  color:var(--fg-secondary);font-size:14px;transition:.2s;
+/* ═══════════════════════════════════════
+   TYPOGRAPHY SCALE
+   ═══════════════════════════════════════ */
+.t-heading-xl {
+  font-family: var(--ff-display);
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  color: var(--fg-primary);
+  text-wrap: balance;
 }
-.theme-btn:hover{background:var(--bg-hover);color:var(--fg-primary);}
+.t-heading-lg {
+  font-family: var(--ff-display);
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 600;
+  letter-spacing: -.015em;
+  line-height: 1.25;
+  color: var(--fg-primary);
+}
+.t-heading-sm {
+  font-family: var(--ff-ui);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fg-primary);
+}
+.t-label {
+  font-family: var(--ff-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+.t-body { font-size: 14px; color: var(--fg-secondary); line-height: 1.6; }
+.t-caption { font-size: 12px; color: var(--fg-tertiary); line-height: 1.5; }
 
-/* ── HERO ── */
-.hero{
-  max-width:1120px;margin:0 auto;
-  padding:var(--s12) 0 var(--s10);
-  display:flex;flex-direction:column;gap:var(--s4);
-}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:var(--s2);
-  font-size:var(--text-xs);font-weight:600;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--brand);
-}
-.hero-eyebrow::before{content:'';width:16px;height:2px;background:currentColor;border-radius:1px;}
-.hero h1{
-  font-family:'Space Grotesp',sans-serif;
-  font-size:clamp(var(--text-3xl),5vw,var(--text-4xl));
-  font-weight:700;line-height:1.1;letter-spacing:-.02em;
-  text-wrap:balance;color:var(--fg-primary);
-}
-.hero h1 em{font-style:normal;color:var(--brand);}
-.hero-desc{
-  max-width:580px;font-size:var(--text-lg);
-  color:var(--fg-secondary);line-height:1.6;text-wrap:balance;
-}
-.hero-meta{
-  display:flex;flex-wrap:wrap;gap:var(--s3);
-  margin-top:var(--s2);
-}
-.hero-chip{
-  display:inline-flex;align-items:center;gap:var(--s2);
-  font-size:var(--text-xs);font-weight:500;
-  padding:var(--s1) var(--s3);
-  background:var(--bg-raised);border:1px solid var(--border);
-  border-radius:var(--r6);color:var(--fg-secondary);
-}
+/* ═══════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════ */
+.frame { max-width: 820px; margin-inline: auto; }
 
-/* ── SECTION ── */
-.section{max-width:1120px;margin:0 auto;padding-bottom:var(--s12);}
-.section-header{
-  display:flex;align-items:baseline;justify-content:space-between;
-  margin-bottom:var(--s7);padding-bottom:var(--s4);
-  border-bottom:1px solid var(--border);
+/* ═══════════════════════════════════════
+   BADGES / CHIPS — Figma component style
+   ═══════════════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--fg-secondary);
+  white-space: nowrap;
 }
-.section-title{
-  font-family:'Space Grotesp',sans-serif;
-  font-size:var(--text-xl);font-weight:700;letter-spacing:-.01em;
-}
-.section-count{
-  font-size:var(--text-xs);font-weight:500;
-  color:var(--fg-tertiary);letter-spacing:.03em;
+.badge-blue {
+  background: var(--brand-subtle);
+  border-color: var(--blue-100);
+  color: var(--brand);
 }
 
-/* ── COURSE GRID ── */
-.courses-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-  gap:var(--s6);
+/* ═══════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════ */
+header {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  padding-block: var(--s12) var(--s10);
+}
+.header-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s8);
+  align-items: end;
+}
+.header-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-bottom: var(--s5);
+}
+.eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex-shrink: 0;
+}
+.header-meta {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  margin-top: var(--s5);
+}
+.header-side {
+  text-align: right;
+}
+.header-side .t-label { margin-bottom: var(--s2); }
+.header-side .t-heading-sm { color: var(--fg-secondary); font-weight: 400; font-size: 13px; line-height: 1.8; }
+
+/* ═══════════════════════════════════════
+   NAV TABS
+   ═══════════════════════════════════════ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 11;
+  background: var(--bg-surface);
+}
+nav.tabs-bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+  padding-inline: max(var(--s4), env(safe-area-inset-left, 0px))
+                  max(var(--s4), env(safe-area-inset-right, 0px));
+}
+.tabs-inner {
+  max-width: 820px;
+  margin-inline: auto;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs-inner::-webkit-scrollbar { display: none; }
+.tab-btn {
+  font-family: var(--ff-ui);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px var(--s5);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+  margin-bottom: -1px;
+}
+.tab-btn:hover { color: var(--fg-secondary); }
+.tab-btn.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+  font-weight: 600;
 }
 
-/* ── COURSE CARD ── */
-.course-card{
-  background:var(--bg-surface);
-  border:1px solid var(--border);
-  border-radius:var(--r5);
-  box-shadow:var(--shadow-sm);
-  overflow:hidden;
-  display:flex;flex-direction:column;
-  transition:box-shadow .2s,transform .2s;
+/* ═══════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════ */
+.section { padding-block: var(--s10) var(--s12); }
+.section-hidden { display: none; }
+.section-header { margin-bottom: var(--s8); }
+.section-header .t-heading-lg { margin-bottom: var(--s2); }
+.section-header p { margin-top: var(--s2); }
+
+/* ═══════════════════════════════════════
+   DIVIDER
+   ═══════════════════════════════════════ */
+.divider { border: none; border-top: 1px solid var(--border); margin-block: var(--s8); }
+
+/* ═══════════════════════════════════════
+   COMPETENCIAS — Property grid
+   ═══════════════════════════════════════ */
+.comp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--r4);
+  overflow: hidden;
 }
-.course-card:hover{
-  box-shadow:var(--shadow-md);
-  transform:translateY(-2px);
+.comp-cell {
+  background: var(--bg-surface);
+  padding: var(--s5) var(--s5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
 }
-.card-cover{
-  position:relative;height:160px;overflow:hidden;
-  flex-shrink:0;
-}
-.card-cover canvas{width:100%;height:100%;display:block;}
-.card-cover-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(160deg,rgba(0,0,0,.0) 50%,rgba(0,0,0,.35));
-}
-.card-badges{
-  position:absolute;top:var(--s3);left:var(--s3);
-  display:flex;flex-wrap:wrap;gap:var(--s1);
-}
-.badge{
-  font-size:10px;font-weight:600;letter-spacing:.04em;
-  padding:2px 7px;border-radius:var(--r6);
-  background:rgba(255,255,255,.18);
-  backdrop-filter:blur(6px);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.25);
-}
-.card-num{
-  position:absolute;bottom:var(--s3);right:var(--s3);
-  font-size:11px;font-weight:700;color:rgba(255,255,255,.75);
-  letter-spacing:.05em;
+.comp-cell .t-heading-sm { font-size: 13px; }
+.comp-cell .t-body { font-size: 13px; max-width: none; }
+.comp-index {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
 }
 
-.card-body{padding:var(--s5);display:flex;flex-direction:column;gap:var(--s4);flex:1;}
-.card-category{
-  font-size:var(--text-xs);font-weight:600;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--brand);
+/* ═══════════════════════════════════════
+   TIMELINE
+   ═══════════════════════════════════════ */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: var(--s6);
+  padding-block: var(--s5);
+  border-top: 1px solid var(--border);
 }
-.card-title{
-  font-family:'Space Grotesp',sans-serif;
-  font-size:var(--text-lg);font-weight:700;
-  letter-spacing:-.01em;line-height:1.25;
-  color:var(--fg-primary);
+.tl-item:last-child { border-bottom: 1px solid var(--border); }
+.tl-date { padding-top: 2px; }
+.tl-date .t-label { display: block; }
+.tl-content {}
+.tl-title { font-size: 13px; font-weight: 600; color: var(--fg-primary); margin-bottom: 2px; }
+.tl-org { font-size: 12px; color: var(--brand); margin-bottom: var(--s2); }
+.tl-desc { font-size: 13px; color: var(--fg-secondary); line-height: 1.55; max-width: 55ch; }
+
+/* ═══════════════════════════════════════
+   CURSO CARD — full design mockup feel
+   ═══════════════════════════════════════ */
+.cursos-list { display: flex; flex-direction: column; gap: var(--s5); }
+
+.curso-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r4);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow .15s;
+}
+.curso-card:hover { box-shadow: var(--shadow-md); }
+
+/* Cover band — course visual identity */
+.curso-cover {
+  height: 180px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--s5) var(--s6) var(--s5);
+}
+.curso-cover canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.curso-cover-content { position: relative; z-index: 1; }
+.curso-cover-content .t-label { color: rgba(255,255,255,.65); margin-bottom: var(--s1); }
+.curso-cover-content .curso-title {
+  font-family: var(--ff-display);
+  font-size: clamp(16px, 3vw, 20px);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.01em;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0,0,0,.3);
 }
 
-/* ── KEY INFO GRID (replaces long descripcion) ── */
-.card-info{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:var(--s2) var(--s4);
-  padding:var(--s3) var(--s4);
-  background:var(--bg-raised);
-  border-radius:var(--r3);
-  border:1px solid var(--border);
+/* Course body */
+.curso-body {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 0;
 }
-.info-item{display:flex;flex-direction:column;gap:2px;}
-.info-label{
-  font-size:10px;font-weight:600;letter-spacing:.05em;
-  text-transform:uppercase;color:var(--fg-tertiary);
+@media (max-width: 600px) { .curso-body { grid-template-columns: 1fr; } }
+
+.curso-main { padding: var(--s5) var(--s6); border-right: 1px solid var(--border); }
+.curso-main .t-body { max-width: none; font-size: 13px; margin-block: var(--s3) var(--s4); }
+.curso-main .t-heading-sm { font-size: 13px; margin-bottom: var(--s3); }
+
+/* Module preview */
+.modulo-preview {
+  background: var(--bg-raised);
+  padding: var(--s4) var(--s5);
+  border-left: 1px solid var(--border);
 }
-.info-value{
-  font-size:var(--text-sm);font-weight:500;color:var(--fg-secondary);
+@media (max-width: 600px) {
+  .modulo-preview { border-left: none; border-top: 1px solid var(--border); }
+}
+.modulo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s3);
+}
+.modulo-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fg-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.modulo-title { font-size: 13px; font-weight: 600; color: var(--fg-primary); margin-bottom: var(--s1); }
+.modulo-desc { font-size: 12px; color: var(--fg-secondary); line-height: 1.55; margin-bottom: var(--s3); }
+
+.modulo-activities { display: flex; flex-direction: column; gap: var(--s1); }
+.activity-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s2);
+  font-size: 12px;
+  color: var(--fg-secondary);
+}
+.activity-type {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--r1);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
-.card-footer{
-  margin-top:auto;
-  padding-top:var(--s3);
-  border-top:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  gap:var(--s3);
+.curso-footer {
+  padding: var(--s3) var(--s6);
+  border-top: 1px solid var(--border);
+  background: var(--bg-raised);
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  align-items: center;
 }
-.card-objetivo{
-  font-size:var(--text-xs);color:var(--fg-tertiary);line-height:1.4;
-  flex:1;overflow:hidden;display:-webkit-box;
-  -webkit-line-clamp:2;-webkit-box-orient:vertical;
+.curso-footer-btn {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand);
+  background: var(--brand-subtle);
+  border: 1px solid var(--blue-100);
+  border-radius: var(--r2);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
 }
-.btn-module{
-  flex-shrink:0;
-  display:inline-flex;align-items:center;gap:var(--s2);
-  padding:var(--s2) var(--s4);
-  background:var(--brand);color:#fff;
-  border:none;border-radius:var(--r3);
-  font-size:var(--text-sm);font-weight:600;
-  cursor:pointer;text-decoration:none;
-  transition:background .15s,transform .1s;
-  white-space:nowrap;
-}
-.btn-module:hover{background:var(--brand-hover);}
-.btn-module:active{transform:scale(.97);}
-.btn-module svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.curso-footer-btn:hover { background: var(--blue-100); }
 
-/* ── GENIALLY SECTION ── */
-.genially-section{max-width:1120px;margin:0 auto;padding-bottom:var(--s12);}
-.genially-card{
-  background:var(--bg-surface);
-  border:1px solid var(--border);
-  border-radius:var(--r5);
-  overflow:hidden;
-  box-shadow:var(--shadow-sm);
+/* ═══════════════════════════════════════
+   MÓDULO MODAL — Figma component viewer
+   ═══════════════════════════════════════ */
+.modulo-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,12,22,.55);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  padding: var(--s6) max(var(--s4), env(safe-area-inset-left,0px));
+  overflow-y: auto;
+  align-items: flex-start;
+  justify-content: center;
 }
-.genially-header{
-  padding:var(--s6);
-  display:flex;align-items:flex-start;justify-content:space-between;
-  gap:var(--s4);
-  border-bottom:1px solid var(--border);
-}
-.genially-info{flex:1;}
-.genially-tag{
-  font-size:var(--text-xs);font-weight:600;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--brand);margin-bottom:var(--s2);
-}
-.genially-title{
-  font-family:'Space Grotesp',sans-serif;
-  font-size:var(--text-xl);font-weight:700;letter-spacing:-.01em;
-}
-.genially-desc{
-  font-size:var(--text-sm);color:var(--fg-secondary);
-  margin-top:var(--s2);line-height:1.55;
-}
-.genially-frame{
-  width:100%;aspect-ratio:16/9;border:none;
-  background:var(--bg-raised);
+.modulo-overlay.open { display: flex; }
+
+.modulo-modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r5);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 680px;
+  margin: auto;
+  overflow: hidden;
 }
 
-/* ── FOOTER ── */
-.site-footer{
-  border-top:1px solid var(--border);
-  padding:var(--s8) 0;
+/* Modal cover band */
+.modal-cover {
+  height: 160px;
+  position: relative;
 }
-.footer-inner{
-  max-width:1120px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:var(--s4);
+.modal-cover canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
 }
-.footer-text{font-size:var(--text-xs);color:var(--fg-tertiary);}
-.footer-brand{
-  display:flex;align-items:center;gap:var(--s2);
-  font-size:var(--text-xs);font-weight:600;color:var(--fg-secondary);
+.modal-cover-content {
+  position: relative; z-index: 1;
+  padding: var(--s5) var(--s6) var(--s4);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
-.footer-dot{
-  width:16px;height:16px;border-radius:50%;
-  background:var(--blue-500);opacity:.6;
+.modal-cover-content .t-label { color: rgba(255,255,255,.65); margin-bottom: var(--s1); }
+.modal-cover-content .modal-curso-title {
+  font-family: var(--ff-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.01em;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0,0,0,.3);
 }
 
-/* ── RESPONSIVE ── */
-@media(max-width:680px){
-  .courses-grid{grid-template-columns:1fr;}
-  .hero h1{font-size:var(--text-2xl);}
-  .hero-desc{font-size:var(--text-base);}
-  .header-inner,.hero,.section,.genially-section,.footer-inner{padding-left:0;padding-right:0;}
-  .genially-header{flex-direction:column;}
+/* Modal header row */
+.modal-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s4) var(--s5) 0;
+  gap: var(--s4);
+}
+.modal-modulo-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.modal-close {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  font-size: 16px; line-height: 1;
+  color: var(--fg-tertiary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  cursor: pointer;
+  transition: background .12s, color .12s;
+  flex-shrink: 0;
+}
+.modal-close:hover { background: var(--bg-raised); color: var(--fg-primary); }
+
+/* Modal body */
+.modal-body { padding: var(--s3) var(--s5) var(--s6); }
+
+.modal-modulo-title {
+  font-family: var(--ff-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--fg-primary);
+  letter-spacing: -.01em;
+  margin-bottom: var(--s2);
+}
+.modal-objetivo {
+  font-size: 13px;
+  color: var(--fg-secondary);
+  line-height: 1.6;
+  border-left: 3px solid var(--brand);
+  padding-left: var(--s3);
+  margin-bottom: var(--s5);
+}
+.modal-desc {
+  font-size: 13px;
+  color: var(--fg-tertiary);
+  line-height: 1.6;
+  margin-bottom: var(--s6);
+  max-width: 56ch;
+}
+
+/* Activity sequence — step-by-step pipeline */
+.modal-actividades-label {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-bottom: var(--s4);
+}
+.modal-actividades-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.modal-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.modal-step {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: var(--s3);
+  padding-block: var(--s3);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.modal-step:last-child { border-bottom: none; }
+.modal-step-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.modal-step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex-shrink: 0;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+.modal-step:not(:last-child) .modal-step-line::after {
+  content: "";
+  flex: 1;
+  width: 1px;
+  background: var(--border);
+  min-height: 100%;
+  margin-top: 4px;
+}
+.modal-step-content { padding-bottom: var(--s1); }
+.modal-step-type {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r1);
+  padding: 1px 7px;
+  margin-bottom: var(--s1);
+}
+.modal-step-titulo {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-primary);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.modal-step-desc {
+  font-size: 13px;
+  color: var(--fg-secondary);
+  line-height: 1.55;
+  margin-bottom: 6px;
+}
+.modal-step-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg-tertiary, var(--fg-secondary));
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 2px 7px;
+  letter-spacing: .02em;
+}
+
+/* ═══════════════════════════════════════
+   GENIALLY CARDS
+   ═══════════════════════════════════════ */
+.genially-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--s4);
+  margin-bottom: var(--s6);
+}
+.gen-card {
+  border: 1px solid var(--border);
+  border-radius: var(--r4);
+  overflow: hidden;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow .15s, transform .15s;
+}
+.gen-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.gen-card-visual {
+  height: 148px;
+  position: relative;
+  overflow: hidden;
+}
+.gen-card-visual canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+}
+.gen-card-visual-label {
+  position: relative;
+  z-index: 1;
+  font-family: var(--ff-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  padding: var(--s5) var(--s4);
+  line-height: 1.25;
+  text-shadow: 0 1px 6px rgba(0,0,0,.35);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gen-card-body { padding: var(--s4) var(--s4) var(--s3); }
+.gen-card-body .t-heading-sm { font-size: 13px; margin-bottom: var(--s1); }
+.gen-card-body .t-body { font-size: 12px; max-width: none; }
+.gen-structure { margin-top: var(--s3); display: flex; flex-direction: column; gap: var(--s2); }
+.gen-node { display: flex; align-items: flex-start; gap: var(--s2); font-size: 12px; color: var(--fg-secondary); }
+.gen-node-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 5px;
+}
+.gen-cta {
+  display: inline-block;
+  margin-top: var(--s3);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand);
+  cursor: pointer;
+  letter-spacing: .01em;
+  border: none; background: transparent;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.gen-detail-panel {
+  display: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r4);
+  padding: var(--s6);
+  margin-top: var(--s4);
+  box-shadow: var(--shadow-sm);
+}
+.gen-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--s5);
+  gap: var(--s4);
+}
+.gen-close-btn {
+  font-size: 12px;
+  color: var(--fg-tertiary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 4px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.gen-steps { display: flex; flex-direction: column; gap: var(--s3); margin-block: var(--s4); }
+.gen-step {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: var(--s3);
+  align-items: flex-start;
+}
+.gen-step-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fg-tertiary);
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+.gen-step-title { font-size: 13px; font-weight: 600; color: var(--fg-primary); margin-bottom: 2px; }
+.gen-step-desc { font-size: 12px; color: var(--fg-secondary); }
+.gen-spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s3);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  overflow: hidden;
+}
+.gen-spec-cell {
+  padding: var(--s3) var(--s4);
+  background: var(--bg-raised);
+}
+.gen-spec-cell:nth-child(even) { border-left: 1px solid var(--border); }
+.gen-spec-cell .t-label { margin-bottom: 4px; }
+.gen-spec-cell .t-body { font-size: 12px; max-width: none; }
+
+/* ═══════════════════════════════════════
+   INSTRUMENTOS TABLE
+   ═══════════════════════════════════════ */
+.inst-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  overflow: hidden;
+}
+.inst-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  padding: var(--s3) var(--s4);
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+}
+.inst-table td {
+  padding: var(--s3) var(--s4);
+  vertical-align: top;
+  color: var(--fg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+.inst-table tr:last-child td { border-bottom: none; }
+.inst-table td:first-child { font-weight: 600; color: var(--fg-primary); white-space: nowrap; }
+.inst-table tr:hover td { background: var(--bg-raised); }
+
+/* ═══════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  background: var(--bg-surface);
+  padding-block: var(--s6);
+  display: flex;
+  gap: var(--s4);
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+footer .t-caption { max-width: none; }
+
+@media (max-width: 500px) {
+  .header-inner { grid-template-columns: 1fr; }
+  .header-side { text-align: left; }
+  .tl-item { grid-template-columns: 1fr; gap: var(--s2); }
+  .tl-date { display: flex; gap: var(--s3); align-items: center; }
+}
+
+/* ═══════════════════════════════════════
+   DESARROLLOS REALIZADOS
+   ═══════════════════════════════════════ */
+.desarrollos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r4);
+  overflow: hidden;
+}
+.desarrollo-item {
+  display: flex;
+  align-items: center;
+  padding: var(--s4) var(--s6);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  transition: background .12s;
+}
+.desarrollo-item:last-child { border-bottom: none; }
+.desarrollo-item:hover { background: var(--bg-raised); }
+.desarrollo-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fg-tertiary);
+  font-variant-numeric: tabular-nums;
+  width: 24px;
+  flex-shrink: 0;
+}
+.desarrollo-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  flex: 1;
+}
+.desarrollo-link:hover { text-decoration: underline; }
+.desarrollo-arrow {
+  font-size: 12px;
+  color: var(--fg-tertiary);
+  flex-shrink: 0;
 }
 </style>
-</head>
-<body>
 
-<!-- HEADER -->
-<header class="site-header">
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-mark">DS</div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  HEADER                                                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header>
+  <div class="frame">
+    <div class="header-inner">
       <div>
-        <div class="logo-text">David Salgado López</div>
-        <div class="logo-sub">Diseño Instruccional · Sintropía Social</div>
+        <div class="header-eyebrow">
+          <div class="eyebrow-dot"></div>
+          <span class="t-label">Portafolio — Diseño Instruccional</span>
+        </div>
+        <div class="t-heading-xl">David Salgado<br>López</div>
+        <div class="header-meta">
+          <span class="badge badge-blue">Maestría en Innovación Educativa</span>
+          <span class="badge">Antropología Social · ENAH</span>
+          <span class="badge">Sintropía Social</span>
+        </div>
       </div>
-    </div>
-    <div class="header-actions">
-      <button class="theme-btn" id="themeToggle" title="Cambiar tema" aria-label="Cambiar modo de color">☀</button>
+      <div class="header-side">
+        <span class="t-label">Especialidades</span>
+        <div class="t-heading-sm">Diseño instruccional<br>Facilitación · Evaluación<br>Metodología Social</div>
+      </div>
     </div>
   </div>
 </header>
 
-<!-- HERO -->
-<main>
-<section class="hero">
-  <div class="hero-eyebrow">Portafolio Profesional</div>
-  <h1>Cursos diseñados para <em>transformar</em> la práctica social</h1>
-  <p class="hero-desc">Diseño instruccional con enfoque comunitario, teoría crítica y pedagogías activas. Cada curso integra lectura, práctica y evaluación auténtica.</p>
-  <div class="hero-meta">
-    <span class="hero-chip">🎓 Educación no formal</span>
-    <span class="hero-chip">🤝 Intervención comunitaria</span>
-    <span class="hero-chip">📐 Diseño por competencias</span>
-    <span class="hero-chip">🌱 Sintropía Social</span>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  NAV                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<nav class="tabs-bar" id="nav">
+  <div class="tabs-inner">
+    <button class="tab-btn active" data-tab="perfil">Perfil DI</button>
+    <button class="tab-btn" data-tab="cursos">Cursos diseñados</button>
+    <button class="tab-btn" data-tab="genially">Propuestas Genially</button>
+    <button class="tab-btn" data-tab="instrumentos">Instrumentos</button>
+    <button class="tab-btn" data-tab="desarrollos">Desarrollos realizados</button>
+    <a class="tab-btn" href="https://dsalgadolpz-aus.github.io/dsalgado/" target="_blank" rel="noopener" style="text-decoration:none;">Blog</a>
   </div>
-</section>
+</nav>
 
-<!-- CURSOS -->
-<section class="section">
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TAB 1 — PERFIL DI                                            -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-perfil" class="section frame">
   <div class="section-header">
-    <h2 class="section-title">Cursos desarrollados</h2>
-    <span class="section-count" id="courseCount">6 cursos</span>
+    <div class="t-heading-lg">Competencias en Diseño Instruccional</div>
+    <p>Capacidades desarrolladas a lo largo de 12+ años diseñando programas formativos en contextos de alto impacto social.</p>
   </div>
-  <div class="courses-grid" id="coursesGrid"></div>
-</section>
 
-<!-- GENIALLY -->
-<section class="genially-section">
-  <div class="section-header">
-    <h2 class="section-title">Presentación interactiva</h2>
+  <div class="comp-grid">
+    <div class="comp-cell">
+      <div class="comp-index">01</div>
+      <div class="t-heading-sm">Análisis de necesidades formativas</div>
+      <div class="t-body">Diagnóstico de brechas con grupos vulnerables, OSC e instituciones educativas. IAP, entrevistas y observación etnográfica como herramientas base.</div>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-index">02</div>
+      <div class="t-heading-sm">Diseño por competencias y resultados</div>
+      <div class="t-body">Itinerarios formativos con objetivos medibles, secuenciación de contenidos y actividades de transferencia. Marcos de Bloom aplicados.</div>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-index">03</div>
+      <div class="t-heading-sm">Modelos instruccionales</div>
+      <div class="t-body">ADDIE, diseño modular y aula invertida en programas de 25–120 horas. Adaptación a contextos presenciales, en línea e híbridos.</div>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-index">04</div>
+      <div class="t-heading-sm">Materiales y recursos didácticos</div>
+      <div class="t-body">Guías del facilitador, cuadernos de trabajo, presentaciones interactivas y LMS. Replicabilidad sin dependencia del experto externo.</div>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-index">05</div>
+      <div class="t-heading-sm">Evaluación del aprendizaje</div>
+      <div class="t-body">Instrumentos diagnósticos, formativos y sumativos. Autor del IMES (Instrumento de Medición de Empleabilidad Social).</div>
+    </div>
+    <div class="comp-cell">
+      <div class="comp-index">06</div>
+      <div class="t-heading-sm">Facilitación y transferencia</div>
+      <div class="t-body">12+ años de práctica. Formación de equipos de facilitadores locales con transferencia metodológica para escalabilidad regional.</div>
+    </div>
   </div>
-  <div class="genially-card">
-    <div class="genially-header">
-      <div class="genially-info">
-        <div class="genially-tag">Recurso educativo · Genially</div>
-        <div class="genially-title">Epistemología de la Práctica Social</div>
-        <p class="genially-desc">Presentación interactiva que introduce los fundamentos epistemológicos del trabajo comunitario. Incluye línea de tiempo, casos prácticos y glosario navegable.</p>
+
+  <hr class="divider">
+  <div class="t-heading-lg" style="margin-bottom:var(--s6)">Trayectoria formativa</div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-date"><span class="t-label">2026 – hoy</span></div>
+      <div class="tl-content">
+        <div class="tl-title">Consultor Fundador · Sintropía Social</div>
+        <div class="tl-org">Diseño instruccional y formación organizacional</div>
+        <div class="tl-desc">Cursos en Metodología de Práctica Social, Teoría de Cambio y Empleabilidad. LMS propio (SintropíaLearn). Publicaciones: <em>Aprender educando</em> (2024), <em>Análisis Conecta Empleo</em> (2023).</div>
       </div>
     </div>
-    <iframe
-      class="genially-frame"
-      src="https://view.genially.com/placeholder"
-      allowfullscreen
-      title="Presentación Genially – Epistemología de la Práctica Social">
-    </iframe>
-  </div>
-</section>
-</main>
-
-<!-- FOOTER -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <p class="footer-text">© 2025 David Salgado López · Diseño Instruccional</p>
-    <div class="footer-brand">
-      <div class="footer-dot"></div>
-      Sintropía Social
+    <div class="tl-item">
+      <div class="tl-date"><span class="t-label">2022 – hoy</span></div>
+      <div class="tl-content">
+        <div class="tl-title">Docente · Licenciatura en Ciencias Sociales</div>
+        <div class="tl-org">Escuela SER</div>
+        <div class="tl-desc">Metodología de Investigación Social, Antropología y Corrientes del Pensamiento Social. Planeación didáctica por competencias para nivel superior.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date"><span class="t-label">2019 – 2025</span></div>
+      <div class="tl-content">
+        <div class="tl-title">Facilitador de Formación · ILCE / UNICEF México</div>
+        <div class="tl-org">Estándares internacionales — NNA en contextos de vulnerabilidad</div>
+        <div class="tl-desc">Diseño y facilitación de programas de capacitación para actores comunitarios y docentes. Materiales pedagógicos replicables para equipos en campo.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date"><span class="t-label">2019 – 2025</span></div>
+      <div class="tl-content">
+        <div class="tl-title">Coordinador Nacional · Conectando Pasos A.C.</div>
+        <div class="tl-org">Empleabilidad juvenil — cobertura nacional</div>
+        <div class="tl-desc">Itinerario formativo nacional: orientación vocacional, competencias laborales, emprendimiento. Transferencia metodológica a facilitadores en múltiples entidades.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date"><span class="t-label">2013 – 2017</span></div>
+      <div class="tl-content">
+        <div class="tl-title">Administrador de Programa · Fundación Centro Histórico</div>
+        <div class="tl-org">Economía solidaria y desarrollo local</div>
+        <div class="tl-desc">Coordinación de acciones formativas en contexto comunitario. Talleres con enfoque de economía solidaria.</div>
+      </div>
     </div>
   </div>
+
+  <hr class="divider">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s6);">
+    <div>
+      <div class="t-label" style="margin-bottom:var(--s3)">Formación académica</div>
+      <div class="t-heading-sm">Maestría en Innovación Educativa</div>
+      <div class="t-caption" style="margin-top:2px;">Universidad del Valle de México · 2020</div>
+      <div class="t-heading-sm" style="margin-top:var(--s4)">Lic. en Antropología Social</div>
+      <div class="t-caption" style="margin-top:2px;">ENAH · 2010</div>
+    </div>
+    <div>
+      <div class="t-label" style="margin-bottom:var(--s3)">Instituciones</div>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--s2);">
+        <span class="badge">UNICEF México</span>
+        <span class="badge">ILCE</span>
+        <span class="badge">SEP</span>
+        <span class="badge">CONALEP</span>
+        <span class="badge">DIF</span>
+        <span class="badge">Escuela SER</span>
+        <span class="badge">Fnd. Telefónica</span>
+        <span class="badge">Fnd. Centro Histórico</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TAB 2 — CURSOS DISEÑADOS                                     -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-cursos" class="section frame section-hidden">
+  <div class="section-header">
+    <div class="t-heading-lg">Cursos diseñados</div>
+    <p>Programas bajo el sello <strong>Aprende. Transforma. Impacta.</strong> — cada tarjeta muestra el curso y un módulo de ejemplo con su diseño instruccional completo.</p>
+  </div>
+
+  <div class="cursos-list" id="cursos-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TAB 3 — PROPUESTAS GENIALLY                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-genially" class="section frame section-hidden">
+  <div class="section-header">
+    <div class="t-heading-lg">Propuestas para Genially</div>
+    <p>Tres blueprints estructurales para replicar en genially.com — concepto visual, navegación y bloques de contenido listos para ejecutar.</p>
+  </div>
+
+  <div class="genially-grid" id="genially-cards"></div>
+  <div id="genially-detail" class="gen-detail-panel">
+    <div class="gen-detail-header">
+      <div class="t-heading-sm" id="gd-title"></div>
+      <button class="gen-close-btn" id="gd-close">Cerrar</button>
+    </div>
+    <div id="gd-content"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TAB 4 — INSTRUMENTOS                                         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-instrumentos" class="section frame section-hidden">
+  <div class="section-header">
+    <div class="t-heading-lg">Instrumentos de evaluación</div>
+    <p>Herramientas diseñadas o aplicadas — diagnóstico de entrada hasta medición de impacto.</p>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="inst-table">
+      <thead>
+        <tr>
+          <th>Instrumento</th>
+          <th>Propósito</th>
+          <th>Tipo</th>
+          <th>Contexto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>IMES</td>
+          <td>Medición de empleabilidad social en jóvenes. Competencias, proyecto de vida y factores de vulnerabilidad.</td>
+          <td><span class="badge">Diagnóstico</span></td>
+          <td>Sintropía Social</td>
+        </tr>
+        <tr>
+          <td>Evaluación modular</td>
+          <td>Rúbricas y cuestionarios por módulo para Metodología de Práctica Social. Autoevaluación + pares.</td>
+          <td><span class="badge">Formativo + sumativo</span></td>
+          <td>SintropíaLearn</td>
+        </tr>
+        <tr>
+          <td>Diagnóstico comunitario</td>
+          <td>Instrumento participativo para cartografía social, mapeo de actores y capital comunitario.</td>
+          <td><span class="badge">Diagnóstico</span></td>
+          <td>ILCE / UNICEF</td>
+        </tr>
+        <tr>
+          <td>Integritest / Veritas</td>
+          <td>Baterías psicométricas: honestidad, integridad, riesgo laboral y competencias.</td>
+          <td><span class="badge">Psicométrico</span></td>
+          <td>GiO Consultores</td>
+        </tr>
+        <tr>
+          <td>Medición de Impacto</td>
+          <td>Seguimiento de indicadores de permanencia, cobertura y resultados formativos para donantes.</td>
+          <td><span class="badge">KPI / Seguimiento</span></td>
+          <td>Conectando Pasos</td>
+        </tr>
+        <tr>
+          <td>Evaluación docente</td>
+          <td>Observación de clase y retroalimentación para equipos de facilitadores en campo.</td>
+          <td><span class="badge">Desempeño</span></td>
+          <td>Programas nacionales</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  TAB 5 — DESARROLLOS REALIZADOS                               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div id="tab-desarrollos" class="section frame section-hidden">
+  <div class="section-header">
+    <div class="t-heading-lg">Desarrollos realizados</div>
+    <p>Herramientas digitales construidas para apoyar procesos de gestión del conocimiento, seguimiento y organización en contextos de práctica social.</p>
+  </div>
+
+  <div class="desarrollos-list">
+    <div class="desarrollo-item">
+      <div class="desarrollo-num">01</div>
+      <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/index.html" target="_blank" rel="noopener">Repositorio bibliográfico</a>
+      <span class="desarrollo-arrow">↗</span>
+    </div>
+    <div class="desarrollo-item">
+      <div class="desarrollo-num">02</div>
+      <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/panel/" target="_blank" rel="noopener">Panel de muestras</a>
+      <span class="desarrollo-arrow">↗</span>
+    </div>
+    <div class="desarrollo-item">
+      <div class="desarrollo-num">03</div>
+      <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/tasklive/" target="_blank" rel="noopener">Tasklive</a>
+      <span class="desarrollo-arrow">↗</span>
+    </div>
+    <div class="desarrollo-item">
+      <div class="desarrollo-num">04</div>
+      <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/diario_campo/" target="_blank" rel="noopener">Diario de campo</a>
+      <span class="desarrollo-arrow">↗</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  MÓDULO MODAL OVERLAY                                          -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="modulo-overlay" id="modulo-overlay" role="dialog" aria-modal="true" aria-label="Módulo de muestra">
+  <div class="modulo-modal" id="modulo-modal">
+    <!-- cover, topbar, body filled by JS -->
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  FOOTER                                                        -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<footer class="frame">
+  <span class="t-caption">David Salgado López · Diseño Instruccional · 2026</span>
+  <span class="t-caption">dsalgadolpz470@gmail.com · dsalgado@sintropiasocial.com</span>
 </footer>
 
 <script>
-/* ── DATA ── */
+/* ════════════════════════════════════════
+   TABS
+   ════════════════════════════════════════ */
+const tabs = document.querySelectorAll('.tab-btn');
+const sections = {
+  perfil: document.getElementById('tab-perfil'),
+  cursos: document.getElementById('tab-cursos'),
+  genially: document.getElementById('tab-genially'),
+  instrumentos: document.getElementById('tab-instrumentos'),
+  desarrollos: document.getElementById('tab-desarrollos'),
+};
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    Object.values(sections).forEach(s => s.classList.add('section-hidden'));
+    sections[btn.dataset.tab].classList.remove('section-hidden');
+  });
+});
+
+/* ════════════════════════════════════════
+   CANVAS UTILITY
+   ════════════════════════════════════════ */
+function drawGradient(canvas, c1, c2, angle) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.offsetWidth * devicePixelRatio || 400;
+  const H = canvas.height = canvas.offsetHeight * devicePixelRatio || 180;
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  const rad = (angle || 135) * Math.PI / 180;
+  const len = Math.sqrt(W*W + H*H);
+  const cx = W/2, cy = H/2;
+  const x1 = cx - Math.cos(rad)*len/2, y1 = cy - Math.sin(rad)*len/2;
+  const x2 = cx + Math.cos(rad)*len/2, y2 = cy + Math.sin(rad)*len/2;
+  const gr = ctx.createLinearGradient(x1, y1, x2, y2);
+  gr.addColorStop(0, c1); gr.addColorStop(1, c2);
+  ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+  // noise texture layer
+  ctx.globalAlpha = .06;
+  ctx.fillStyle = '#fff';
+  for (let i = 0; i < 40; i++) {
+    ctx.beginPath();
+    ctx.arc(Math.random()*W, Math.random()*H, Math.random()*H*.35, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* ════════════════════════════════════════
+   CURSOS DATA
+   ════════════════════════════════════════ */
 const cursos = [
   {
-    id:'c1',
-    num:'01',
-    categoria:'Metodología · Sintropía Social',
-    title:'Metodología de Práctica Social',
-    c1:'#2558C4', c2:'#0F2D6B',
-    badges:['30 hrs','6 módulos','En línea + Live'],
-    info:[
-      {label:'Horas',value:'30 h'},
-      {label:'Módulos',value:'6'},
-      {label:'Modalidad',value:'En línea + Live'},
-      {label:'Plataforma',value:'SintropíaLearn'},
-    ],
-    objetivo:'Diseñar una estrategia de práctica social con base en un diagnóstico comunitario situado.',
-    hasModule: true,
-    moduloUrl: 'modulo-viewer.html?curso=c1',
+    id: 'c1',
+    categoria: 'Metodología · Sintropía Social',
+    title: 'Metodología de Práctica Social',
+    descripcion: 'Marco teórico-metodológico para organizaciones que intervienen en contextos comunitarios. 6 módulos con sesiones en vivo, bibliografía APA y materiales curados para facilitadores.',
+    c1: '#2558C4', c2: '#0F2D6B',
+    badges: ['30 horas','6 módulos','En línea + Live','SintropíaLearn'],
+    modulo: {
+      num: 'Módulo 2 de 6',
+      title: 'El campo social como espacio de práctica',
+      objetivo: 'Que el participante distinga los elementos que constituyen un campo social —capital, habitus y posiciones relacionales— y los aplique al diagnóstico de su propio contexto de intervención comunitaria.',
+      desc: 'En este módulo los participantes abandonan la mirada descriptiva del territorio para adoptar una mirada relacional. Usando los conceptos de Bourdieu como lentes analíticos, mapean las fuerzas, capitales y posiciones que estructuran el espacio donde trabajan. El caso documentado "Barrio Histórico 2021" (Sintropía Social) funciona como espejo: sirve para ver cómo otros equipos aplicaron estos conceptos antes de hacerlo en el propio contexto.',
+      actividades: [
+        {
+          tipo: 'Lectura',
+          titulo: 'Fragmento comentado — Bourdieu',
+          desc: 'Lee las páginas 95–112 de <em>La distinción</em> (Bourdieu, 1979) en la edición comentada que encontrarás en la plataforma. El texto viene con notas al margen que señalan los conceptos clave y su equivalente en la práctica comunitaria. Al terminar, completa la <strong>Guía de Lectura Anotada</strong> (5 preguntas breves) disponible en DOCX descargable.',
+          meta: '45 min de lectura + 20 min de guía',
+        },
+        {
+          tipo: 'Video',
+          titulo: 'Clase — Del espacio físico al espacio social',
+          desc: 'Clase grabada de 18 minutos donde el facilitador explica los tres conceptos centrales con ejemplos visuales de intervenciones reales en contextos mexicanos. Incluye un segmento de análisis del caso "Barrio Histórico 2021". Activa los subtítulos si lo necesitas. Puedes pausar y retomar; no hay examen sobre el video, pero los conceptos son insumo directo para la actividad.',
+          meta: '18 min · subtítulos disponibles',
+        },
+        {
+          tipo: 'Actividad',
+          titulo: 'Mapa de campo de tu contexto de intervención',
+          desc: 'Usando la <strong>Plantilla Mapa de Campo</strong> (descargable en PDF editable o imprimible), identifica para tu espacio de intervención: (1) los tipos de capital en juego —económico, social, cultural, simbólico—; (2) los agentes y sus posiciones relativas; (3) las reglas no escritas (habitus) que organizan las prácticas. No hay respuestas correctas: se evalúa la capacidad de observación y argumentación, no el "diagnóstico correcto". Entrega el mapa completo antes de la sesión en vivo.',
+          meta: 'Entrega en PDF · 1–2 páginas',
+        },
+        {
+          tipo: 'Evaluación',
+          titulo: 'Rúbrica de valoración — 4 criterios',
+          desc: '<strong>1. Conceptualización</strong> — ¿Usa correctamente los términos campo, capital, habitus y posición? <strong>2. Pertinencia</strong> — ¿Los elementos identificados corresponden realmente al espacio de intervención? <strong>3. Evidencia</strong> — ¿Las afirmaciones están respaldadas por observación o datos, no por suposición? <strong>4. Reflexión crítica</strong> — ¿El participante reconoce los límites del análisis o las tensiones que no resuelve? Cada criterio se valora de 1 a 4. Puntaje mínimo de acreditación: 10/16.',
+          meta: 'Acreditación: 10/16',
+        },
+      ],
+    },
   },
   {
-    id:'c2',
-    num:'02',
-    categoria:'Teoría Social · Bourdieu',
-    title:'Teoría del Campo Social',
-    c1:'#7C3AED', c2:'#3B1A6E',
-    badges:['24 hrs','5 módulos','Asíncrono'],
-    info:[
-      {label:'Horas',value:'24 h'},
-      {label:'Módulos',value:'5'},
-      {label:'Modalidad',value:'Asíncrono'},
-      {label:'Plataforma',value:'SintropíaLearn'},
-    ],
-    objetivo:'Analizar dinámicas de poder en contextos comunitarios usando la teoría del campo de Bourdieu.',
+    id: 'c2',
+    categoria: 'Planificación · En desarrollo',
+    title: 'Teoría de Cambio',
+    descripcion: 'Curso de rigor académico para OSC, empresas y gobierno. Dato duro + evidencia cualitativa + fuentes APA en cada módulo. Sesiones en vivo vía Microsoft Teams.',
+    c1: '#B85A14', c2: '#5C2200',
+    badges: ['30 horas','6 módulos','Híbrido','OSC · Empresa · Gobierno'],
+    modulo: {
+      num: 'Módulo 4 de 6',
+      title: 'De los outputs a los outcomes: lógica de impacto',
+      objetivo: 'Que el participante construya la cadena lógica de su intervención diferenciando con precisión productos (outputs), resultados intermedios (outcomes) e impacto, y sustente cada eslabón con evidencia verificable.',
+      desc: 'Este es el módulo bisagra del curso: es donde la mayoría de los participantes descubren que su "Teoría de Cambio" era en realidad un plan operativo. Pasar de actividades a transformaciones exige un salto conceptual que este módulo acompaña con herramientas, un caso real y retroalimentación directa. Se trabaja con la metodología BetterEvaluation y se analiza la ToC publicada por UNICEF México 2022, disponible en dominio público.',
+      actividades: [
+        {
+          tipo: 'Lectura',
+          titulo: 'Guía BetterEvaluation — Outcomes vs. Impact',
+          desc: 'Lee la traducción comentada (8 pp.) de la guía BetterEvaluation disponible en la plataforma. Esta versión incluye ejemplos traducidos al contexto latinoamericano y notas del facilitador que señalan los errores más comunes al definir outcomes. Presta atención especial a la tabla de la p. 5: "¿Esto es un output o un outcome?" — la usarás en la actividad.',
+          meta: '8 páginas · ~25 min',
+        },
+        {
+          tipo: 'Video',
+          titulo: 'Análisis en pantalla — ToC UNICEF México 2022',
+          desc: 'Video de 22 minutos donde el facilitador abre la Teoría de Cambio oficial de UNICEF México 2022 y la analiza en tiempo real: identifica sus outputs, traza sus outcomes, señala los supuestos implícitos y discute qué evidencia respalda cada eslabón. Este análisis es un modelo de cómo se lee críticamente una ToC antes de construir la propia.',
+          meta: '22 min · pausa cuando sea necesario',
+        },
+        {
+          tipo: 'Actividad',
+          titulo: 'Tabla de cadena lógica — tu propio proyecto',
+          desc: 'Descarga la <strong>Plantilla Cadena Lógica</strong> (DOCX). Completa las 4 columnas para tu intervención: Actividades → Outputs → Outcomes a 6 meses → Outcomes a 2 años → Impacto esperado a 5 años. Para cada outcome, escribe en la celda de la derecha: ¿qué evidencia tengo o podría tener para verificar que esto ocurrió? Si no puedes responder esa pregunta, el outcome no está bien formulado. Entrega antes de la sesión en vivo.',
+          meta: 'Plantilla DOCX · entrega 48 h antes de la sesión',
+        },
+        {
+          tipo: 'Evaluación',
+          titulo: 'Presentación en sesión Teams — 10 min',
+          desc: 'Presentas tu cadena lógica en 10 minutos ante el grupo. El facilitador y dos participantes dan retroalimentación estructurada usando la <strong>Rúbrica de Coherencia Lógica</strong>: (1) claridad conceptual —outputs/outcomes/impacto bien diferenciados—; (2) verificabilidad —cada eslabón tiene indicador potencial—; (3) supuestos explicitados —qué tiene que ser verdad para que la cadena funcione—; (4) viabilidad de evidencia. La sesión se graba y queda disponible en la plataforma.',
+          meta: '10 min de presentación + 5 de retroalimentación',
+        },
+      ],
+    },
   },
   {
-    id:'c3',
-    num:'03',
-    categoria:'Pedagogía · Educación Popular',
-    title:'Educación Popular y Pedagogía Crítica',
-    c1:'#0D9488', c2:'#0F4740',
-    badges:['20 hrs','4 módulos','Semipresencial'],
-    info:[
-      {label:'Horas',value:'20 h'},
-      {label:'Módulos',value:'4'},
-      {label:'Modalidad',value:'Semipresencial'},
-      {label:'Plataforma',value:'SintropíaLearn'},
-    ],
-    objetivo:'Facilitar procesos educativos con metodologías de Paulo Freire y educación popular latinoamericana.',
+    id: 'c3',
+    categoria: 'Comunicación · Taller 01',
+    title: 'Hablar para Influir',
+    descripcion: 'Taller de comunicación oral estratégica con 25 horas de contenido. Plataforma HTML propia con acceso por clave y pago vía PayPal.',
+    c1: '#1A7A5E', c2: '#0A3D2C',
+    badges: ['25 horas','En línea','Plataforma propia','PayPal + Gmail API'],
+    modulo: {
+      num: 'Módulo 3 de 5',
+      title: 'Estructura persuasiva: el modelo CAR',
+      objetivo: 'Aplicar el modelo Contexto–Argumento–Resultado para organizar mensajes orales que generen una acción concreta en audiencias específicas, en 90 segundos o menos.',
+      desc: 'La mayoría de los problemas de comunicación no son de vocabulario ni de nervios: son de estructura. Este módulo enseña un modelo de tres movimientos —CAR— que puede aplicarse a cualquier mensaje oral, desde una presentación ejecutiva hasta una conversación difícil. Los tres contextos del video (político, empresarial, académico) demuestran que el modelo no cambia; lo que cambia es el contenido y el tono.',
+      actividades: [
+        {
+          tipo: 'Video',
+          titulo: 'Mini-clase — El modelo CAR en 3 contextos',
+          desc: 'Video de 14 minutos con subtítulos. El facilitador presenta el modelo CAR (Contexto: ¿por qué esto importa ahora? · Argumento: ¿qué propongo o afirmo? · Resultado: ¿qué cambia si me escuchas?) y lo aplica a tres mensajes reales: un fragmento de discurso de campaña, un pitch de producto ante inversionistas, y una defensa de tesis. Identifica mientras ves el video dónde empieza cada C, A y R en cada ejemplo.',
+          meta: '14 min · subtítulos ES disponibles',
+        },
+        {
+          tipo: 'Lectura',
+          titulo: 'Hoja de referencia rápida — Modelo CAR',
+          desc: 'Una página descargable (PDF) con la definición operativa de cada componente, ejemplos de frases de apertura para cada uno, y los 5 errores más comunes al aplicar el modelo. Diseñada para llevarla a una presentación como apoyo de memoria. No es un texto para leer de corrido; es una herramienta de consulta rápida.',
+          meta: '1 página · PDF imprimible',
+        },
+        {
+          tipo: 'Actividad',
+          titulo: 'Grabación de 90 segundos — tu mensaje CAR',
+          desc: 'Elige un tema que te importe: un proyecto que quieres proponer, un problema que quieres resolver, una idea que quieres convencer. Graba un video de exactamente 90 segundos donde apliques el modelo CAR. No hagas guión palabra por palabra —sí puedes tener notas—. Sube el video en MP4 o como enlace de Drive. En el campo de descripción, escribe tres líneas: qué fue tu C, tu A y tu R.',
+          meta: 'Video 90 seg + descripción · subir a plataforma',
+        },
+        {
+          tipo: 'Evaluación',
+          titulo: 'Rúbrica de comunicación oral — 4 criterios',
+          desc: '<strong>1. Apertura</strong> — ¿Los primeros 15 segundos capturan la atención y sitúan el contexto? <strong>2. Estructura</strong> — ¿Se identifican claramente los tres momentos CAR? <strong>3. Evidencia</strong> — ¿El argumento incluye al menos un dato, ejemplo o razón verificable? <strong>4. Llamada a la acción</strong> — ¿El cierre le dice a la audiencia qué hacer o pensar distinto? Cada criterio: 1–4 puntos. Acreditación: 10/16.',
+          meta: 'Acreditación: 10/16',
+        },
+      ],
+    },
   },
   {
-    id:'c4',
-    num:'04',
-    categoria:'Diagnóstico · Intervención',
-    title:'Diagnóstico Comunitario Participativo',
-    c1:'#D97706', c2:'#7A3D00',
-    badges:['18 hrs','4 módulos','Taller presencial'],
-    info:[
-      {label:'Horas',value:'18 h'},
-      {label:'Módulos',value:'4'},
-      {label:'Modalidad',value:'Taller presencial'},
-      {label:'Plataforma',value:'Presencial'},
-    ],
-    objetivo:'Implementar herramientas participativas de diagnóstico comunitario: mapeo, IAP y árbol de problemas.',
+    id: 'c4',
+    categoria: 'Empleabilidad · Nacional',
+    title: 'Itinerario Conecta Empleo',
+    descripcion: 'Programa nacional de empleabilidad juvenil diseñado a escala federal. Módulos de orientación vocacional, competencias laborales, emprendimiento y proyecto de vida.',
+    c1: '#6030B0', c2: '#2A0F5C',
+    badges: ['Cobertura nacional','Multi-entidad','Presencial','Conectando Pasos A.C.'],
+    modulo: {
+      num: 'Módulo 2 de 5',
+      title: 'Autoconocimiento y perfiles vocacionales',
+      objetivo: 'Que el joven identifique sus habilidades transferibles, intereses concretos y valores laborales para formular una hipótesis inicial de trayectoria, con base en evidencia de su propia experiencia de vida.',
+      desc: 'Este módulo parte de un principio metodológico clave: los jóvenes en contextos de vulnerabilidad ya tienen experiencia laboral —cuidado de hermanos, trabajo informal, gestión del hogar— que no reconocen como tal. La metodología "Mi historia de trabajo" de Sintropía Social está diseñada para nombrar esas experiencias y convertirlas en evidencia de competencias. El IMES Breve funciona como espejo técnico de lo que el ejercicio cualitativo ya reveló.',
+      actividades: [
+        {
+          tipo: 'Actividad',
+          titulo: 'Mi historia de trabajo — línea de tiempo',
+          desc: 'En una hoja grande o en la plantilla imprimible, traza una línea de tiempo desde los 10 años hasta hoy. Marca todas las veces que hiciste algo por alguien, resolviste un problema, organizaste algo, enseñaste a alguien, o cuidaste a alguien. No importa si fue en casa, en la escuela, con amigos o en un trabajo pagado. Luego responde por escrito: ¿qué habilidad estabas usando en cada momento? El facilitador guía el ejercicio con ejemplos en plenaria antes de que cada joven lo haga individualmente.',
+          meta: '30 min · trabajo individual con apoyo del facilitador',
+        },
+        {
+          tipo: 'Actividad',
+          titulo: 'IMES Breve — diagnóstico de empleabilidad',
+          desc: 'Aplica el <strong>IMES Breve</strong> (20 reactivos, Escala Likert 1–5). El instrumento mide 4 dimensiones: competencias técnicas básicas, habilidades socioemocionales, orientación al logro y red de apoyo laboral. Al terminar, el facilitador entrega a cada joven su perfil individual en papel con los resultados por dimensión. Se usa como insumo para la reflexión de cierre, no como "calificación".',
+          meta: '20 reactivos · ~15 min · resultados inmediatos',
+        },
+        {
+          tipo: 'Evaluación',
+          titulo: 'Lista de cotejo del facilitador',
+          desc: 'El facilitador observa y registra durante toda la sesión usando una lista de cotejo con 8 indicadores: participación activa, capacidad para nombrar habilidades propias, coherencia entre línea de tiempo e IMES, formulación de al menos una hipótesis de trayectoria, disposición al diálogo con pares, asistencia, entrega de materiales. No es una evaluación en el sentido escolar —es un registro de evidencias para el seguimiento longitudinal del joven en el programa.',
+          meta: '8 indicadores · observación directa del facilitador',
+        },
+      ],
+    },
   },
   {
-    id:'c5',
-    num:'05',
-    categoria:'Evaluación · Impacto Social',
-    title:'Evaluación de Impacto en Proyectos Sociales',
-    c1:'#E11D48', c2:'#6B0F22',
-    badges:['22 hrs','5 módulos','En línea'],
-    info:[
-      {label:'Horas',value:'22 h'},
-      {label:'Módulos',value:'5'},
-      {label:'Modalidad',value:'En línea'},
-      {label:'Plataforma',value:'SintropíaLearn'},
-    ],
-    objetivo:'Diseñar marcos de evaluación de impacto para proyectos de intervención comunitaria con indicadores cualitativos.',
+    id: 'c5',
+    categoria: 'Derechos / UNICEF · ILCE',
+    title: 'Capacitación para Actores Comunitarios',
+    descripcion: 'Programa con estándares UNICEF para formación de actores comunitarios y docentes en atención a NNA en contextos de vulnerabilidad.',
+    c1: '#B09210', c2: '#5A4800',
+    badges: ['Nacional','Presencial + LMS','Estándares UNICEF','Materiales auditados'],
+    modulo: {
+      num: 'Módulo 1 de 4',
+      title: 'Enfoque de derechos y participación infantil',
+      objetivo: 'Que el actor comunitario comprenda los cuatro principios de la Convención sobre los Derechos del Niño (CDN) y los identifique en situaciones concretas de su práctica cotidiana con NNA.',
+      desc: 'Este módulo está diseñado para funcionar sin depender de la lectura fluida. Todo el contenido es experiencial, visual y dialogado. Los principios CDN no se enseñan como marco jurídico abstracto —se descubren a través de situaciones que los facilitadores ya conocen de su trabajo diario. El criterio central de diseño fue la transferibilidad: que lo aprendido pueda usarse al día siguiente, sin internet, sin plataforma, solo con las tarjetas laminadas en la bolsa.',
+      actividades: [
+        {
+          tipo: 'Apertura',
+          titulo: 'Dinámica — Dos verdades y un mito',
+          desc: 'El facilitador lee en voz alta 9 afirmaciones sobre derechos de NNA (3 grupos de 3). En cada grupo, dos son verdaderas y una es un mito extendido en la comunidad. Los participantes votan en silencio levantando la mano, luego discuten en plenaria. Esta dinámica cumple dos funciones: activa el conocimiento previo del grupo y visibiliza las creencias erróneas que el módulo necesita trabajar. Duración: 15 minutos. No requiere materiales adicionales.',
+          meta: '15 min · sin materiales extra · plenaria',
+        },
+        {
+          tipo: 'Video',
+          titulo: 'Animación — Los 4 principios de la CDN',
+          desc: 'Animación de 8 minutos producida para este programa. Presenta los cuatro principios —no discriminación, interés superior, derecho a la vida y al desarrollo, y participación— con ejemplos visuales de contextos rurales y urbanos de México. Los participantes ven el video con la <strong>Guía de Observación</strong> en mano: una hoja con 4 preguntas (una por principio) que completan durante o inmediatamente después del video. No es un cuestionario de evaluación; es una herramienta para fijar la atención.',
+          meta: '8 min · guía de observación incluida',
+        },
+        {
+          tipo: 'Actividad',
+          titulo: 'Análisis de caso local — ¿Qué derechos están en juego?',
+          desc: 'El facilitador presenta un caso real anonimizado de la comunidad o región (el diseño del programa incluye 3 casos regionales: zona urbana marginal, contexto rural indígena, zona de migración). El grupo analiza en equipos de 4–5 personas: ¿qué principios CDN están siendo vulnerados? ¿quién tiene la responsabilidad de protegerlos? ¿qué podría hacer cada uno de los participantes desde su rol? Los equipos presentan sus conclusiones en 2 minutos. El facilitador cierra con síntesis y conexión con el siguiente módulo.',
+          meta: 'Equipos de 4–5 · 25 min · 3 casos regionales disponibles',
+        },
+        {
+          tipo: 'Evaluación',
+          titulo: 'Checklist de observación del facilitador (UNICEF)',
+          desc: 'Instrumento auditado por UNICEF México. 12 indicadores observables distribuidos en 3 dimensiones: <strong>comprensión conceptual</strong> (¿el participante nombra correctamente los principios?), <strong>aplicación contextual</strong> (¿los identifica en situaciones reales?) y <strong>disposición a la acción</strong> (¿formula al menos una acción concreta para su práctica?). El facilitador lo completa al cierre de la sesión para cada participante. Los resultados alimentan el seguimiento del programa y el reporte a UNICEF.',
+          meta: '12 indicadores · completado por el facilitador',
+        },
+      ],
+    },
   },
   {
-    id:'c6',
-    num:'06',
-    categoria:'Comunicación · Narrativa Social',
-    title:'Comunicación Comunitaria y Narrativas de Cambio',
-    c1:'#059669', c2:'#063E2A',
-    badges:['16 hrs','3 módulos','Híbrido'],
-    info:[
-      {label:'Horas',value:'16 h'},
-      {label:'Módulos',value:'3'},
-      {label:'Modalidad',value:'Híbrido'},
-      {label:'Plataforma',value:'SintropíaLearn'},
-    ],
-    objetivo:'Construir narrativas comunitarias de cambio y producir comunicación estratégica para proyectos sociales.',
+    id: 'c6',
+    categoria: 'En diseño · Catálogo ATI',
+    title: 'Masterclass 04 + Taller 05',
+    descripcion: 'Dos productos del catálogo Aprende. Transforma. Impacta. con materiales académicos completos producidos (PPTX + DOCX). Pendientes de publicación en LMS.',
+    c1: '#3B6FD4', c2: '#B85A14',
+    badges: ['Próximamente','SintropíaLearn','Materiales listos'],
+    modulo: {
+      num: 'Masterclass 04',
+      title: 'Liderazgo en organizaciones de impacto social',
+      objetivo: 'Que el participante identifique su estilo predominante de liderazgo, comprenda sus ventajas y límites en contextos de impacto social, y formule un ajuste concreto para su práctica inmediata.',
+      desc: 'Esta masterclass está diseñada para líderes que ya llevan tiempo en el sector y que quieren salir con algo concreto, no con un marco teórico más. El caso de Conectando Pasos está elegido porque es un ejemplo local, verificable y sin glamour —una organización que tomó decisiones de liderazgo difíciles con recursos limitados y sin certeza. Eso lo hace más útil que cualquier caso de Harvard.',
+      actividades: [
+        {
+          tipo: 'Video',
+          titulo: 'Apertura — ¿Para qué liderar en el tercer sector?',
+          desc: 'Video motivacional de 3 minutos que abre la sesión. No es un resumen del contenido: es una pregunta incómoda planteada con honestidad —¿el liderazgo que ejerces está al servicio de la organización o de tu propia necesidad de control?— que instala la disposición reflexiva necesaria para la masterclass. Producido con recursos mínimos: voz en off + imágenes de archivo de proyectos reales de Sintropía Social.',
+          meta: '3 min · abre la sesión presencial o en línea',
+        },
+        {
+          tipo: 'Lectura',
+          titulo: 'Marco conceptual — Liderazgo situacional + Teoría U',
+          desc: 'Presentación de 25 diapositivas diseñada para ser usada por el facilitador y como material de consulta post-sesión. Cubre dos marcos complementarios: el <strong>Liderazgo Situacional</strong> de Hersey & Blanchard —qué estilo usar según la madurez del equipo— y los tres niveles de acción de la <strong>Teoría U</strong> de Otto Scharmer —descarga, ver desde adentro, presenciar—. Ambos marcos se cruzan en la diapositiva 18 con una matriz de aplicación para OSC.',
+          meta: '25 diapositivas · PPTX disponible para facilitador',
+        },
+        {
+          tipo: 'Actividad',
+          titulo: 'Autoevaluación — Estilo de liderazgo',
+          desc: 'Guía de autoevaluación en DOCX descargable (2 páginas). Incluye: (1) un cuestionario de 12 reactivos que ubica al participante en uno de cuatro estilos —directivo, coach, participativo, delegador—; (2) una tabla para contrastar el estilo identificado con las características actuales de su equipo; (3) un espacio de escritura libre: "Una situación donde mi estilo no funcionó y qué haría diferente hoy." El participante lo lleva lleno a la sesión Q&A.',
+          meta: 'DOCX 2 páginas · completar antes del Q&A',
+        },
+        {
+          tipo: 'Evaluación',
+          titulo: 'Sesión Q&A — 20 min estructurado',
+          desc: 'La sesión de preguntas no es libre: sigue un protocolo de 4 rondas de 5 minutos. Ronda 1: preguntas de clarificación conceptual. Ronda 2: preguntas de aplicación —"¿cómo aplicaría esto a...?"—. Ronda 3: tensiones y desacuerdos —espacio para lo que no cierra—. Ronda 4: compromisos de acción —cada participante dice en voz alta un ajuste concreto que va a hacer en los próximos 7 días—. El moderador registra los compromisos y los envía por correo al cierre de la sesión.',
+          meta: '4 rondas de 5 min · compromisos registrados y enviados',
+        },
+      ],
+    },
   },
 ];
 
-/* ── CANVAS GRADIENT ── */
-function drawGradient(canvas, c1, c2) {
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const gr = ctx.createLinearGradient(0, 0, W * .7, H);
-  gr.addColorStop(0, c1);
-  gr.addColorStop(1, c2);
-  ctx.fillStyle = gr;
-  ctx.fillRect(0, 0, W, H);
-  // noise circles
-  for (let i = 0; i < 6; i++) {
-    const r = ctx.createRadialGradient(
-      Math.random()*W, Math.random()*H, 0,
-      Math.random()*W, Math.random()*H, W * .5
-    );
-    r.addColorStop(0, 'rgba(255,255,255,.07)');
-    r.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = r;
-    ctx.fillRect(0, 0, W, H);
-  }
-}
+/* ── RENDER CURSOS ────────────────────────────────────────────────── */
+const cursosList = document.getElementById('cursos-list');
+const allCanvases = [];
 
-/* ── RENDER ── */
-function renderCourses() {
-  const grid = document.getElementById('coursesGrid');
-  document.getElementById('courseCount').textContent = cursos.length + ' cursos';
-  grid.innerHTML = '';
-  cursos.forEach(c => {
-    const card = document.createElement('article');
-    card.className = 'course-card';
-    card.innerHTML = `
-      <div class="card-cover">
-        <canvas width="640" height="320"></canvas>
-        <div class="card-cover-overlay"></div>
-        <div class="card-badges">
-          ${c.badges.map(b=>`<span class="badge">${b}</span>`).join('')}
-        </div>
-        <div class="card-num">${c.num} / ${String(cursos.length).padStart(2,'0')}</div>
+cursos.forEach(c => {
+  const card = document.createElement('div');
+  card.className = 'curso-card';
+  card.innerHTML = `
+    <div class="curso-cover" style="height:180px;">
+      <canvas></canvas>
+      <div class="curso-cover-content">
+        <div class="t-label">${c.categoria}</div>
+        <div class="curso-title">${c.title}</div>
       </div>
-      <div class="card-body">
-        <div class="card-category">${c.categoria}</div>
-        <div class="card-title">${c.title}</div>
-        <div class="card-info">
-          ${c.info.map(i=>`
-            <div class="info-item">
-              <span class="info-label">${i.label}</span>
-              <span class="info-value">${i.value}</span>
-            </div>
-          `).join('')}
-        </div>
-        <div class="card-footer">
-          <div class="card-objetivo">${c.objetivo}</div>
-          ${c.hasModule
-            ? `<a class="btn-module" href="${c.moduloUrl}">
-                Módulo 1
-                <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
-               </a>`
-            : `<button class="btn-module" disabled style="opacity:.4;cursor:default;">Próximamente</button>`
-          }
+    </div>
+    <div class="curso-body">
+      <div class="curso-main">
+        <div class="t-body">${c.descripcion}</div>
+        <div class="t-heading-sm" style="margin-top:var(--s4);margin-bottom:var(--s3);">Muestra: ${c.modulo.num}</div>
+        <div style="background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r3);padding:var(--s4);">
+          <div style="font-size:13px;font-weight:600;color:var(--fg-primary);margin-bottom:4px;">${c.modulo.title}</div>
+          <div style="font-size:12px;color:var(--fg-secondary);margin-bottom:var(--s3);line-height:1.55;">${c.modulo.objetivo}</div>
+          <div style="font-size:12px;color:var(--fg-tertiary);line-height:1.55;">${c.modulo.desc}</div>
         </div>
       </div>
-    `;
-    grid.appendChild(card);
-    const cv = card.querySelector('canvas');
-    drawGradient(cv, c.c1, c.c2);
-  });
-}
-renderCourses();
-
-/* ── THEME TOGGLE ── */
-const themeBtn = document.getElementById('themeToggle');
-let theme = localStorage.getItem('theme') || 'system';
-function applyTheme(t) {
-  theme = t;
-  if (t === 'dark') { document.documentElement.dataset.theme = 'dark'; themeBtn.textContent = '☀'; }
-  else if (t === 'light') { document.documentElement.dataset.theme = 'light'; themeBtn.textContent = '☾'; }
-  else { delete document.documentElement.dataset.theme; themeBtn.textContent = '◑'; }
-  try { localStorage.setItem('theme', t); } catch(e){}
-}
-themeBtn.addEventListener('click', () => {
-  applyTheme(theme === 'system' ? 'dark' : theme === 'dark' ? 'light' : 'system');
+      <div class="modulo-preview">
+        <div class="modulo-header">
+          <div class="t-label">Actividades</div>
+          <div class="modulo-num">${c.modulo.actividades.length} pasos</div>
+        </div>
+        <div class="modulo-activities">
+          ${c.modulo.actividades.map(a => `
+            <div class="activity-row">
+              <span class="activity-type">${a.tipo}</span>
+              <span>${a.desc}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="curso-footer">
+      ${c.badges.map(b => `<span class="badge">${b}</span>`).join('')}
+      <button class="curso-footer-btn" data-curso="${c.id}">Ver módulo 1</button>
+    </div>`;
+  cursosList.appendChild(card);
+  const cv = card.querySelector('canvas');
+  allCanvases.push({ canvas: cv, c1: c.c1, c2: c.c2 });
+  requestAnimationFrame(() => drawGradient(cv, c.c1, c.c2, 135));
 });
-applyTheme(theme);
+
+/* ════════════════════════════════════════
+   GENIALLY DATA
+   ════════════════════════════════════════ */
+const geniallys = [
+  {
+    id: 'g1',
+    title: 'Mapa de Ruta del Aprendizaje',
+    tipo: 'Interactivo',
+    colors: ['#2558C4', '#0F2D6B'],
+    concepto: 'Un mapa geográfico estilizado donde cada "parada" es un módulo. El estudiante hace clic en cada punto para acceder a los contenidos. Ideal para cursos con secuencia narrativa.',
+    estructura: [
+      { label: 'Pantalla de bienvenida', desc: 'Mapa completo visible con objetivos generales' },
+      { label: '6 nodos interactivos', desc: 'Un nodo por módulo con icono y estado de avance' },
+      { label: 'Slide emergente por nodo', desc: 'Objetivo · materiales descargables · actividad' },
+      { label: 'Nodo de cierre', desc: 'Resumen de competencias y recurso de evaluación sumativa' },
+    ],
+    plantilla: 'Mapa interactivo',
+    cursoSugerido: 'Metodología de Práctica Social · Teoría de Cambio',
+  },
+  {
+    id: 'g2',
+    title: 'Infografía Modular por Capas',
+    tipo: 'Presentación interactiva',
+    colors: ['#B85A14', '#5C2200'],
+    concepto: 'Infografía vertical con secciones que se despliegan al hacer clic. Cada bloque contiene un concepto clave. Efectiva para introducir módulos o como recurso de repaso.',
+    estructura: [
+      { label: 'Encabezado', desc: 'Título del módulo, objetivo e imagen de contexto' },
+      { label: '4–6 bloques desplegables', desc: 'Concepto · Ejemplo real · Utilidad · Recurso' },
+      { label: 'Elemento de reflexión', desc: 'Pregunta detonadora o caso práctico al final' },
+      { label: 'Cierre', desc: 'Conexión con el siguiente módulo y botón a evaluación' },
+    ],
+    plantilla: 'Infografía interactiva',
+    cursoSugerido: 'Hablar para Influir · Conecta Empleo',
+  },
+  {
+    id: 'g3',
+    title: 'Escenario de Aprendizaje Situado',
+    tipo: 'Interactivo gamificado',
+    colors: ['#1A7A5E', '#0A3D2C'],
+    concepto: 'El participante asume el rol de un actor y toma decisiones en un escenario realista. Cada elección lleva a una consecuencia y un contenido formativo. Alto impacto en transferencia.',
+    estructura: [
+      { label: 'Pantalla de rol', desc: 'El participante elige un personaje con contexto y objetivo' },
+      { label: '3–4 bifurcaciones', desc: 'Situación real + 2–3 opciones de respuesta por nodo' },
+      { label: 'Consecuencia narrativa', desc: 'Resultado de la decisión + explicación conceptual + fuente' },
+      { label: 'Cierre reflexivo', desc: 'Resumen de decisiones y relación con objetivos del módulo' },
+    ],
+    plantilla: 'Pregunta interactiva / Escape room',
+    cursoSugerido: 'Teoría de Cambio · Diagnóstico Comunitario',
+  },
+];
+
+/* ── RENDER GENIALLY CARDS ────────────────────────────────────────── */
+const gContainer = document.getElementById('genially-cards');
+const genCanvases = [];
+
+geniallys.forEach(g => {
+  const card = document.createElement('div');
+  card.className = 'gen-card';
+  card.innerHTML = `
+    <div class="gen-card-visual" style="height:148px;">
+      <canvas></canvas>
+      <div class="gen-card-visual-label">${g.title}</div>
+    </div>
+    <div class="gen-card-body">
+      <div class="t-label" style="margin-bottom:4px;">${g.tipo}</div>
+      <div class="t-heading-sm">${g.title}</div>
+      <div class="t-body" style="font-size:12px;margin-top:4px;max-width:none;">${g.concepto.substring(0,120)}…</div>
+      <div class="gen-structure">
+        ${g.estructura.slice(0,2).map(n => `
+          <div class="gen-node">
+            <div class="gen-node-dot" style="background:${g.colors[0]}"></div>
+            <span>${n.label}</span>
+          </div>`).join('')}
+      </div>
+      <button class="gen-cta" data-id="${g.id}">Ver blueprint completo</button>
+    </div>`;
+  gContainer.appendChild(card);
+  const cv = card.querySelector('canvas');
+  genCanvases.push({ canvas: cv, c1: g.colors[0], c2: g.colors[1] });
+  requestAnimationFrame(() => drawGradient(cv, g.colors[0], g.colors[1], 150));
+});
+
+/* ── GENIALLY DETAIL ──────────────────────────────────────────────── */
+const detail = document.getElementById('genially-detail');
+const gdTitle = document.getElementById('gd-title');
+const gdContent = document.getElementById('gd-content');
+
+gContainer.addEventListener('click', e => {
+  const btn = e.target.closest('.gen-cta');
+  if (!btn) return;
+  const g = geniallys.find(x => x.id === btn.dataset.id);
+  if (!g) return;
+  gdTitle.textContent = g.title;
+  gdContent.innerHTML = `
+    <div class="t-body" style="max-width:none;margin-bottom:var(--s4);">${g.concepto}</div>
+    <div class="t-label" style="margin-bottom:var(--s3);">Estructura de navegación</div>
+    <div class="gen-steps">
+      ${g.estructura.map((n, i) => `
+        <div class="gen-step">
+          <div class="gen-step-num">0${i+1}</div>
+          <div>
+            <div class="gen-step-title">${n.label}</div>
+            <div class="gen-step-desc">${n.desc}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="gen-spec-grid">
+      <div class="gen-spec-cell">
+        <div class="t-label">Plantilla sugerida</div>
+        <div class="t-body" style="font-size:12px;max-width:none;margin-top:4px;">${g.plantilla}</div>
+      </div>
+      <div class="gen-spec-cell">
+        <div class="t-label">Curso sugerido</div>
+        <div class="t-body" style="font-size:12px;max-width:none;margin-top:4px;">${g.cursoSugerido}</div>
+      </div>
+    </div>`;
+  detail.style.display = 'block';
+  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+document.getElementById('gd-close').addEventListener('click', () => {
+  detail.style.display = 'none';
+});
+
+/* ── RESIZE ───────────────────────────────────────────────────────── */
+window.addEventListener('resize', () => {
+  allCanvases.forEach(({canvas,c1,c2}) => drawGradient(canvas,c1,c2,135));
+  genCanvases.forEach(({canvas,c1,c2}) => drawGradient(canvas,c1,c2,150));
+  if (modalCanvas) drawGradient(modalCanvas, modalCanvasC1, modalCanvasC2, 135);
+});
+
+/* ════════════════════════════════════════
+   MÓDULO MODAL
+   ════════════════════════════════════════ */
+// Tipos que mostramos en la muestra (sin Foro/Revisión/Dinám. grupal)
+const SHOW_TIPOS = ['Lectura','Video','Actividad','Evaluación','Diagnóstico','Apertura','Marco','Caso','Materiales','Caso en vivo','Q&A','Recurso','Práctica'];
+
+const overlay    = document.getElementById('modulo-overlay');
+const modal      = document.getElementById('modulo-modal');
+let modalCanvas  = null;
+let modalCanvasC1 = '#2558C4';
+let modalCanvasC2 = '#0F2D6B';
+
+function openModuloModal(cursoId) {
+  const c = cursos.find(x => x.id === cursoId);
+  if (!c) return;
+  modalCanvasC1 = c.c1; modalCanvasC2 = c.c2;
+
+  // filter activities
+  const acts = c.modulo.actividades.filter(a => SHOW_TIPOS.includes(a.tipo));
+
+  modal.innerHTML = `
+    <div class="modal-cover">
+      <canvas></canvas>
+      <div class="modal-cover-content">
+        <div class="t-label">${c.categoria}</div>
+        <div class="modal-curso-title">${c.title}</div>
+      </div>
+    </div>
+    <div class="modal-topbar">
+      <div class="modal-modulo-num">${c.modulo.num}</div>
+      <button class="modal-close" id="modal-close-btn" aria-label="Cerrar">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-modulo-title">${c.modulo.title}</div>
+      <div class="modal-objetivo">${c.modulo.objetivo}</div>
+      <div class="modal-desc">${c.modulo.desc}</div>
+
+      <div class="modal-actividades-label">
+        <span class="t-label">Secuencia de aprendizaje</span>
+      </div>
+      <div class="modal-steps">
+        ${acts.map(a => `
+          <div class="modal-step">
+            <div class="modal-step-line">
+              <div class="modal-step-dot"></div>
+            </div>
+            <div class="modal-step-content">
+              <div class="modal-step-type">${a.tipo}</div>
+              ${a.titulo ? `<div class="modal-step-titulo">${a.titulo}</div>` : ''}
+              <div class="modal-step-desc">${a.desc}</div>
+              ${a.meta ? `<div class="modal-step-meta">&#9201; ${a.meta}</div>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  // draw canvas cover
+  modalCanvas = modal.querySelector('.modal-cover canvas');
+  requestAnimationFrame(() => drawGradient(modalCanvas, c.c1, c.c2, 135));
+
+  document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  modalCanvas = null;
+}
+
+// Open on button click
+cursosList.addEventListener('click', e => {
+  const btn = e.target.closest('.curso-footer-btn');
+  if (btn) openModuloModal(btn.dataset.curso);
+});
+
+// Close on overlay backdrop click
+overlay.addEventListener('click', e => {
+  if (e.target === overlay) closeModal();
+});
+
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
 </script>
-</body>
-</html>
+
+</body></html>
