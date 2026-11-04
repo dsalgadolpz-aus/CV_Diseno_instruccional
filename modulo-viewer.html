@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Módulo 1 · Metodología de Práctica Social</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* ── TOKENS ── */
+:root{
+  --blue-50:#EEF3FF;--blue-100:#D9E4FF;--blue-200:#B3CAFE;
+  --blue-500:#2558C4;--blue-600:#1D47A3;--blue-700:#153882;--blue-900:#0A1B42;
+  --gray-0:#FFFFFF;--gray-50:#F8F9FB;--gray-100:#F1F2F5;--gray-150:#E8EAEE;
+  --gray-200:#D8DBE3;--gray-300:#B8BCC8;--gray-400:#8A8FA8;--gray-500:#666B82;
+  --gray-600:#484D63;--gray-700:#353A52;--gray-800:#21253A;--gray-900:#0F1222;--gray-950:#070912;
+  --teal-500:#0D9488;--emerald-500:#059669;--amber-500:#D97706;--violet-500:#7C3AED;
+
+  --bg-canvas:var(--gray-50);--bg-surface:var(--gray-0);--bg-raised:var(--gray-100);
+  --bg-hover:var(--gray-150);--fg-primary:var(--gray-900);--fg-secondary:var(--gray-600);
+  --fg-tertiary:var(--gray-400);--brand:var(--blue-500);--brand-hover:var(--blue-600);
+  --brand-bg:var(--blue-50);--border:var(--gray-200);--border-strong:var(--gray-300);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.06);--shadow-sm:0 2px 6px rgba(0,0,0,.08);
+  --shadow-md:0 6px 20px rgba(0,0,0,.10);
+  --r1:4px;--r2:6px;--r3:8px;--r4:12px;--r5:16px;--r6:24px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;
+  --s7:28px;--s8:32px;--s9:40px;--s10:48px;--s11:56px;--s12:64px;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg-canvas:var(--gray-950);--bg-surface:var(--gray-900);--bg-raised:var(--gray-800);
+  --bg-hover:var(--gray-700);--fg-primary:var(--gray-50);--fg-secondary:var(--gray-300);
+  --fg-tertiary:var(--gray-500);--brand:var(--blue-200);--brand-hover:var(--blue-100);
+  --brand-bg:#0F1A35;--border:var(--gray-700);--border-strong:var(--gray-600);
+  --shadow-xs:0 1px 2px rgba(0,0,0,.3);--shadow-sm:0 2px 6px rgba(0,0,0,.35);
+  --shadow-md:0 6px 20px rgba(0,0,0,.45);color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg-canvas:var(--gray-950);--bg-surface:var(--gray-900);--bg-raised:var(--gray-800);
+  --bg-hover:var(--gray-700);--fg-primary:var(--gray-50);--fg-secondary:var(--gray-300);
+  --fg-tertiary:var(--gray-500);--brand:var(--blue-200);--brand-hover:var(--blue-100);
+  --brand-bg:#0F1A35;--border:var(--gray-700);--border-strong:var(--gray-600);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg-canvas);color:var(--fg-primary);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;
+}
+
+/* ── TOP BAR ── */
+.top-bar{
+  background:var(--bg-surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;box-shadow:var(--shadow-xs);
+}
+.top-bar-inner{
+  max-width:1000px;margin:0 auto;
+  display:flex;align-items:center;gap:var(--s4);
+  padding:var(--s3) 0;
+}
+.back-btn{
+  display:inline-flex;align-items:center;gap:var(--s2);
+  font-size:13px;font-weight:500;color:var(--fg-secondary);
+  text-decoration:none;padding:var(--s2) var(--s3);
+  border:1px solid var(--border);border-radius:var(--r3);
+  background:var(--bg-raised);transition:.15s;white-space:nowrap;
+}
+.back-btn:hover{color:var(--fg-primary);border-color:var(--border-strong);}
+.back-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.bar-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14px;font-weight:600;color:var(--fg-primary);
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  flex:1;
+}
+.bar-module{font-size:12px;color:var(--fg-tertiary);white-space:nowrap;}
+
+/* ── STEP NAV ── */
+.step-nav{
+  background:var(--bg-surface);border-bottom:1px solid var(--border);
+  position:sticky;top:49px;z-index:190;
+}
+.step-nav-inner{
+  max-width:1000px;margin:0 auto;
+  display:flex;overflow-x:auto;
+  scrollbar-width:none;-ms-overflow-style:none;
+  gap:0;
+  padding:0;
+}
+.step-nav-inner::-webkit-scrollbar{display:none;}
+.step-tab{
+  flex-shrink:0;
+  display:flex;align-items:center;gap:var(--s2);
+  padding:var(--s3) var(--s5);
+  font-size:13px;font-weight:500;color:var(--fg-secondary);
+  border:none;background:none;cursor:pointer;
+  position:relative;border-bottom:2px solid transparent;
+  transition:color .15s;white-space:nowrap;
+}
+.step-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.step-tab:hover:not(.active){color:var(--fg-primary);}
+.step-num{
+  width:20px;height:20px;border-radius:50%;
+  font-size:11px;font-weight:700;
+  display:grid;place-items:center;
+  background:var(--bg-raised);color:var(--fg-tertiary);
+  border:1px solid var(--border);
+  transition:.15s;flex-shrink:0;
+}
+.step-tab.active .step-num{background:var(--brand);color:#fff;border-color:var(--brand);}
+.step-tab.done .step-num{background:var(--emerald-500);color:#fff;border-color:var(--emerald-500);}
+.step-tab.done{color:var(--fg-secondary);}
+
+/* ── STEP PROGRESS ── */
+.progress-bar{
+  height:3px;background:var(--border);
+}
+.progress-fill{
+  height:100%;background:var(--brand);
+  transition:width .4s ease;
+}
+
+/* ── STEP CONTENT AREA ── */
+.step-area{position:relative;overflow:hidden;}
+.step-panel{
+  display:none;
+  animation:slideIn .35s cubic-bezier(.4,0,.2,1) both;
+}
+.step-panel.active{display:block;}
+.step-panel.exit-left{animation:slideOutLeft .3s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.exit-right{animation:slideOutRight .3s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.enter-right{animation:slideInRight .35s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.enter-left{animation:slideInLeft .35s cubic-bezier(.4,0,.2,1) both;}
+
+@keyframes slideIn{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+@keyframes slideOutLeft{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-48px)}}
+@keyframes slideOutRight{from{opacity:1;transform:none}to{opacity:0;transform:translateX(48px)}}
+
+/* ── CONTENT WRAPPER ── */
+.content-wrap{
+  max-width:1000px;margin:0 auto;
+  padding:var(--s8) 0 var(--s12);
+}
+
+/* ── STEP HEADER ── */
+.step-header{
+  margin-bottom:var(--s7);
+  padding-bottom:var(--s6);
+  border-bottom:1px solid var(--border);
+}
+.step-type-label{
+  display:inline-flex;align-items:center;gap:var(--s2);
+  font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  padding:3px 10px;border-radius:var(--r6);
+  margin-bottom:var(--s3);
+}
+.step-type-label.lectura{background:#EEF3FF;color:var(--blue-600);}
+.step-type-label.video{background:#F3E8FF;color:var(--violet-500);}
+.step-type-label.clase{background:#FEF3C7;color:var(--amber-500);}
+.step-type-label.actividad{background:#ECFDF5;color:var(--emerald-500);}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .step-type-label.lectura{background:#0F1A35;color:var(--blue-200);}
+  :root:not([data-theme="light"]) .step-type-label.video{background:#1E0A3C;color:#C4B5FD;}
+  :root:not([data-theme="light"]) .step-type-label.clase{background:#1A1000;color:#FCD34D;}
+  :root:not([data-theme="light"]) .step-type-label.actividad{background:#021A0C;color:#6EE7B7;}
+}
+:root[data-theme="dark"] .step-type-label.lectura{background:#0F1A35;color:var(--blue-200);}
+:root[data-theme="dark"] .step-type-label.video{background:#1E0A3C;color:#C4B5FD;}
+:root[data-theme="dark"] .step-type-label.clase{background:#1A1000;color:#FCD34D;}
+:root[data-theme="dark"] .step-type-label.actividad{background:#021A0C;color:#6EE7B7;}
+
+.step-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-.01em;
+  line-height:1.2;text-wrap:balance;
+}
+.step-meta-row{
+  display:flex;flex-wrap:wrap;gap:var(--s3);
+  margin-top:var(--s4);
+}
+.step-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:500;color:var(--fg-tertiary);
+  border:1px solid var(--border);border-radius:var(--r2);
+  padding:3px 8px;background:var(--bg-raised);
+}
+
+/* ── LECTURA STEP ── */
+.apa-block{
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-left:4px solid var(--brand);
+  border-radius:var(--r3);
+  padding:var(--s4) var(--s5);
+  margin-bottom:var(--s7);
+  box-shadow:var(--shadow-xs);
+}
+.apa-label{
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--fg-tertiary);margin-bottom:var(--s3);
+}
+.apa-ref{
+  font-size:14px;line-height:1.65;color:var(--fg-secondary);
+}
+.apa-ref em{font-style:italic;}
+.reading-fragment{
+  background:var(--bg-surface);
+  border:1px solid var(--border);
+  border-radius:var(--r4);
+  padding:var(--s7) var(--s8);
+  box-shadow:var(--shadow-sm);
+  margin-bottom:var(--s6);
+  line-height:1.9;
+  font-size:15px;
+}
+.reading-fragment h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;margin-bottom:var(--s4);
+  color:var(--fg-primary);
+}
+.reading-fragment p{color:var(--fg-secondary);margin-bottom:var(--s4);}
+.reading-fragment p:last-child{margin-bottom:0;}
+.reading-fragment .marginal{
+  background:var(--brand-bg);border-left:3px solid var(--brand);
+  padding:var(--s3) var(--s4);border-radius:0 var(--r3) var(--r3) 0;
+  font-size:13px;color:var(--fg-secondary);margin:var(--s4) 0;
+  font-style:italic;
+}
+.reading-fragment strong{color:var(--fg-primary);}
+.pdf-btn{
+  display:inline-flex;align-items:center;gap:var(--s3);
+  padding:var(--s3) var(--s5);
+  background:var(--brand);color:#fff;
+  border:none;border-radius:var(--r3);
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:background .15s,transform .1s;text-decoration:none;
+}
+.pdf-btn:hover{background:var(--brand-hover);}
+.pdf-btn:active{transform:scale(.97);}
+.pdf-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── GUÍA DE LECTURA ── */
+.guia-card{
+  background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r4);
+  padding:var(--s5) var(--s6);margin-top:var(--s6);
+}
+.guia-title{font-size:14px;font-weight:700;margin-bottom:var(--s3);color:var(--fg-primary);}
+.guia-items{list-style:none;display:flex;flex-direction:column;gap:var(--s2);}
+.guia-items li{
+  display:flex;align-items:flex-start;gap:var(--s3);
+  font-size:13px;color:var(--fg-secondary);line-height:1.5;
+}
+.guia-items li::before{
+  content:'→';color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px;
+}
+
+/* ── VIDEO INTRO STEP ── */
+.slides-container{
+  background:#0A1B42;
+  border-radius:var(--r5);
+  overflow:hidden;
+  box-shadow:var(--shadow-md);
+  margin-bottom:var(--s6);
+  aspect-ratio:16/9;
+  position:relative;
+}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:clamp(24px,5%,56px);
+  opacity:0;pointer-events:none;
+  transition:opacity .6s ease,transform .6s ease;
+  transform:translateX(60px);
+  text-align:center;
+}
+.slide.active{opacity:1;pointer-events:auto;transform:none;}
+.slide.prev{opacity:0;transform:translateX(-60px);}
+
+/* Slide backgrounds */
+.slide-1{background:linear-gradient(135deg,#0A1B42 0%,#1535A0 60%,#0E2A8C 100%);}
+.slide-2{background:linear-gradient(135deg,#0A1B42 0%,#0E3B8C 50%,#092060 100%);}
+.slide-3{background:linear-gradient(135deg,#061030 0%,#1030A0 50%,#0A1B42 100%);}
+.slide-4{background:linear-gradient(135deg,#0A1B42 0%,#0F4080 60%,#06244C 100%);}
+.slide-5{background:linear-gradient(135deg,#0A1B42 0%,#133EAA 50%,#0A1B42 100%);}
+
+.slide-eyebrow{
+  font-size:clamp(10px,1.2vw,13px);font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(179,202,254,.8);margin-bottom:16px;
+}
+.slide-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(18px,3.5vw,38px);font-weight:700;
+  color:#fff;line-height:1.2;text-wrap:balance;
+  margin-bottom:16px;
+}
+.slide-title em{color:#93C5FD;font-style:normal;}
+.slide-body{
+  font-size:clamp(13px,1.8vw,17px);color:rgba(255,255,255,.75);
+  line-height:1.6;max-width:620px;text-wrap:balance;
+}
+.slide-accent{
+  display:inline-block;
+  background:rgba(37,88,196,.5);border:1px solid rgba(147,197,253,.3);
+  border-radius:8px;padding:12px 20px;
+  font-size:clamp(13px,1.6vw,16px);font-weight:500;color:#E0EAFF;
+  margin-top:16px;line-height:1.5;
+}
+.slide-list{
+  list-style:none;text-align:left;
+  display:flex;flex-direction:column;gap:10px;
+  margin-top:16px;max-width:560px;
+}
+.slide-list li{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:clamp(12px,1.5vw,15px);color:rgba(255,255,255,.8);line-height:1.5;
+}
+.slide-list li::before{content:'◆';color:#60A5FA;font-size:10px;flex-shrink:0;margin-top:3px;}
+.slide-num{
+  position:absolute;bottom:16px;right:20px;
+  font-size:12px;color:rgba(255,255,255,.35);font-weight:600;letter-spacing:.05em;
+}
+.slide-logo{
+  position:absolute;top:16px;left:20px;
+  font-size:11px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;
+}
+
+/* Slide controls */
+.slide-controls{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--s3) var(--s5);
+  background:var(--bg-surface);border:1px solid var(--border);
+  border-radius:0 0 var(--r4) var(--r4);
+  margin-top:-1px;
+}
+.slide-ctrl-group{display:flex;gap:var(--s2);}
+.slide-btn{
+  display:inline-flex;align-items:center;gap:var(--s2);
+  padding:var(--s2) var(--s3);border:1px solid var(--border);
+  border-radius:var(--r2);background:var(--bg-raised);
+  font-size:12px;font-weight:500;color:var(--fg-secondary);
+  cursor:pointer;transition:.15s;
+}
+.slide-btn:hover{background:var(--bg-hover);color:var(--fg-primary);}
+.slide-btn.primary{background:var(--brand);color:#fff;border-color:var(--brand);}
+.slide-btn.primary:hover{background:var(--brand-hover);}
+.slide-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.slide-dots{
+  display:flex;gap:6px;align-items:center;
+}
+.slide-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--border-strong);transition:.2s;cursor:pointer;
+}
+.slide-dot.active{background:var(--brand);transform:scale(1.3);}
+.tts-status{
+  font-size:12px;color:var(--fg-tertiary);
+  display:flex;align-items:center;gap:5px;
+}
+.tts-wave{
+  display:inline-flex;gap:2px;align-items:center;
+  height:14px;
+}
+.tts-wave span{
+  display:block;width:2px;border-radius:2px;
+  background:var(--brand);
+  animation:wave 1s ease-in-out infinite;
+}
+.tts-wave span:nth-child(2){animation-delay:.15s;}
+.tts-wave span:nth-child(3){animation-delay:.3s;}
+@keyframes wave{
+  0%,100%{height:4px}
+  50%{height:12px}
+}
+
+/* ── VIDEO CLASE STEP ── */
+.video-placeholder{
+  background:linear-gradient(135deg,#111827,#1f2937);
+  border-radius:var(--r4);aspect-ratio:16/9;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--s4);margin-bottom:var(--s6);
+  box-shadow:var(--shadow-md);
+  border:1px solid #374151;
+  position:relative;overflow:hidden;
+}
+.video-placeholder::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 60%,rgba(37,88,196,.15),transparent 70%);
+}
+.play-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(37,88,196,.8);backdrop-filter:blur(8px);
+  border:2px solid rgba(147,197,253,.4);
+  display:grid;place-items:center;cursor:pointer;
+  transition:.2s;position:relative;z-index:1;
+}
+.play-icon:hover{transform:scale(1.08);background:var(--blue-600);}
+.play-icon svg{width:28px;height:28px;fill:#fff;margin-left:4px;}
+.video-title-overlay{
+  position:relative;z-index:1;
+  text-align:center;
+  color:rgba(255,255,255,.9);
+  font-size:16px;font-weight:600;
+  font-family:'Space Grotesk',sans-serif;
+}
+.video-sub-overlay{color:rgba(255,255,255,.5);font-size:13px;margin-top:4px;}
+.video-desc-card{
+  background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r4);
+  padding:var(--s5) var(--s6);box-shadow:var(--shadow-sm);
+  margin-bottom:var(--s4);
+}
+.video-desc-card p{color:var(--fg-secondary);line-height:1.75;font-size:14px;}
+.video-desc-card strong{color:var(--fg-primary);}
+
+/* ── ACTIVIDAD STEP ── */
+.activities-tabs{
+  display:flex;gap:0;border-bottom:1px solid var(--border);
+  margin-bottom:var(--s7);overflow-x:auto;
+  scrollbar-width:none;
+}
+.activities-tabs::-webkit-scrollbar{display:none;}
+.act-tab{
+  flex-shrink:0;
+  padding:var(--s3) var(--s5);font-size:13px;font-weight:500;
+  color:var(--fg-secondary);border:none;background:none;cursor:pointer;
+  border-bottom:2px solid transparent;position:relative;
+  transition:color .15s;
+}
+.act-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.act-tab:hover:not(.active){color:var(--fg-primary);}
+
+.act-panel{display:none;}
+.act-panel.active{display:block;}
+
+/* Q&A */
+.qa-container{display:flex;flex-direction:column;gap:var(--s3);}
+.qa-item{
+  background:var(--bg-surface);border:1px solid var(--border);
+  border-radius:var(--r4);overflow:hidden;
+  box-shadow:var(--shadow-xs);
+}
+.qa-question{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:var(--s4) var(--s5);
+  font-size:14px;font-weight:600;text-align:left;
+  background:none;border:none;cursor:pointer;color:var(--fg-primary);gap:var(--s3);
+  transition:background .15s;
+}
+.qa-question:hover{background:var(--bg-hover);}
+.qa-arrow{
+  flex-shrink:0;width:20px;height:20px;border-radius:50%;
+  background:var(--bg-raised);border:1px solid var(--border);
+  display:grid;place-items:center;
+  font-size:11px;color:var(--fg-tertiary);transition:.2s;
+}
+.qa-item.open .qa-arrow{transform:rotate(180deg);background:var(--brand);color:#fff;border-color:var(--brand);}
+.qa-answer{
+  display:none;padding:0 var(--s5) var(--s5);
+  font-size:14px;color:var(--fg-secondary);line-height:1.7;
+  border-top:1px solid var(--border);padding-top:var(--s4);
+}
+.qa-item.open .qa-answer{display:block;}
+.qa-answer strong{color:var(--fg-primary);}
+
+/* SOPA DE LETRAS */
+.sopa-wrapper{display:flex;flex-direction:column;align-items:center;gap:var(--s6);}
+.sopa-grid{
+  display:inline-grid;
+  gap:4px;
+  user-select:none;cursor:crosshair;
+  background:var(--bg-surface);
+  border:1px solid var(--border);border-radius:var(--r4);
+  padding:var(--s4);
+  box-shadow:var(--shadow-sm);
+}
+.sopa-cell{
+  width:36px;height:36px;display:grid;place-items:center;
+  font-size:14px;font-weight:600;letter-spacing:.03em;
+  border-radius:var(--r2);color:var(--fg-primary);
+  transition:.15s;
+  position:relative;
+}
+.sopa-cell.selected{background:rgba(37,88,196,.2);color:var(--brand);}
+.sopa-cell.found{background:var(--blue-500)!important;color:#fff!important;border-radius:var(--r2);}
+.sopa-words{
+  display:flex;flex-wrap:wrap;gap:var(--s2);justify-content:center;max-width:420px;
+}
+.word-chip{
+  font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  padding:var(--s1) var(--s3);border:1px solid var(--border);border-radius:var(--r6);
+  color:var(--fg-secondary);background:var(--bg-raised);transition:.2s;
+}
+.word-chip.found{background:var(--emerald-500);color:#fff;border-color:transparent;text-decoration:line-through;}
+.sopa-status{font-size:14px;color:var(--fg-secondary);font-weight:500;}
+.sopa-btn{
+  padding:var(--s2) var(--s5);border:1px solid var(--border);border-radius:var(--r3);
+  background:var(--bg-raised);font-size:13px;font-weight:500;color:var(--fg-secondary);
+  cursor:pointer;transition:.15s;
+}
+.sopa-btn:hover{background:var(--bg-hover);color:var(--fg-primary);}
+
+/* BLOQUES */
+.matching-container{display:flex;flex-direction:column;gap:var(--s5);}
+.matching-cols{
+  display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);
+}
+.match-col-title{
+  font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--fg-tertiary);margin-bottom:var(--s3);
+}
+.match-col{display:flex;flex-direction:column;gap:var(--s2);}
+.match-item{
+  padding:var(--s3) var(--s4);
+  border:1px solid var(--border);border-radius:var(--r3);
+  font-size:13px;font-weight:500;cursor:pointer;
+  transition:all .15s;background:var(--bg-surface);color:var(--fg-secondary);
+  min-height:52px;display:flex;align-items:center;
+}
+.match-item:hover{border-color:var(--brand);color:var(--fg-primary);}
+.match-item.selected{border-color:var(--brand);background:var(--brand-bg);color:var(--brand);}
+.match-item.matched{border-color:var(--emerald-500);background:#ECFDF5;color:var(--emerald-500);cursor:default;}
+:root[data-theme="dark"] .match-item.matched{background:#021A0C;}
+.match-item.error{border-color:#E11D48;background:#FFF1F3;color:#E11D48;animation:shake .3s;}
+:root[data-theme="dark"] .match-item.error{background:#1A0007;}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.matching-score{
+  text-align:center;font-size:14px;font-weight:600;color:var(--fg-secondary);
+  padding:var(--s3);background:var(--bg-raised);border-radius:var(--r3);
+}
+.matching-score span{color:var(--emerald-500);}
+.match-reset{
+  align-self:flex-start;padding:var(--s2) var(--s4);border:1px solid var(--border);
+  border-radius:var(--r3);background:var(--bg-raised);font-size:12px;font-weight:500;
+  color:var(--fg-secondary);cursor:pointer;transition:.15s;
+}
+.match-reset:hover{background:var(--bg-hover);}
+
+/* COMPLETAR ORACIONES */
+.fill-container{display:flex;flex-direction:column;gap:var(--s4);}
+.fill-sentence{
+  background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r3);
+  padding:var(--s4) var(--s5);display:flex;align-items:center;flex-wrap:wrap;gap:var(--s2);
+  font-size:14px;color:var(--fg-secondary);line-height:1.8;box-shadow:var(--shadow-xs);
+}
+.fill-blank{
+  display:inline-block;min-width:120px;border:none;border-bottom:2px solid var(--brand);
+  background:transparent;font-size:14px;font-family:inherit;
+  color:var(--fg-primary);font-weight:600;padding:2px 6px;
+  outline:none;text-align:center;transition:.15s;
+}
+.fill-blank:focus{border-bottom-color:var(--blue-700);background:var(--brand-bg);}
+.fill-blank.correct{border-bottom-color:var(--emerald-500);color:var(--emerald-500);}
+.fill-blank.wrong{border-bottom-color:#E11D48;color:#E11D48;animation:shake .3s;}
+.fill-actions{display:flex;gap:var(--s3);margin-top:var(--s3);}
+.fill-btn{
+  padding:var(--s2) var(--s5);border-radius:var(--r3);font-size:13px;font-weight:600;
+  cursor:pointer;transition:.15s;border:1px solid transparent;
+}
+.fill-btn.primary{background:var(--brand);color:#fff;}
+.fill-btn.primary:hover{background:var(--brand-hover);}
+.fill-btn.secondary{border-color:var(--border);background:var(--bg-raised);color:var(--fg-secondary);}
+.fill-btn.secondary:hover{background:var(--bg-hover);}
+.fill-result{
+  font-size:13px;padding:var(--s3) var(--s4);border-radius:var(--r3);margin-top:var(--s3);
+  display:none;
+}
+.fill-result.show{display:block;}
+.fill-result.good{background:#ECFDF5;color:var(--emerald-500);border:1px solid #6EE7B7;}
+.fill-result.partial{background:#FEF3C7;color:var(--amber-500);border:1px solid #FCD34D;}
+:root[data-theme="dark"] .fill-result.good{background:#021A0C;}
+:root[data-theme="dark"] .fill-result.partial{background:#1A1000;}
+
+/* ── STEP NAV BUTTONS ── */
+.step-nav-buttons{
+  display:flex;justify-content:space-between;
+  padding:var(--s7) 0 0;
+  border-top:1px solid var(--border);
+  margin-top:var(--s8);
+  gap:var(--s4);
+}
+.nav-btn{
+  display:inline-flex;align-items:center;gap:var(--s2);
+  padding:var(--s3) var(--s5);
+  border:1px solid var(--border);border-radius:var(--r3);
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:.15s;text-decoration:none;
+}
+.nav-btn-prev{background:var(--bg-raised);color:var(--fg-secondary);}
+.nav-btn-prev:hover{background:var(--bg-hover);color:var(--fg-primary);}
+.nav-btn-next{background:var(--brand);color:#fff;border-color:var(--brand);}
+.nav-btn-next:hover{background:var(--brand-hover);}
+.nav-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.nav-btn-next:disabled,.nav-btn-prev:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ── COMPLETION ── */
+.completion-banner{
+  background:linear-gradient(135deg,var(--blue-900) 0%,var(--blue-700) 100%);
+  border-radius:var(--r5);padding:var(--s10) var(--s8);text-align:center;
+  color:#fff;margin-top:var(--s7);
+}
+.completion-icon{font-size:48px;margin-bottom:var(--s4);}
+.completion-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(20px,3vw,28px);font-weight:700;margin-bottom:var(--s3);
+}
+.completion-desc{font-size:15px;color:rgba(255,255,255,.75);max-width:480px;margin:0 auto var(--s6);}
+.completion-btn{
+  display:inline-flex;align-items:center;gap:var(--s2);
+  padding:var(--s3) var(--s6);background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.3);border-radius:var(--r3);
+  color:#fff;font-size:14px;font-weight:600;cursor:pointer;
+  backdrop-filter:blur(6px);transition:.15s;text-decoration:none;
+}
+.completion-btn:hover{background:rgba(255,255,255,.25);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .matching-cols{grid-template-columns:1fr;}
+  .content-wrap{padding:var(--s6) 0 var(--s10);}
+  .reading-fragment{padding:var(--s5);}
+  .sopa-cell{width:30px;height:30px;font-size:12px;}
+  .bar-module{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="top-bar">
+  <div class="top-bar-inner">
+    <a href="index.html" class="back-btn">
+      <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+      Portafolio
+    </a>
+    <div class="bar-title">Metodología de Práctica Social</div>
+    <div class="bar-module">Módulo 1 de 6</div>
+  </div>
+</header>
+
+<!-- STEP NAV -->
+<nav class="step-nav">
+  <div class="step-nav-inner" id="stepTabs">
+    <button class="step-tab active" data-step="0">
+      <span class="step-num">1</span> Lectura
+    </button>
+    <button class="step-tab" data-step="1">
+      <span class="step-num">2</span> Video intro
+    </button>
+    <button class="step-tab" data-step="2">
+      <span class="step-num">3</span> Video clase
+    </button>
+    <button class="step-tab" data-step="3">
+      <span class="step-num">4</span> Actividad
+    </button>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:25%"></div>
+  </div>
+</nav>
+
+<!-- STEP AREA -->
+<div class="step-area" id="stepArea">
+
+  <!-- ═══════════ STEP 1: LECTURA ═══════════ -->
+  <div class="step-panel active" id="step-0">
+    <div class="content-wrap">
+
+      <div class="step-header">
+        <div class="step-type-label lectura">📖 Lectura</div>
+        <h1 class="step-title">Fragmento comentado — Pierre Bourdieu</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ 45 min de lectura</span>
+          <span class="step-chip">📄 Páginas 95–112</span>
+          <span class="step-chip">📌 Módulo 1 · Fundamentos</span>
+        </div>
+      </div>
+
+      <!-- APA Reference -->
+      <div class="apa-block">
+        <div class="apa-label">📚 Referencia APA 7a edición</div>
+        <div class="apa-ref">
+          Bourdieu, P. (1979). <em>La distinción: Criterio y bases sociales del gusto</em> (M. del C. Ruiz de Elvira, Trad.). Taurus. (Obra original publicada en 1979)
+          <br><br>
+          Bourdieu, P., & Wacquant, L. J. D. (1992). <em>An invitation to reflexive sociology</em>. University of Chicago Press.
+          <br><br>
+          Bourdieu, P. (1980). <em>El sentido práctico</em> (Á. Pazos, Trad.). Siglo XXI Editores.
+        </div>
+      </div>
+
+      <!-- Reading Fragment -->
+      <div class="reading-fragment">
+        <h3>El habitus y la construcción del campo social</h3>
+        <p>
+          Para comprender cómo funciona el mundo social, es preciso abandonar la alternativa entre la física social —que trata a los agentes sociales como partículas sometidas a fuerzas mecánicas y propugna una causalidad mecánica— y la fenomenología social —que subraya la experiencia viva de los agentes y, por tanto, la representación que ellos se hacen del mundo social.
+        </p>
+        <div class="marginal">
+          Nota del diseñador instruccional: Bourdieu propone aquí una tercera vía que él llama "constructivismo estructuralista", donde las estructuras objetivas y las disposiciones subjetivas se co-producen mutuamente.
+        </div>
+        <p>
+          Los agentes sociales están dotados de <strong>habitus</strong>, sistemas de disposiciones duraderas y transferibles que, al integrar todas las experiencias pasadas, funcionan en cada momento como matriz de percepciones, apreciaciones y acciones, y hace posible la realización de tareas infinitamente diferenciadas.
+        </p>
+        <p>
+          El <strong>campo</strong> es una red o configuración de relaciones objetivas entre posiciones. Estas posiciones se definen objetivamente en su existencia y en las determinaciones que imponen a sus ocupantes, agentes o instituciones, por su situación actual y potencial en la estructura de la distribución de las diferentes especies de poder (o de capital) cuya posesión comanda el acceso a los beneficios específicos que están en juego en el campo, así como por su relación objetiva con las demás posiciones.
+        </p>
+        <div class="marginal">
+          Pregunta de reflexión: ¿Puedes identificar cuáles son los "capitales" que operan en el campo comunitario donde vas a intervenir? ¿Cuál predomina?
+        </div>
+        <p>
+          En la práctica, es el sentido del juego, como dominación práctica de la lógica o de la necesidad inmanente de un juego, que se adquiere por la experiencia del juego, y que no implica nada de lo que comúnmente se entiende por regla, el que da cuenta del hecho de que el agente esté presente donde el juego lo requiere. El sentido del juego es lo que hace que el agente social pueda producir prácticas adaptadas a las exigencias del campo sin postular conscientemente los fines y sin calcular conscientemente los medios.
+        </p>
+        <p>
+          Los campos sociales son, así, espacios de juego históricamente constituidos, con sus instituciones específicas y sus leyes de funcionamiento propias. Las prácticas en el campo dependen en parte de las regularidades objetivas del campo, que son el resultado del ajuste entre la estructura del campo y el habitus de los agentes.
+        </p>
+        <p>
+          En el caso de la intervención comunitaria —que es nuestro campo de práctica— esto implica que el <strong>facilitador social no entra como observador neutral</strong>: lleva consigo un habitus profesional, institucional y de clase que moldea su percepción del problema, sus categorías de análisis y sus propuestas de solución. <strong>El primer ejercicio de la práctica social reflexiva es, precisamente, objetivar ese habitus.</strong>
+        </p>
+      </div>
+
+      <!-- PDF download -->
+      <button class="pdf-btn" id="downloadPdf">
+        <svg viewBox="0 0 16 16"><path d="M8 1v8M5 6l3 3 3-3M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2"/></svg>
+        Descargar fragmento en PDF
+      </button>
+
+      <!-- Reading guide -->
+      <div class="guia-card">
+        <div class="guia-title">🗺 Guía de lectura — Preguntas orientadoras</div>
+        <ul class="guia-items">
+          <li>¿Qué diferencia Bourdieu entre campo y habitus? ¿Cómo se relacionan?</li>
+          <li>Identifica un ejemplo de tu propio contexto comunitario donde puedas reconocer la operación del habitus.</li>
+          <li>¿Por qué Bourdieu insiste en que las reglas del juego no son conscientes? ¿Qué implica esto para quien facilita procesos sociales?</li>
+          <li>¿Qué capitales (económico, social, cultural, simbólico) están en juego en el campo que te interesa intervenir?</li>
+        </ul>
+      </div>
+
+      <div class="step-nav-buttons">
+        <span></span>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(1)">
+          Siguiente: Video intro
+          <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ STEP 2: VIDEO INTRO / TTS SLIDES ═══════════ -->
+  <div class="step-panel" id="step-1">
+    <div class="content-wrap">
+
+      <div class="step-header">
+        <div class="step-type-label video">🎬 Video intro · 3 min</div>
+        <h1 class="step-title">Presentación — Habitus, Campo y Capital Social</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">🎥 Video de bienvenida</span>
+          <span class="step-chip">⏱ ~3 min</span>
+          <span class="step-chip">📌 Módulo 1</span>
+        </div>
+      </div>
+
+      <!-- VIDEO INTRO -->
+      <video
+        id="introVideo"
+        src="presentacion_modulo1.mp4"
+        controls
+        preload="metadata"
+        style="width:100%;border-radius:var(--r5);display:block;box-shadow:var(--shadow-md);margin-bottom:var(--s6);background:#0A1B42;aspect-ratio:16/9;"
+      ></video>
+
+      <div class="step-nav-buttons">
+        <button class="nav-btn nav-btn-prev" onclick="goToStep(0)">
+          <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+          Lectura
+        </button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(2)">
+          Video clase
+          <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ STEP 3: VIDEO CLASE ═══════════ -->
+  <div class="step-panel" id="step-2">
+    <div class="content-wrap">
+
+      <div class="step-header">
+        <div class="step-type-label clase">🎥 Video clase · 18 min</div>
+        <h1 class="step-title">Del espacio físico al espacio social</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ 18 minutos</span>
+          <span class="step-chip">💬 Subtítulos disponibles</span>
+          <span class="step-chip">📌 Sin examen directo</span>
+        </div>
+      </div>
+
+      <!-- Video placeholder -->
+      <div class="video-placeholder">
+        <div class="play-icon" title="Reproducir clase">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+        <div>
+          <div class="video-title-overlay">Del espacio físico al espacio social</div>
+          <div class="video-sub-overlay">Clase grabada · Sintropía Social · 18:24</div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="video-desc-card">
+        <p>
+          Clase grabada de 18 minutos donde el facilitador explica los tres conceptos centrales con ejemplos visuales de intervenciones reales en contextos mexicanos. Incluye un segmento de análisis del caso <strong>'Barrio Histórico 2021'</strong>. Activa los subtítulos si lo necesitas. Puedes pausar y retomar; no hay examen sobre el video, pero los conceptos son insumo directo para la actividad.
+        </p>
+      </div>
+
+      <div class="guia-card">
+        <div class="guia-title">📋 Mientras ves la clase, observa…</div>
+        <ul class="guia-items">
+          <li>¿Cómo el facilitador conecta el caso 'Barrio Histórico 2021' con los conceptos de Bourdieu?</li>
+          <li>Identifica al menos dos ejemplos de capital simbólico en el caso analizado.</li>
+          <li>¿Qué conflictos de campo se hacen visibles en el barrio? ¿Quién tiene el capital dominante?</li>
+        </ul>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button class="nav-btn nav-btn-prev" onclick="goToStep(1)">
+          <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+          Video intro
+        </button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(3)">
+          Actividad
+          <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ STEP 4: ACTIVIDAD ═══════════ -->
+  <div class="step-panel" id="step-3">
+    <div class="content-wrap">
+
+      <div class="step-header">
+        <div class="step-type-label actividad">✏️ Actividad evaluativa</div>
+        <h1 class="step-title">Aplica lo que aprendiste</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">🎮 4 dinámicas interactivas</span>
+          <span class="step-chip">⏱ ~25 min</span>
+          <span class="step-chip">✅ Sin límite de intentos</span>
+        </div>
+      </div>
+
+      <!-- Activity tabs -->
+      <div class="activities-tabs">
+        <button class="act-tab active" data-act="qa">❓ Preguntas</button>
+        <button class="act-tab" data-act="sopa">🔍 Sopa de letras</button>
+        <button class="act-tab" data-act="match">🔗 Juntar bloques</button>
+        <button class="act-tab" data-act="fill">✍️ Completar</button>
+      </div>
+
+      <!-- Q&A -->
+      <div class="act-panel active" id="act-qa">
+        <div class="qa-container" id="qaContainer"></div>
+      </div>
+
+      <!-- Sopa de letras -->
+      <div class="act-panel" id="act-sopa">
+        <div class="sopa-wrapper">
+          <div class="sopa-status" id="sopaStatus">Encuentra las 6 palabras clave del módulo</div>
+          <div class="sopa-grid" id="sopaGrid"></div>
+          <div class="sopa-words" id="sopaWords"></div>
+          <button class="sopa-btn" id="sopaReset">🔄 Nueva cuadrícula</button>
+        </div>
+      </div>
+
+      <!-- Matching -->
+      <div class="act-panel" id="act-match">
+        <div class="matching-container" id="matchContainer">
+          <div class="matching-score">Pares encontrados: <span id="matchScore">0</span> / 5</div>
+          <div class="matching-cols">
+            <div>
+              <div class="match-col-title">Concepto</div>
+              <div class="match-col" id="matchLeft"></div>
+            </div>
+            <div>
+              <div class="match-col-title">Definición</div>
+              <div class="match-col" id="matchRight"></div>
+            </div>
+          </div>
+          <button class="match-reset" id="matchReset">🔄 Reiniciar</button>
+        </div>
+      </div>
+
+      <!-- Fill in blanks -->
+      <div class="act-panel" id="act-fill">
+        <div class="fill-container" id="fillContainer"></div>
+      </div>
+
+      <div class="step-nav-buttons">
+        <button class="nav-btn nav-btn-prev" onclick="goToStep(2)">
+          <svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>
+          Video clase
+        </button>
+        <button class="nav-btn nav-btn-next" onclick="showCompletion()">
+          Finalizar módulo ✓
+          <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg>
+        </button>
+      </div>
+
+      <!-- Completion -->
+      <div class="completion-banner" id="completionBanner" style="display:none">
+        <div class="completion-icon">🎉</div>
+        <div class="completion-title">¡Módulo 1 completado!</div>
+        <p class="completion-desc">Has explorado los conceptos de habitus, campo y capital social de Bourdieu y los has conectado a la práctica comunitaria.</p>
+        <a href="index.html" class="completion-btn">← Volver al portafolio</a>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /step-area -->
+
+<script>
+/* ══════════════════════════════════
+   STEP NAVIGATION
+══════════════════════════════════ */
+let currentStep = 0;
+const totalSteps = 4;
+const done = new Set();
+
+function goToStep(next) {
+  if (next === currentStep) return;
+  const panels = document.querySelectorAll('.step-panel');
+  const tabs = document.querySelectorAll('.step-tab');
+  const prev = currentStep;
+
+  // mark prev as done
+  done.add(prev);
+
+  // animate out
+  const outCls = next > prev ? 'exit-left' : 'exit-right';
+  panels[prev].classList.add(outCls);
+  panels[prev].addEventListener('animationend', () => {
+    panels[prev].classList.remove('active', 'exit-left', 'exit-right');
+  }, { once: true });
+
+  // animate in
+  const inCls = next > prev ? 'enter-right' : 'enter-left';
+  panels[next].classList.add('active', inCls);
+  panels[next].addEventListener('animationend', () => {
+    panels[next].classList.remove('enter-right', 'enter-left');
+  }, { once: true });
+
+  currentStep = next;
+
+  // update tabs
+  tabs.forEach((t, i) => {
+    t.classList.remove('active', 'done');
+    if (i === next) t.classList.add('active');
+    else if (done.has(i)) t.classList.add('done');
+  });
+  document.getElementById('progressFill').style.width = ((next + 1) / totalSteps * 100) + '%';
+
+  // scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // pause video intro if leaving step 1
+  if (prev === 1) {
+    const v = document.getElementById('introVideo');
+    if (v) v.pause();
+  }
+}
+
+// Tab click
+document.getElementById('stepTabs').querySelectorAll('.step-tab').forEach(btn => {
+  btn.addEventListener('click', () => goToStep(+btn.dataset.step));
+});
+
+/* ══════════════════════════════════
+   PDF DOWNLOAD (simulated)
+══════════════════════════════════ */
+document.getElementById('downloadPdf').addEventListener('click', () => {
+  // Build a minimal text-based PDF via data URI simulation
+  const content = `Fragmento: Bourdieu, P. (1979). La distinción.
+Referencia APA: Bourdieu, P. (1979). La distinción: Criterio y bases sociales del gusto (M. del C. Ruiz de Elvira, Trad.). Taurus.
+
+---
+El habitus y la construcción del campo social
+
+Los agentes sociales están dotados de habitus, sistemas de disposiciones duraderas y transferibles que, al integrar todas las experiencias pasadas, funcionan en cada momento como matriz de percepciones, apreciaciones y acciones.
+
+El campo es una red o configuración de relaciones objetivas entre posiciones. Estas posiciones se definen objetivamente en su existencia y en las determinaciones que imponen a sus ocupantes, por su situación actual y potencial en la estructura de distribución de las diferentes especies de poder (o de capital).
+
+[Fragmento comentado — Módulo 1 · Metodología de Práctica Social]
+[Sintropía Social · Diseño instruccional: David Salgado López]
+`;
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'Bourdieu_Fragmento_Modulo1.txt';
+  a.click(); URL.revokeObjectURL(url);
+});
+
+/* ══════════════════════════════════
+   Q&A ACCORDION
+══════════════════════════════════ */
+const qaData = [
+  {
+    q: '¿Qué diferencia hay entre habitus y hábito?',
+    a: 'Un <strong>hábito</strong> es una conducta repetida individualmente (lavarse los dientes). El <strong>habitus</strong> es un sistema estructural de disposiciones colectivas que se adquiere en un grupo social: moldea no solo conductas sino también percepciones, juicios y esquemas de valoración del mundo. Es mucho más profundo y menos consciente que un simple hábito.',
+  },
+  {
+    q: '¿Puede cambiar el habitus de una persona?',
+    a: 'Sí, aunque no fácilmente. Bourdieu señala que el habitus se forma en condiciones históricas específicas y tiende a reproducirlas. Sin embargo, puede transformarse —parcialmente— cuando el agente enfrenta condiciones radicalmente distintas durante períodos prolongados, o cuando entra en un proceso de reflexividad sistemática sobre sus propias disposiciones.',
+  },
+  {
+    q: '¿Qué es el capital simbólico y por qué importa en la práctica comunitaria?',
+    a: 'El capital simbólico es la forma que toman los otros capitales cuando son reconocidos como legítimos por los demás: prestigio, honor, autoridad moral. En contextos comunitarios es especialmente relevante porque puede ser más poderoso que el capital económico: una figura de respeto local (un anciano, un líder vecinal) puede movilizar a la comunidad más que cualquier recurso material.',
+  },
+  {
+    q: '¿Cómo se aplica la noción de campo a una intervención comunitaria?',
+    a: 'Al ingresar a un barrio o comunidad, el facilitador entra en un <strong>campo</strong> ya constituido: existen posiciones, jerarquías, conflictos latentes y reglas no escritas. Mapear el campo significa identificar quiénes tienen capital (y de qué tipo), qué disputas hay en curso, cuáles son las alianzas y los límites. Sin ese mapeo, la intervención puede reforzar inconscientemente las asimetrías existentes.',
+  },
+  {
+    q: '¿Bourdieu es determinista? ¿Hay agencia en su teoría?',
+    a: 'Esta es una crítica frecuente. Bourdieu distingue entre <strong>determinismo</strong> y <strong>probabilismo</strong>: el habitus no determina mecánicamente las prácticas, sino que las orienta con distintas probabilidades. Siempre existe un margen de agencia, aunque sea reducido. La sociología reflexiva que propone Bourdieu busca precisamente ampliar ese margen: hacer visibles las estructuras que nos condicionan para poder actuar sobre ellas.',
+  },
+];
+
+const qaContainer = document.getElementById('qaContainer');
+qaData.forEach(item => {
+  const div = document.createElement('div');
+  div.className = 'qa-item';
+  div.innerHTML = `
+    <button class="qa-question">
+      <span>${item.q}</span>
+      <span class="qa-arrow">▾</span>
+    </button>
+    <div class="qa-answer">${item.a}</div>
+  `;
+  div.querySelector('.qa-question').addEventListener('click', () => {
+    div.classList.toggle('open');
+  });
+  qaContainer.appendChild(div);
+});
+
+/* ══════════════════════════════════
+   SOPA DE LETRAS
+══════════════════════════════════ */
+const WORDS = ['HABITUS','CAMPO','CAPITAL','BOURDIEU','PRACTICA','REFLEXION'];
+const GRID_SIZE = 10;
+let sopaGrid = [], sopaFound = new Set(), sopaSelecting = false, sopaStart = null;
+
+function buildSopa() {
+  sopaFound.clear();
+  // init empty
+  const g = Array.from({length:GRID_SIZE}, () => Array(GRID_SIZE).fill(''));
+  const dirs = [[0,1],[1,0],[1,1],[0,-1],[-1,0],[-1,-1],[1,-1],[-1,1]];
+  const placed = [];
+
+  for (const word of WORDS) {
+    let tries = 0, ok = false;
+    while (tries++ < 200 && !ok) {
+      const dir = dirs[Math.floor(Math.random()*dirs.length)];
+      const r = Math.floor(Math.random()*GRID_SIZE);
+      const c = Math.floor(Math.random()*GRID_SIZE);
+      let fits = true;
+      for (let i = 0; i < word.length; i++) {
+        const nr = r + dir[0]*i, nc = c + dir[1]*i;
+        if (nr<0||nr>=GRID_SIZE||nc<0||nc>=GRID_SIZE) { fits=false; break; }
+        if (g[nr][nc] && g[nr][nc] !== word[i]) { fits=false; break; }
+      }
+      if (fits) {
+        for (let i = 0; i < word.length; i++) g[r+dir[0]*i][c+dir[1]*i] = word[i];
+        placed.push({word, r, c, dir});
+        ok = true;
+      }
+    }
+  }
+  // fill blanks
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let r=0;r<GRID_SIZE;r++) for (let c=0;c<GRID_SIZE;c++)
+    if (!g[r][c]) g[r][c] = letters[Math.floor(Math.random()*26)];
+  sopaGrid = g;
+  renderSopa(placed);
+}
+
+function renderSopa(placed) {
+  const container = document.getElementById('sopaGrid');
+  container.style.gridTemplateColumns = `repeat(${GRID_SIZE},36px)`;
+  container.innerHTML = '';
+  for (let r=0;r<GRID_SIZE;r++) for (let c=0;c<GRID_SIZE;c++) {
+    const cell = document.createElement('div');
+    cell.className = 'sopa-cell';
+    cell.textContent = sopaGrid[r][c];
+    cell.dataset.r = r; cell.dataset.c = c;
+    container.appendChild(cell);
+  }
+
+  // words list
+  const wordsEl = document.getElementById('sopaWords');
+  wordsEl.innerHTML = WORDS.map(w=>`<span class="word-chip" data-word="${w}">${w}</span>`).join('');
+
+  // drag-select logic
+  let isDragging = false, selected = [], startCell = null;
+
+  container.addEventListener('mousedown', e => {
+    const cell = e.target.closest('.sopa-cell');
+    if (!cell) return;
+    isDragging = true; startCell = cell;
+    clearSelection();
+    cell.classList.add('selected');
+    selected = [cell];
+  });
+
+  container.addEventListener('mousemove', e => {
+    if (!isDragging || !startCell) return;
+    const cell = e.target.closest('.sopa-cell');
+    if (!cell) return;
+    clearSelection();
+    // get cells in line
+    const r1=+startCell.dataset.r, c1=+startCell.dataset.c;
+    const r2=+cell.dataset.r, c2=+cell.dataset.c;
+    const cells = getCellsInLine(r1,c1,r2,c2,container);
+    cells.forEach(cl => cl.classList.add('selected'));
+    selected = cells;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    checkWord(selected, placed);
+    clearSelection();
+    selected = [];
+  });
+
+  // touch support
+  container.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    const cell = document.elementFromPoint(t.clientX,t.clientY)?.closest?.('.sopa-cell');
+    if (cell) { isDragging=true; startCell=cell; clearSelection(); cell.classList.add('selected'); selected=[cell]; }
+    e.preventDefault();
+  }, {passive:false});
+  container.addEventListener('touchmove', e => {
+    if (!isDragging||!startCell) return;
+    const t = e.touches[0];
+    const cell = document.elementFromPoint(t.clientX,t.clientY)?.closest?.('.sopa-cell');
+    if (!cell) return;
+    clearSelection();
+    const r1=+startCell.dataset.r,c1=+startCell.dataset.c;
+    const r2=+cell.dataset.r,c2=+cell.dataset.c;
+    const cells=getCellsInLine(r1,c1,r2,c2,container);
+    cells.forEach(cl=>cl.classList.add('selected'));
+    selected=cells;
+    e.preventDefault();
+  }, {passive:false});
+  container.addEventListener('touchend', () => {
+    if (!isDragging) return; isDragging=false;
+    checkWord(selected, placed); clearSelection(); selected=[];
+  });
+
+  function clearSelection() { container.querySelectorAll('.selected:not(.found)').forEach(c=>c.classList.remove('selected')); }
+
+  function getCellsInLine(r1,c1,r2,c2,container) {
+    let dr=0,dc=0;
+    if (r2>r1) dr=1; else if (r2<r1) dr=-1;
+    if (c2>c1) dc=1; else if (c2<c1) dc=-1;
+    const cells=[];
+    let r=r1,c=c1;
+    for (let i=0;i<GRID_SIZE;i++) {
+      const el = container.querySelector(`[data-r="${r}"][data-c="${c}"]`);
+      if (el) cells.push(el);
+      if (r===r2&&c===c2) break;
+      r+=dr; c+=dc;
+      if (r<0||r>=GRID_SIZE||c<0||c>=GRID_SIZE) break;
+    }
+    return cells;
+  }
+
+  function checkWord(cells, placed) {
+    const str = cells.map(c=>c.textContent).join('');
+    const rev = str.split('').reverse().join('');
+    for (const p of placed) {
+      if ((str===p.word||rev===p.word) && !sopaFound.has(p.word)) {
+        sopaFound.add(p.word);
+        cells.forEach(c=>{ c.classList.remove('selected'); c.classList.add('found'); });
+        const chip = document.querySelector(`.word-chip[data-word="${p.word}"]`);
+        if (chip) chip.classList.add('found');
+        updateSopaStatus();
+        return;
+      }
+    }
+  }
+}
+
+function updateSopaStatus() {
+  const st = document.getElementById('sopaStatus');
+  if (sopaFound.size === WORDS.length) st.textContent = '🎉 ¡Encontraste todas las palabras!';
+  else st.textContent = `${sopaFound.size} / ${WORDS.length} palabras encontradas`;
+}
+
+document.getElementById('sopaReset').addEventListener('click', () => { buildSopa(); updateSopaStatus(); });
+
+/* ══════════════════════════════════
+   MATCHING / JUNTAR BLOQUES
+══════════════════════════════════ */
+const matchData = [
+  { concept:'Habitus', def:'Sistema de disposiciones duraderas adquiridas socialmente que moldea percepciones y acciones.' },
+  { concept:'Campo', def:'Red de relaciones objetivas entre posiciones definidas por la distribución de capitales.' },
+  { concept:'Capital simbólico', def:'Forma de poder basada en el reconocimiento y el prestigio que otorgan los demás agentes.' },
+  { concept:'Práctica reflexiva', def:'Proceso de objetivar el propio habitus para actuar con mayor conciencia sobre las estructuras.' },
+  { concept:'Posición', def:'Lugar que ocupa un agente en el campo, determinado por su volumen y composición de capital.' },
+];
+
+let matchSelected = { left: null, right: null };
+let matchCorrect = 0;
+
+function buildMatch() {
+  matchCorrect = 0; matchSelected = { left: null, right: null };
+  document.getElementById('matchScore').textContent = '0';
+  const leftEl = document.getElementById('matchLeft');
+  const rightEl = document.getElementById('matchRight');
+  const shuffledDefs = [...matchData].sort(() => Math.random()-.5);
+
+  leftEl.innerHTML = matchData.map((m,i)=>`<div class="match-item" data-id="${i}" data-side="left">${m.concept}</div>`).join('');
+  rightEl.innerHTML = shuffledDefs.map((m,i)=>`<div class="match-item" data-id="${matchData.indexOf(m)}" data-side="right">${m.def}</div>`).join('');
+
+  document.querySelectorAll('.match-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const side = item.dataset.side;
+      const id = +item.dataset.id;
+      if (item.classList.contains('matched')) return;
+
+      // deselect same side
+      document.querySelectorAll(`.match-item[data-side="${side}"]:not(.matched)`).forEach(el=>el.classList.remove('selected'));
+      item.classList.add('selected');
+      matchSelected[side] = id;
+
+      if (matchSelected.left !== null && matchSelected.right !== null) {
+        const lItem = document.querySelector(`.match-item[data-side="left"][data-id="${matchSelected.left}"]`);
+        const rItem = document.querySelector(`.match-item[data-side="right"][data-id="${matchSelected.right}"]`);
+        if (matchSelected.left === matchSelected.right) {
+          lItem?.classList.add('matched'); rItem?.classList.add('matched');
+          matchCorrect++;
+          document.getElementById('matchScore').textContent = matchCorrect;
+        } else {
+          lItem?.classList.add('error'); rItem?.classList.add('error');
+          setTimeout(() => { lItem?.classList.remove('error','selected'); rItem?.classList.remove('error','selected'); }, 600);
+        }
+        matchSelected = { left: null, right: null };
+      }
+    });
+  });
+}
+
+document.getElementById('matchReset').addEventListener('click', buildMatch);
+
+/* ══════════════════════════════════
+   FILL IN BLANKS
+══════════════════════════════════ */
+const fillData = [
+  { before:'El ', blank:'habitus', after:' es un sistema de disposiciones duraderas que moldea la percepción y la acción de los agentes sociales.' },
+  { before:'El ', blank:'campo', after:' social es una red de relaciones objetivas entre posiciones definidas por la distribución de capitales.' },
+  { before:'El capital ', blank:'simbólico', after:' se basa en el reconocimiento y el prestigio que los demás agentes otorgan.' },
+  { before:'La práctica social reflexiva requiere ', blank:'objetivar', after:' el propio habitus para actuar con mayor conciencia.' },
+  { before:'En el caso "Barrio Histórico", el conflicto revela quién tiene el capital ', blank:'dominante', after:' en ese campo comunitario.' },
+];
+
+const fillContainer = document.getElementById('fillContainer');
+fillData.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'fill-sentence';
+  div.innerHTML = `<span>${item.before}</span><input class="fill-blank" data-answer="${item.blank.toLowerCase()}" placeholder="___" type="text" autocomplete="off"><span>${item.after}</span>`;
+  fillContainer.appendChild(div);
+});
+
+const fillActions = document.createElement('div');
+fillActions.className = 'fill-actions';
+fillActions.innerHTML = `<button class="fill-btn primary" id="fillCheck">Verificar respuestas</button><button class="fill-btn secondary" id="fillClear">Limpiar</button>`;
+fillContainer.appendChild(fillActions);
+
+const fillResult = document.createElement('div');
+fillResult.className = 'fill-result';
+fillContainer.appendChild(fillResult);
+
+document.getElementById('fillCheck').addEventListener('click', () => {
+  const inputs = fillContainer.querySelectorAll('.fill-blank');
+  let correct = 0;
+  inputs.forEach(inp => {
+    const val = inp.value.trim().toLowerCase();
+    const ans = inp.dataset.answer.toLowerCase();
+    inp.classList.remove('correct','wrong');
+    if (val === ans) { inp.classList.add('correct'); correct++; }
+    else if (val) { inp.classList.add('wrong'); }
+  });
+  fillResult.className = 'fill-result show ' + (correct === inputs.length ? 'good' : 'partial');
+  fillResult.textContent = correct === inputs.length
+    ? `✅ ¡Perfecto! Las ${correct} respuestas son correctas.`
+    : `${correct} de ${inputs.length} correctas. Revisa las marcadas en rojo.`;
+});
+
+document.getElementById('fillClear').addEventListener('click', () => {
+  fillContainer.querySelectorAll('.fill-blank').forEach(inp => { inp.value=''; inp.classList.remove('correct','wrong'); });
+  fillResult.className = 'fill-result';
+});
+
+/* ══════════════════════════════════
+   ACTIVITY TABS
+══════════════════════════════════ */
+document.querySelectorAll('.act-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.act-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.act-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('act-' + tab.dataset.act).classList.add('active');
+  });
+});
+
+/* ══════════════════════════════════
+   COMPLETION
+══════════════════════════════════ */
+function showCompletion() {
+  document.getElementById('completionBanner').style.display = 'block';
+  document.getElementById('completionBanner').scrollIntoView({behavior:'smooth'});
+  // mark all done
+  document.querySelectorAll('.step-tab').forEach(t => { done.add(+t.dataset.step); t.classList.add('done'); });
+  document.getElementById('progressFill').style.width = '100%';
+}
+
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+buildSopa();
+buildMatch();
+</script>
+</body>
+</html>
