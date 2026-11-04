@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Portafolio DI · David Salgado</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lato:wght@300;400;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap">
 
 <style>
 /* ═══════════════════════════════════════
@@ -41,8 +41,9 @@
   --brand-subtle: var(--blue-50);
 
   /* Typography */
-  --ff-ui:      'Inter', system-ui, sans-serif;
-  --ff-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --ff-ui:      'Lato', system-ui, sans-serif;
+  --ff-display: 'Playfair Display', Georgia, serif;
+  --ff-mono:    'DM Mono', 'Courier New', monospace;
 
   /* Spacing (8-pt grid) */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px;
@@ -140,10 +141,10 @@ a { color: var(--brand); text-underline-offset: 3px; }
   color: var(--fg-primary);
 }
 .t-label {
-  font-family: var(--ff-ui);
+  font-family: var(--ff-mono);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .07em;
+  font-weight: 500;
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--fg-tertiary);
 }
@@ -329,8 +330,23 @@ nav.tabs-bar {
 /* ═══════════════════════════════════════
    CURSO CARD — full design mockup feel
    ═══════════════════════════════════════ */
-.cursos-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: var(--s5); }
-@media (max-width: 820px) { .cursos-list { grid-template-columns: 1fr; } }
+.cursos-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--s5); }
+@media (max-width: 820px) { .cursos-list { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); } }
+
+/* Show only the cover of each course card */
+.curso-body, .curso-footer { display: none; }
+
+/* Note below the grid */
+.cursos-nota {
+  margin-top: var(--s5);
+  text-align: center;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
 
 .curso-card {
   background: var(--bg-surface);
@@ -857,37 +873,75 @@ footer .t-caption { max-width: none; }
   overflow: hidden;
 }
 .desarrollo-item {
-  display: flex;
-  align-items: center;
-  padding: var(--s4) var(--s6);
   border-bottom: 1px solid var(--border);
   background: var(--bg-surface);
-  transition: background .12s;
 }
 .desarrollo-item:last-child { border-bottom: none; }
-.desarrollo-item:hover { background: var(--bg-raised); }
+.desarrollo-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s4) var(--s6);
+  cursor: pointer;
+  transition: background .12s;
+  user-select: none;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+}
+.desarrollo-trigger:hover { background: var(--bg-raised); }
 .desarrollo-num {
+  font-family: var(--ff-mono);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--fg-tertiary);
   font-variant-numeric: tabular-nums;
   width: 24px;
   flex-shrink: 0;
 }
-.desarrollo-link {
+.desarrollo-name {
   font-size: 14px;
   font-weight: 600;
-  color: var(--brand);
-  text-decoration: none;
-  text-underline-offset: 3px;
+  color: var(--fg-primary);
   flex: 1;
 }
-.desarrollo-link:hover { text-decoration: underline; }
-.desarrollo-arrow {
-  font-size: 12px;
+.desarrollo-caret {
+  font-size: 11px;
   color: var(--fg-tertiary);
   flex-shrink: 0;
+  transition: transform .2s;
 }
+.desarrollo-item.open .desarrollo-caret { transform: rotate(90deg); }
+.desarrollo-body {
+  display: none;
+  padding: 0 var(--s6) var(--s5) calc(var(--s6) + 24px + var(--s3));
+}
+.desarrollo-item.open .desarrollo-body { display: block; }
+.desarrollo-desc {
+  font-size: 13px;
+  color: var(--fg-secondary);
+  line-height: 1.65;
+  max-width: 60ch;
+  margin-bottom: var(--s3);
+}
+.desarrollo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--brand);
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid var(--brand);
+  border-radius: var(--r2);
+  transition: background .12s;
+}
+.desarrollo-link:hover { background: var(--brand-subtle); }
 
 /* ═══════════════════════════════════════
    PRESENTATIONS
@@ -901,9 +955,11 @@ footer .t-caption { max-width: none; }
   padding-bottom: var(--s3);
 }
 .pres-tab {
-  font-family: var(--ff-ui);
-  font-size: 13px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
   font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
   padding: var(--s2) var(--s4);
   border: 1px solid var(--border);
   border-radius: var(--r3);
@@ -1126,7 +1182,7 @@ footer .t-caption { max-width: none; }
       </div>
     </div>
     <div class="tl-item">
-      <div class="tl-date"><span class="t-label">2019 – 2025</span></div>
+      <div class="tl-date"><span class="t-label">2023 – 2025</span></div>
       <div class="tl-content">
         <div class="tl-title">Facilitador de Formación · ILCE / UNICEF México</div>
         <div class="tl-org">Estándares internacionales — NNA en contextos de vulnerabilidad</div>
@@ -1162,7 +1218,7 @@ footer .t-caption { max-width: none; }
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3);">
       <div class="t-label" style="margin-bottom:var(--s1)">Organización</div>
-      <img src="WhatsApp Image 2025-08-10 at 16.40.34 (2)" alt="Sintropía Social" style="max-height:56px;width:auto;max-width:200px;object-fit:contain;filter:var(--logo-filter);">
+      <img src="WhatsApp%20Image%202025-08-10%20at%2016.40.34%20(2).jpeg" alt="Sintropía Social" style="max-height:56px;width:auto;max-width:200px;object-fit:contain;filter:var(--logo-filter);" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><span style="display:none;font-size:13px;font-weight:600;color:var(--fg-primary);">Sintropía Social</span>
     </div>
   </div>
 </div>
@@ -1177,6 +1233,7 @@ footer .t-caption { max-width: none; }
   </div>
 
   <div class="cursos-list" id="cursos-list"></div>
+  <p class="cursos-nota">Solo son algunas muestras</p>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -1190,9 +1247,9 @@ footer .t-caption { max-width: none; }
 
   <!-- Presentation selector tabs -->
   <div class="pres-selector" id="pres-selector">
-    <button class="pres-tab active" data-pres="p1">🗺 Mapa de Ruta</button>
-    <button class="pres-tab" data-pres="p2">📊 Infografía Modular</button>
-    <button class="pres-tab" data-pres="p3">🎭 Escenario Situado</button>
+    <button class="pres-tab active" data-pres="p1">Mapa de Ruta</button>
+    <button class="pres-tab" data-pres="p2">Infografía Modular</button>
+    <button class="pres-tab" data-pres="p3">Escenario Situado</button>
   </div>
 
   <!-- Presentation viewer -->
@@ -1277,25 +1334,53 @@ footer .t-caption { max-width: none; }
   </div>
 
   <div class="desarrollos-list">
+
     <div class="desarrollo-item">
-      <div class="desarrollo-num">01</div>
-      <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/index.html" target="_blank" rel="noopener">Repositorio bibliográfico</a>
-      <span class="desarrollo-arrow">↗</span>
+      <button class="desarrollo-trigger" aria-expanded="false">
+        <span class="desarrollo-num">01</span>
+        <span class="desarrollo-name">Repositorio bibliográfico</span>
+        <span class="desarrollo-caret">▶</span>
+      </button>
+      <div class="desarrollo-body">
+        <p class="desarrollo-desc">Buscador de citas en PDF — sube un libro, reporte o tesis, busca una palabra clave y el sistema propone sus citas (con página exacta) al Repositorio Bibliográfico de Sintropía Social. Cuenta con 836+ referencias académicas con acceso por niveles según el perfil del usuario.</p>
+        <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/index.html" target="_blank" rel="noopener">Abrir herramienta ↗</a>
+      </div>
     </div>
+
     <div class="desarrollo-item">
-      <div class="desarrollo-num">02</div>
-      <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/panel/" target="_blank" rel="noopener">Panel de muestras</a>
-      <span class="desarrollo-arrow">↗</span>
+      <button class="desarrollo-trigger" aria-expanded="false">
+        <span class="desarrollo-num">02</span>
+        <span class="desarrollo-name">Panel de muestras</span>
+        <span class="desarrollo-caret">▶</span>
+      </button>
+      <div class="desarrollo-body">
+        <p class="desarrollo-desc">Once experiencias gratuitas — una por cada público — que entregan un resultado real en minutos, sin costo y sin compromiso. Agrupadas por: Empresas, Organizaciones (OSC / gobierno / fundaciones), Centro Escolar y Personas. Cada muestra demuestra en vivo lo que Sintropía Social puede hacer para ese perfil.</p>
+        <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/panel/" target="_blank" rel="noopener">Abrir herramienta ↗</a>
+      </div>
     </div>
+
     <div class="desarrollo-item">
-      <div class="desarrollo-num">03</div>
-      <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/tasklive/" target="_blank" rel="noopener">Tasklive</a>
-      <span class="desarrollo-arrow">↗</span>
+      <button class="desarrollo-trigger" aria-expanded="false">
+        <span class="desarrollo-num">03</span>
+        <span class="desarrollo-name">Tasklive</span>
+        <span class="desarrollo-caret">▶</span>
+      </button>
+      <div class="desarrollo-body">
+        <p class="desarrollo-desc">Herramienta para trabajo colaborativo en pequeños grupos durante videollamadas. Los participantes trabajan en tiempo real sobre enlaces compartidos de Google Drive; el facilitador distribuye copias del documento a cada equipo para que editen en paralelo. Uso abierto para cualquier contexto formativo o comercial.</p>
+        <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/tasklive/" target="_blank" rel="noopener">Abrir herramienta ↗</a>
+      </div>
     </div>
+
     <div class="desarrollo-item">
-      <div class="desarrollo-num">04</div>
-      <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/diario_campo/" target="_blank" rel="noopener">Diario de campo</a>
-      <span class="desarrollo-arrow">↗</span>
+      <button class="desarrollo-trigger" aria-expanded="false">
+        <span class="desarrollo-num">04</span>
+        <span class="desarrollo-name">Diario de campo</span>
+        <span class="desarrollo-caret">▶</span>
+      </button>
+      <div class="desarrollo-body">
+        <p class="desarrollo-desc">Herramienta digital para la documentación sistemática de prácticas sociales en campo. Facilita el registro estructurado de observaciones, notas etnográficas y evidencias durante procesos de intervención comunitaria, investigación-acción y educación popular.</p>
+        <a class="desarrollo-link" href="https://sintropiassociales-del.github.io/diario_campo/" target="_blank" rel="noopener">Abrir herramienta ↗</a>
+      </div>
     </div>
   </div>
 </div>
@@ -1314,7 +1399,7 @@ footer .t-caption { max-width: none; }
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <footer class="frame">
   <span class="t-caption">David Salgado López · Diseño Instruccional · 2026</span>
-  <span class="t-caption">dsalgadolpz470@gmail.com · dsalgado@sintropiasocial.com</span>
+  <span class="t-caption">d.salgado.lpz@gmail.com</span>
 </footer>
 
 <script>
@@ -2022,6 +2107,24 @@ overlay.addEventListener('click', e => {
 // Close on Escape
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
+});
+
+// ── DESARROLLOS: expandable rows ──────────────────────────────────
+document.querySelectorAll('.desarrollo-trigger').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.desarrollo-item');
+    const isOpen = item.classList.contains('open');
+    // Close all first
+    document.querySelectorAll('.desarrollo-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.desarrollo-trigger').setAttribute('aria-expanded', 'false');
+    });
+    // Open clicked if it was closed
+    if (!isOpen) {
+      item.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
 });
 </script>
 
