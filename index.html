@@ -846,6 +846,12 @@ footer {
   border-top: 1px solid var(--border);
   background: var(--bg-surface);
   padding-block: var(--s6);
+  padding-left: max(var(--s4), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--s4), env(safe-area-inset-right, 0px));
+}
+.footer-inner {
+  max-width: 820px;
+  margin-inline: auto;
   display: flex;
   gap: var(--s4);
   align-items: center;
@@ -1218,9 +1224,9 @@ footer .t-caption { max-width: none; }
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3);">
       <div class="t-label" style="margin-bottom:var(--s2)">Organización</div>
-      <div style="background:var(--bg-canvas);border:1px solid var(--border);border-radius:var(--r3);padding:var(--s4) var(--s5);display:inline-flex;align-items:center;justify-content:center;min-width:180px;">
+      <div style="background:var(--bg-canvas);border:1px solid var(--border);border-radius:var(--r3);padding:var(--s5) var(--s6);display:inline-flex;align-items:center;justify-content:center;min-width:220px;">
         <img src="WhatsApp%20Image%202025-08-10%20at%2016.40.34%20(2).jpeg" alt="Sintropía Social"
-          style="height:110px;width:auto;max-width:280px;object-fit:contain;mix-blend-mode:multiply;filter:var(--logo-filter);"
+          style="height:150px;width:auto;max-width:320px;object-fit:contain;mix-blend-mode:multiply;filter:var(--logo-filter);"
           onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
         <span style="display:none;font-size:14px;font-weight:700;color:var(--fg-primary);font-family:var(--ff-display);">Sintropía Social</span>
       </div>
@@ -1402,9 +1408,11 @@ footer .t-caption { max-width: none; }
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <!--  FOOTER                                                        -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
-<footer class="frame">
-  <span class="t-caption">David Salgado López · Diseño Instruccional · 2026</span>
-  <span class="t-caption">d.salgado.lpz@gmail.com</span>
+<footer>
+  <div class="footer-inner">
+    <span class="t-caption">David Salgado López · Diseño Instruccional · 2026</span>
+    <span class="t-caption">d.salgado.lpz@gmail.com</span>
+  </div>
 </footer>
 
 <script>
