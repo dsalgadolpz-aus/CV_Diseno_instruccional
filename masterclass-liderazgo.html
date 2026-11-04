@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Masterclass 04 · Liderazgo en organizaciones de impacto social</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg-canvas:#F8F9FB;--bg-surface:#fff;--bg-raised:#F1F2F5;--bg-hover:#E8EAEE;
+  --fg-primary:#0F1222;--fg-secondary:#484D63;--fg-tertiary:#8A8FA8;
+  --brand:#7C3AED;--brand-hover:#6D28D9;--brand-bg:#F5F3FF;
+  --amber:#D97706;--amber-bg:#FFFBEB;
+  --border:#D8DBE3;--border-strong:#B8BCC8;
+  --shadow-xs:0 1px 2px rgba(0,0,0,.06);--shadow-sm:0 2px 6px rgba(0,0,0,.08);--shadow-md:0 6px 20px rgba(0,0,0,.10);
+  --r2:6px;--r3:8px;--r4:12px;--r5:16px;--r6:24px;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:20px;--s6:24px;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg-canvas:#070912;--bg-surface:#0F1222;--bg-raised:#21253A;--bg-hover:#353A52;
+  --fg-primary:#F8F9FB;--fg-secondary:#B8BCC8;--fg-tertiary:#666B82;
+  --brand:#A78BFA;--brand-hover:#C4B5FD;--brand-bg:#1A0F2E;
+  --amber:#FCD34D;--amber-bg:#1C1700;
+  --border:#353A52;--border-strong:#484D63;color-scheme:dark;
+}}
+:root[data-theme="dark"]{--bg-canvas:#070912;--bg-surface:#0F1222;--bg-raised:#21253A;--bg-hover:#353A52;--fg-primary:#F8F9FB;--fg-secondary:#B8BCC8;--fg-tertiary:#666B82;--brand:#A78BFA;--brand-hover:#C4B5FD;--brand-bg:#1A0F2E;--amber:#FCD34D;--amber-bg:#1C1700;--border:#353A52;--border-strong:#484D63;color-scheme:dark;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-canvas);color:var(--fg-primary);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;}
+
+/* TOP BAR */
+.top-bar{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;box-shadow:var(--shadow-xs);}
+.top-bar-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:16px;padding:12px 0;}
+.back-btn{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--fg-secondary);text-decoration:none;padding:8px 12px;border:1px solid var(--border);border-radius:var(--r3);background:var(--bg-raised);transition:.15s;white-space:nowrap;}
+.back-btn:hover{color:var(--fg-primary);}
+.back-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.bar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.bar-module{font-size:12px;color:var(--fg-tertiary);white-space:nowrap;}
+
+/* STEP NAV */
+.step-nav{background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:49px;z-index:190;}
+.step-nav-inner{max-width:1000px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none;}
+.step-nav-inner::-webkit-scrollbar{display:none;}
+.step-tab{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:12px 20px;font-size:13px;font-weight:500;color:var(--fg-secondary);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s;white-space:nowrap;}
+.step-tab.active{color:var(--brand);border-bottom-color:var(--brand);}
+.step-tab:hover:not(.active){color:var(--fg-primary);}
+.step-num{width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;display:grid;place-items:center;background:var(--bg-raised);color:var(--fg-tertiary);border:1px solid var(--border);flex-shrink:0;}
+.step-tab.active .step-num{background:var(--brand);color:#fff;border-color:var(--brand);}
+.step-tab.done .step-num{background:#059669;color:#fff;border-color:#059669;}
+.progress-bar{height:3px;background:var(--border);}
+.progress-fill{height:100%;background:var(--brand);transition:width .4s ease;}
+
+/* PANELS */
+.step-area{position:relative;overflow:hidden;}
+.step-panel{display:none;animation:slideIn .35s cubic-bezier(.4,0,.2,1) both;}
+.step-panel.active{display:block;}
+.step-panel.exit-left{animation:slideOutLeft .3s ease both;}
+.step-panel.exit-right{animation:slideOutRight .3s ease both;}
+.step-panel.enter-right{animation:slideInRight .35s ease both;}
+.step-panel.enter-left{animation:slideInLeft .35s ease both;}
+@keyframes slideIn{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+@keyframes slideOutLeft{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-48px)}}
+@keyframes slideOutRight{from{opacity:1;transform:none}to{opacity:0;transform:translateX(48px)}}
+.content-wrap{max-width:1000px;margin:0 auto;padding:32px 0 64px;}
+
+/* STEP HEADER */
+.step-header{margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.step-type-label{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 10px;border-radius:var(--r6);margin-bottom:12px;}
+.lbl-lectura{background:#EEF3FF;color:#1D47A3;}
+.lbl-video{background:#F5F3FF;color:#5B21B6;}
+.lbl-actividad{background:#FEF3C7;color:#92400E;}
+.step-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-.01em;line-height:1.2;text-wrap:balance;}
+.step-meta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px;}
+.step-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--fg-tertiary);border:1px solid var(--border);border-radius:var(--r2);padding:3px 8px;background:var(--bg-raised);}
+
+/* LECTURA */
+.apa-block{background:var(--bg-surface);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:var(--r3);padding:16px 20px;margin-bottom:28px;box-shadow:var(--shadow-xs);}
+.apa-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-tertiary);margin-bottom:12px;}
+.apa-ref{font-size:14px;line-height:1.65;color:var(--fg-secondary);}
+.apa-ref em{font-style:italic;}
+.reading-fragment{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r4);padding:28px 32px;box-shadow:var(--shadow-sm);margin-bottom:24px;line-height:1.9;font-size:15px;}
+.reading-fragment h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;}
+.reading-fragment p{color:var(--fg-secondary);margin-bottom:16px;}
+.reading-fragment p:last-child{margin-bottom:0;}
+.reading-fragment strong{color:var(--fg-primary);}
+.marginal{background:var(--brand-bg);border-left:3px solid var(--brand);padding:12px 16px;border-radius:0 var(--r3) var(--r3) 0;font-size:13px;color:var(--fg-secondary);margin:16px 0;font-style:italic;}
+
+/* GUIA CARD */
+.guia-card{background:var(--bg-raised);border:1px solid var(--border);border-radius:var(--r4);padding:20px 24px;margin-top:24px;}
+.guia-title{font-size:14px;font-weight:700;margin-bottom:12px;}
+.guia-items{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.guia-items li{display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--fg-secondary);line-height:1.5;}
+.guia-items li::before{content:'→';color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px;}
+
+/* PRESENTACIÓN CANVA */
+.canva-placeholder{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#2E1065,#7C3AED);border-radius:var(--r5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;}
+.canva-placeholder-icon{font-size:48px;}
+.canva-placeholder-text{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:rgba(255,255,255,.85);text-align:center;}
+.canva-placeholder-sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;}
+
+/* ACTIVIDAD — AUTODIAGNÓSTICO */
+.diag-wrap{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r5);box-shadow:var(--shadow-md);overflow:hidden;margin-bottom:28px;}
+.diag-header{background:linear-gradient(135deg,#2E1065,#7C3AED);padding:20px 24px;color:#fff;}
+.diag-header-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;}
+.diag-header-sub{font-size:12px;opacity:.7;margin-top:4px;}
+.diag-body{padding:24px;}
+.diag-question{margin-bottom:28px;}
+.diag-q-label{font-size:13px;font-weight:700;color:var(--fg-primary);margin-bottom:12px;line-height:1.4;}
+.diag-q-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--brand-bg);color:var(--brand);font-size:11px;font-weight:800;margin-right:8px;flex-shrink:0;vertical-align:middle;}
+.diag-options{display:flex;flex-direction:column;gap:8px;}
+.diag-opt{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r3);cursor:pointer;transition:.15s;font-size:13px;color:var(--fg-secondary);line-height:1.4;user-select:none;}
+.diag-opt:hover{border-color:var(--brand);background:var(--brand-bg);}
+.diag-opt.selected{border-color:var(--brand);background:var(--brand-bg);color:var(--fg-primary);}
+.diag-opt input{accent-color:var(--brand);flex-shrink:0;margin-top:2px;}
+.diag-actions{display:flex;gap:12px;margin-top:8px;}
+.diag-btn{padding:10px 20px;border-radius:var(--r3);font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--bg-raised);color:var(--fg-secondary);transition:.15s;}
+.diag-btn.primary{background:var(--brand);color:#fff;border-color:var(--brand);}
+.diag-btn.primary:hover{background:var(--brand-hover);}
+.diag-btn:hover{color:var(--fg-primary);}
+.diag-result{display:none;margin-top:20px;padding:20px 24px;background:var(--brand-bg);border:1px solid var(--brand);border-radius:var(--r4);}
+.diag-result.show{display:block;}
+.diag-result-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+.diag-result-desc{font-size:14px;color:var(--fg-secondary);line-height:1.75;}
+.diag-result-ajuste{margin-top:14px;padding:12px 16px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r3);font-size:13px;color:var(--fg-secondary);}
+.diag-result-ajuste strong{color:var(--fg-primary);}
+
+/* TALLER */
+.taller-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r4);padding:24px 28px;margin-bottom:20px;box-shadow:var(--shadow-sm);}
+.taller-card h3{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin-bottom:12px;}
+.taller-textarea{width:100%;min-height:100px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r3);font-size:14px;font-family:inherit;color:var(--fg-primary);background:var(--bg-raised);resize:vertical;transition:border-color .15s;line-height:1.6;}
+.taller-textarea:focus{outline:none;border-color:var(--brand);}
+.taller-label{font-size:12px;font-weight:600;color:var(--fg-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:block;}
+.taller-btn{margin-top:12px;padding:10px 20px;border-radius:var(--r3);font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--brand);background:var(--brand);color:#fff;transition:.15s;}
+.taller-btn:hover{background:var(--brand-hover);}
+.taller-saved{display:none;margin-top:10px;font-size:13px;color:#059669;font-weight:500;}
+.taller-saved.show{display:block;}
+
+/* NAV */
+.nav-buttons{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:28px;border-top:1px solid var(--border);}
+.nav-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;font-size:14px;font-weight:600;border:1.5px solid var(--border);border-radius:var(--r3);background:var(--bg-surface);color:var(--fg-secondary);cursor:pointer;transition:.15s;}
+.nav-btn:hover{color:var(--fg-primary);border-color:var(--border-strong);}
+.nav-btn-next{background:var(--brand);color:#fff;border-color:var(--brand);}
+.nav-btn-next:hover{background:var(--brand-hover);color:#fff;}
+.nav-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* COMPLETION */
+.completion-banner{margin-top:48px;background:linear-gradient(135deg,#2E1065,#7C3AED);border-radius:var(--r5);padding:48px 32px;text-align:center;color:#fff;}
+.completion-icon{font-size:48px;margin-bottom:16px;}
+.completion-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:12px;}
+.completion-desc{font-size:14px;opacity:.8;max-width:480px;margin:0 auto 24px;line-height:1.6;}
+.completion-link{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:#fff;color:#2E1065;border-radius:var(--r3);font-size:14px;font-weight:700;text-decoration:none;}
+.completion-link:hover{opacity:.9;}
+
+@media(max-width:600px){.nav-buttons{flex-direction:column;}.reading-fragment{padding:20px 16px;}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <a href="index.html" class="back-btn"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg>Portafolio</a>
+    <span class="bar-title">Liderazgo en organizaciones de impacto social</span>
+    <span class="bar-module">Masterclass 04</span>
+  </div>
+</div>
+
+<div class="step-nav">
+  <div class="step-nav-inner" id="stepTabs">
+    <button class="step-tab active" data-step="0"><span class="step-num">1</span> Lectura</button>
+    <button class="step-tab" data-step="1"><span class="step-num">2</span> Presentación</button>
+    <button class="step-tab" data-step="2"><span class="step-num">3</span> Autodiagnóstico</button>
+    <button class="step-tab" data-step="3"><span class="step-num">4</span> Taller 05</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:25%"></div></div>
+</div>
+
+<div class="step-area">
+
+  <!-- ═══ STEP 1: LECTURA ═══ -->
+  <div class="step-panel active" id="step-0">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-lectura">📖 Lectura guiada</div>
+        <h1 class="step-title">Liderazgo en organizaciones de impacto social: más allá del modelo empresarial</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ 35 min</span>
+          <span class="step-chip">📄 Burns · Greenleaf · Heifetz</span>
+          <span class="step-chip">📌 Masterclass 04</span>
+        </div>
+      </div>
+
+      <div class="apa-block">
+        <div class="apa-label">Referencias APA</div>
+        <div class="apa-ref">
+          Burns, J. M. (1978). <em>Leadership</em>. Harper & Row.<br>
+          Greenleaf, R. K. (1977). <em>Servant leadership: A journey into the nature of legitimate power and greatness</em>. Paulist Press.<br>
+          Heifetz, R. A., Grashow, A., &amp; Linsky, M. (2009). <em>The practice of adaptive leadership: Tools and tactics for changing your organization and the world</em>. Harvard Business Press.<br>
+          Pearce, C. L., &amp; Conger, J. A. (Eds.). (2003). <em>Shared leadership: Reframing the hows and whys of leadership</em>. SAGE Publications.
+        </div>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>1. El liderazgo en contextos de misión social: una categoría propia</h3>
+        <p>Las organizaciones de impacto social —OSC, fundaciones, cooperativas, colectivos comunitarios— operan bajo una lógica que el modelo empresarial no captura del todo. El liderazgo en estas organizaciones articula simultáneamente tres tensiones que rara vez coexisten en la empresa privada: la <strong>misión como brújula</strong> (el propósito justifica la existencia y regula las decisiones), la <strong>escasez como condición estructural</strong> (no como coyuntura temporal), y la <strong>comunidad como stakeholder primario</strong> (no secundario).</p>
+        <div class="marginal">"El liderazgo transformacional eleva a los seguidores de preocupaciones más bajas a más altas; los motiva a ir más allá del interés propio hacia el bien colectivo." — Burns, 1978, p. 20</div>
+        <p>Burns (1978) distingue el <strong>liderazgo transaccional</strong> —basado en el intercambio, la recompensa y el cumplimiento de expectativas— del <strong>liderazgo transformacional</strong>, que opera sobre los valores, propósitos y motivaciones más profundas de las personas. En organizaciones de impacto social, el liderazgo transformacional es una necesidad estructural: sin él, la organización funciona como una burocracia de bajo presupuesto, no como un actor de cambio.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>2. Liderazgo de servicio: el líder como infraestructura del equipo</h3>
+        <p>Greenleaf (1977) propuso una inversión radical de la jerarquía convencional: el líder existe para servir al equipo, no al revés. En su modelo, la pregunta central no es "¿cómo hago que mi equipo logre mis objetivos?" sino "¿qué necesita mi equipo para lograr los objetivos de la misión?". Esta distinción tiene consecuencias prácticas concretas: el líder dedica tiempo a remover obstáculos, gestionar recursos y proteger la capacidad de trabajo del equipo.</p>
+        <div class="marginal">"El líder-servidor es servidor primero. Comienza con el sentimiento natural de querer servir. Luego la elección consciente lleva a quien aspira a liderar." — Greenleaf, 1977, p. 27</div>
+        <p>En organizaciones de impacto social con recursos limitados, este modelo tiene una ventaja adicional: reduce la dependencia del liderazgo en la figura individual. Cuando el líder construye capacidades en el equipo —en lugar de acumular información y decisiones—, la organización es más resiliente ante cambios de personal, una vulnerabilidad endémica en el sector.</p>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>3. Liderazgo adaptativo: el arte de distinguir problemas técnicos de desafíos adaptativos</h3>
+        <p>Heifetz, Grashow y Linsky (2009) introducen una distinción operativa fundamental. Los <strong>problemas técnicos</strong> tienen soluciones conocidas que pueden aplicarse con la experiencia y autoridad existentes en la organización: actualizar un sistema contable, diseñar un nuevo formato de reporte. Los <strong>desafíos adaptativos</strong>, en cambio, requieren que las personas cambien sus valores, creencias o comportamientos: transformar la cultura de rendición de cuentas, gestionar un conflicto de misión con un financiador, redefinir el modelo de intervención.</p>
+        <p>El error más común en organizaciones sociales es aplicar soluciones técnicas a desafíos adaptativos: contratar un consultor, comprar un software o rediseñar el organigrama cuando el problema real es que el equipo no confía en la dirección, o que la misión original ya no corresponde al contexto. Heifetz llama a esto <strong>"la trampa de la solución técnica"</strong>.</p>
+        <div class="marginal">"Los líderes son responsables de poner el trabajo adaptativo en la agenda y de crear las condiciones en que ese trabajo pueda hacerse." — Heifetz et al., 2009, p. 14</div>
+      </div>
+
+      <div class="reading-fragment">
+        <h3>4. Liderazgo distribuido: la organización como red de liderazgo</h3>
+        <p>Pearce y Conger (2003) argumentan que el liderazgo efectivo en organizaciones complejas no puede concentrarse en una sola persona o posición. El <strong>liderazgo distribuido</strong> o compartido reconoce que distintas personas en la organización ejercen liderazgo en distintos momentos, según sus competencias y el tipo de desafío. No es un modelo de democracia organizacional ni de consenso permanente: es una arquitectura donde la autoridad fluye según el problema.</p>
+        <p>Para organizaciones de impacto social en México y América Latina, este modelo resulta especialmente pertinente. Las figuras fundadoras frecuentemente acumulan poder de manera que crea dependencia institucional. Cuando la fundadora sale —por burnout, conflicto, o éxito personal—, la organización entra en crisis. Distribuir el liderazgo no es solo una buena práctica de gestión: es una estrategia de supervivencia institucional.</p>
+      </div>
+
+      <div class="guia-card">
+        <div class="guia-title">🧭 Guía de lectura reflexiva</div>
+        <ul class="guia-items">
+          <li>¿Qué estilo de liderazgo predomina en tu organización actualmente? ¿Se ajusta al tipo de desafíos que enfrentas?</li>
+          <li>¿Puedes identificar un desafío adaptativo que tu organización ha tratado como problema técnico?</li>
+          <li>¿Qué pasaría en tu organización si la persona líder saliera mañana? ¿Qué dice eso sobre el modelo de liderazgo?</li>
+          <li>¿Cómo distingues en tu práctica el rol de gestión del rol de liderazgo?</li>
+        </ul>
+      </div>
+
+      <div class="nav-buttons">
+        <span></span>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(1)">Presentación <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 2: PRESENTACIÓN CANVA ═══ -->
+  <div class="step-panel" id="step-1">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-video">🎞 Presentación</div>
+        <h1 class="step-title">Liderazgo en organizaciones de impacto social — Conceptos clave</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">📐 Canva · 5 diapositivas</span>
+          <span class="step-chip">⏱ ~8 min</span>
+          <span class="step-chip">📌 Masterclass 04</span>
+        </div>
+      </div>
+
+      <div class="canva-placeholder">
+        <div class="canva-placeholder-icon">🎯</div>
+        <div class="canva-placeholder-text">Presentación: Liderazgo en organizaciones de impacto social</div>
+        <div class="canva-placeholder-sub">Próximamente — Sintropía Social · Masterclass 04</div>
+      </div>
+
+      <div class="guia-card">
+        <div class="guia-title">💡 Mientras revisas la presentación</div>
+        <ul class="guia-items">
+          <li>Identifica cuál de los cuatro estilos de liderazgo describes más con tu práctica cotidiana.</li>
+          <li>Observa la distinción entre problemas técnicos y desafíos adaptativos — ¿la reconoces en tu organización?</li>
+          <li>En el Paso 3 usarás el autodiagnóstico para formular un ajuste concreto.</li>
+        </ul>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(0)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Lectura</button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(2)">Autodiagnóstico <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3: AUTODIAGNÓSTICO ═══ -->
+  <div class="step-panel" id="step-2">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-actividad">🧩 Actividad</div>
+        <h1 class="step-title">Autodiagnóstico de estilo de liderazgo</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ ~15 min</span>
+          <span class="step-chip">📋 8 preguntas</span>
+          <span class="step-chip">📌 Masterclass 04</span>
+        </div>
+      </div>
+
+      <div class="diag-wrap">
+        <div class="diag-header">
+          <div class="diag-header-title">¿Cuál es tu estilo predominante de liderazgo?</div>
+          <div class="diag-header-sub">Responde pensando en tu práctica real, no en cómo quisieras que fuera</div>
+        </div>
+        <div class="diag-body" id="diagBody">
+
+          <div class="diag-question" data-q="0">
+            <div class="diag-q-label"><span class="diag-q-num">1</span>Cuando tu equipo enfrenta un problema complejo, tu primer impulso es:</div>
+            <div class="diag-options">
+              <label class="diag-opt"><input type="radio" name="q0" value="T"> Dar instrucciones claras sobre cómo resolverlo</label>
+              <label class="diag-opt"><input type="radio" name="q0" value="TR"> Explicar por qué el problema importa y movilizar energía del equipo</label>
+              <label class="diag-opt"><input type="radio" name="q0" value="S"> Preguntar qué necesita el equipo para resolverlo</label>
+              <label class="diag-opt"><input type="radio" name="q0" value="D"> Identificar quién del equipo tiene más experiencia en este tipo de problema y delegarle</label>
+            </div>
+          </div>
+
+          <div class="diag-question" data-q="1">
+            <div class="diag-q-label"><span class="diag-q-num">2</span>Al tomar decisiones importantes, generalmente:</div>
+            <div class="diag-options">
+              <label class="diag-opt"><input type="radio" name="q1" value="T"> Evalúo los costos y beneficios y tomo la decisión más eficiente</label>
+              <label class="diag-opt"><input type="radio" name="q1" value="TR"> Consulto la decisión con la misión de la organización y los valores del equipo</label>
+              <label class="diag-opt"><input type="radio" name="q1" value="S"> Escucho primero a las personas más afectadas por la decisión</label>
+              <label class="diag-opt"><input type="radio" name="q1" value="D"> Convoco a las personas con más conocimiento del tema</label>
+            </div>
+          </div>
+
+          <div class="diag-question" data-q="2">
+            <div class="diag-q-label"><span class="diag-q-num">3</span>Cuando un miembro del equipo comete un error significativo:</div>
+            <div class="diag-options">
+              <label class="diag-opt"><input type="radio" name="q2" value="T"> Lo señalo claramente y establezco expectativas para que no se repita</label>
+              <label class="diag-opt"><input type="radio" name="q2" value="TR"> Lo enmarco como una oportunidad de aprendizaje para toda la organización</label>
+              <label class="diag-opt"><input type="radio" name="q2" value="S"> Pregunto qué necesitaba y no tuvo para evitarlo</label>
+              <label class="diag-opt"><input type="radio" name="q2" value="D"> Involucro al equipo en analizar qué salió mal y cómo corregirlo</label>
+            </div>
+          </div>
+
+          <div class="diag-question" data-q="3">
+            <div class="diag-q-label"><span class="diag-q-num">4</span>Tu organización depende demasiado de ti cuando:</div>
+            <div class="diag-options">
+              <label class="diag-opt"><input type="radio" name="q3" value="T"> Me preocupa poco — tengo el control necesario para que las cosas funcionen</label>
+              <label class="diag-opt"><input type="radio" name="q3" value="TR"> Me incomoda un poco — quisiera que el equipo compartiera más mi visión</label>
+              <label class="diag-opt"><input type="radio" name="q3" value="S"> Me preocupa mucho — estoy trabajando activamente en que el equipo sea más autónomo</label>
+              <label class="diag-opt"><input type="radio" name="q3" value="D"> Lo veo como un problema estructural que estoy distribuyendo deliberadamente</label>
+            </div>
+          </div>
+
+          <div class="diag-question" data-q="4">
+            <div class="diag-q-label"><span class="diag-q-num">5</span>Cuando describes el éxito de un proyecto exitoso:</div>
+            <div class="diag-options">
+              <label class="diag-opt"><input type="radio" name="q4" value="T"> Destaco que se cumplió en tiempo, presupuesto y resultados</label>
+              <label class="diag-opt"><input type="radio" name="q4" value="TR"> Hablo del impacto en la comunidad y cómo el equipo creció</label>
+              <label class="diag-opt"><input type="radio" name="q4" value="S"> Señalo cómo el equipo tuvo lo que necesitaba para trabajar bien</label>
+              <label class="diag-opt"><input type="radio" name="q4" value="D"> Menciono a las personas específicas que lo hicieron posible</label>
+            </div>
+          </div>
+
+          <div class="diag-question" data-q="5">
+            <div class="diag-q-label"><span class="diag-q-num">6</span>Frente a un conflicto interno en el equipo:</div>
+            <div class="diag-options">
+              <label class="diag-opt"><input type="radio" name="q5" value="T"> Intervengo para resolver el conflicto y retomar el trabajo</label>
+              <label class="diag-opt"><input type="radio" name="q5" value="TR"> Lo enmarco en términos de los valores compartidos de la organización</label>
+              <label class="diag-opt"><input type="radio" name="q5" value="S"> Escucho a todas las partes antes de intervenir</label>
+              <label class="diag-opt"><input type="radio" name="q5" value="D"> Facilito una conversación entre los involucrados sin imponer una solución</label>
+            </div>
+          </div>
+
+          <div class="diag-question" data-q="6">
+            <div class="diag-q-label"><span class="diag-q-num">7</span>Tu mayor preocupación como líder es:</div>
+            <div class="diag-options">
+              <label class="diag-opt"><input type="radio" name="q6" value="T"> Que las cosas no se hagan bien o a tiempo</label>
+              <label class="diag-opt"><input type="radio" name="q6" value="TR"> Que el equipo pierda de vista el propósito de lo que hacemos</label>
+              <label class="diag-opt"><input type="radio" name="q6" value="S"> Que el equipo no tenga las condiciones para trabajar bien</label>
+              <label class="diag-opt"><input type="radio" name="q6" value="D"> Que el liderazgo quede concentrado en pocas personas</label>
+            </div>
+          </div>
+
+          <div class="diag-question" data-q="7">
+            <div class="diag-q-label"><span class="diag-q-num">8</span>Cuando debes comunicar una decisión difícil al equipo:</div>
+            <div class="diag-options">
+              <label class="diag-opt"><input type="radio" name="q7" value="T"> La comunico de manera directa y explico la lógica</label>
+              <label class="diag-opt"><input type="radio" name="q7" value="TR"> Explico cómo la decisión sirve a la misión aunque sea dolorosa</label>
+              <label class="diag-opt"><input type="radio" name="q7" value="S"> Abro espacio para que el equipo exprese cómo les afecta</label>
+              <label class="diag-opt"><input type="radio" name="q7" value="D"> Involucro al equipo en pensar cómo implementarla</label>
+            </div>
+          </div>
+
+          <div class="diag-actions">
+            <button class="diag-btn primary" onclick="calcDiag()">Ver mi resultado</button>
+            <button class="diag-btn" onclick="resetDiag()">Reiniciar</button>
+          </div>
+
+          <div class="diag-result" id="diagResult">
+            <div class="diag-result-title" id="diagResultTitle"></div>
+            <div class="diag-result-desc" id="diagResultDesc"></div>
+            <div class="diag-result-ajuste" id="diagResultAjuste"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(1)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Presentación</button>
+        <button class="nav-btn nav-btn-next" onclick="goToStep(3)">Taller 05 <svg viewBox="0 0 16 16"><polyline points="6,4 10,8 6,12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 4: TALLER 05 ═══ -->
+  <div class="step-panel" id="step-3">
+    <div class="content-wrap">
+      <div class="step-header">
+        <div class="step-type-label lbl-actividad">✍️ Taller 05</div>
+        <h1 class="step-title">Formula tu ajuste de liderazgo</h1>
+        <div class="step-meta-row">
+          <span class="step-chip">⏱ ~20 min</span>
+          <span class="step-chip">📝 Reflexión individual</span>
+          <span class="step-chip">📌 Masterclass 04 + 05</span>
+        </div>
+      </div>
+
+      <p style="font-size:15px;color:var(--fg-secondary);margin-bottom:28px;line-height:1.75;">Este taller parte del diagnóstico del Paso 3. El objetivo es que salgas con <strong style="color:var(--fg-primary);">un ajuste concreto y comunicable</strong> para tu práctica de liderazgo. No un plan general — una sola cosa que puedas hacer diferente a partir de la siguiente semana.</p>
+
+      <div class="taller-card">
+        <h3>1. El patrón que reconozco en mi liderazgo</h3>
+        <label class="taller-label">¿Qué hace bien tu estilo actual? ¿Qué costo tiene para tu equipo u organización?</label>
+        <textarea class="taller-textarea" id="t1" placeholder="Escribe aquí tu reflexión..."></textarea>
+        <button class="taller-btn" onclick="saveTaller('t1','s1')">Guardar</button>
+        <div class="taller-saved" id="s1">✓ Guardado</div>
+      </div>
+
+      <div class="taller-card">
+        <h3>2. El desafío adaptativo que tengo pendiente</h3>
+        <label class="taller-label">¿Hay algo en tu organización que has intentado resolver con soluciones técnicas sin resultado? Descríbelo.</label>
+        <textarea class="taller-textarea" id="t2" placeholder="Describe el desafío..."></textarea>
+        <button class="taller-btn" onclick="saveTaller('t2','s2')">Guardar</button>
+        <div class="taller-saved" id="s2">✓ Guardado</div>
+      </div>
+
+      <div class="taller-card">
+        <h3>3. Mi ajuste concreto</h3>
+        <label class="taller-label">Formula una sola acción específica que harás diferente en las próximas dos semanas. Debe ser observable y comunicable a tu equipo.</label>
+        <textarea class="taller-textarea" id="t3" placeholder="A partir de la semana que viene, voy a..."></textarea>
+        <button class="taller-btn" onclick="saveTaller('t3','s3')">Guardar</button>
+        <div class="taller-saved" id="s3">✓ Guardado</div>
+      </div>
+
+      <div class="taller-card">
+        <h3>4. ¿Cómo sabrás que funcionó?</h3>
+        <label class="taller-label">¿Qué señal concreta — en el comportamiento de tu equipo o en los resultados — te indicará que el ajuste está teniendo efecto?</label>
+        <textarea class="taller-textarea" id="t4" placeholder="Sabré que funcionó cuando..."></textarea>
+        <button class="taller-btn" onclick="saveTaller('t4','s4')">Guardar</button>
+        <div class="taller-saved" id="s4">✓ Guardado</div>
+      </div>
+
+      <div class="completion-banner">
+        <div class="completion-icon">🏆</div>
+        <div class="completion-title">Masterclass 04 + Taller 05 completados</div>
+        <div class="completion-desc">Has identificado tu estilo predominante de liderazgo y formulado un ajuste concreto para tu práctica. El trabajo real empieza ahora.</div>
+        <a href="index.html" class="completion-link">← Volver al portafolio</a>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="goToStep(2)"><svg viewBox="0 0 16 16"><polyline points="10,4 6,8 10,12"/></svg> Autodiagnóstico</button>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /step-area -->
+
+<script>
+/* ── NAV ── */
+let currentStep = 0;
+const totalSteps = 4;
+
+function goToStep(n) {
+  const panels = document.querySelectorAll('.step-panel');
+  const tabs = document.querySelectorAll('.step-tab');
+  const prev = currentStep;
+  if (n === prev) return;
+  const dir = n > prev ? 'left' : 'right';
+
+  panels[prev].classList.add('exit-' + dir);
+  setTimeout(() => {
+    panels[prev].classList.remove('active','exit-' + dir);
+    panels[n].classList.add('active','enter-' + (dir === 'left' ? 'right' : 'left'));
+    setTimeout(() => panels[n].classList.remove('enter-right','enter-left'), 400);
+  }, 280);
+
+  tabs.forEach((t,i) => {
+    t.classList.remove('active','done');
+    if (i < n) t.classList.add('done');
+    if (i === n) t.classList.add('active');
+  });
+
+  document.getElementById('progressFill').style.width = ((n + 1) / totalSteps * 100) + '%';
+  currentStep = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.querySelectorAll('.step-tab').forEach(t =>
+  t.addEventListener('click', () => goToStep(+t.dataset.step))
+);
+
+/* ── AUTODIAGNÓSTICO ── */
+const estilos = {
+  T: {
+    title: '📊 Estilo predominante: Liderazgo Transaccional',
+    desc: 'Tu fortaleza está en la claridad, la eficiencia y el cumplimiento de objetivos. Tus equipos saben qué se espera de ellos y los procesos funcionan. El riesgo: en contextos de impacto social donde la motivación intrínseca es el motor principal, el liderazgo transaccional puede reducir el compromiso de largo plazo y tratar como problemas técnicos lo que son desafíos adaptativos.',
+    ajuste: '<strong>Ajuste sugerido:</strong> Elige una situación de conflicto o baja motivación en tu equipo y, antes de intervenir con una solución, pregúntate: ¿es esto un problema técnico o un desafío adaptativo? Si es lo segundo, dedica 30 minutos a escuchar a las personas involucradas antes de actuar.'
+  },
+  TR: {
+    title: '🔥 Estilo predominante: Liderazgo Transformacional',
+    desc: 'Tienes un fuerte sentido de propósito y capacidad para movilizar energía en torno a la misión. Tu equipo probablemente siente que el trabajo importa. El riesgo: el liderazgo transformacional puede tornarse carismático e individualista. Si la visión depende demasiado de tu persona, la organización es frágil. También puede subestimar las necesidades operativas del equipo.',
+    ajuste: '<strong>Ajuste sugerido:</strong> Identifica una capacidad de liderazgo que actualmente recae en ti y diseña un proceso explícito para transferirla a otra persona del equipo en los próximos 60 días.'
+  },
+  S: {
+    title: '🤝 Estilo predominante: Liderazgo de Servicio (Servant Leadership)',
+    desc: 'Tu fortaleza está en la escucha, el cuidado del equipo y la construcción de condiciones de trabajo. Tu equipo probablemente se siente respaldado. El riesgo: el liderazgo de servicio puede convertirse en gestión sin dirección. Si dedicas más energía a cuidar al equipo que a sostener la visión estratégica, la organización puede perder norte.',
+    ajuste: '<strong>Ajuste sugerido:</strong> Agenda una reunión de equipo exclusivamente para hablar sobre la dirección estratégica de la organización en los próximos seis meses. No la uses para resolver problemas operativos — solo para alinear visión.'
+  },
+  D: {
+    title: '🕸️ Estilo predominante: Liderazgo Distribuido',
+    desc: 'Tu fortaleza está en construir capacidades colectivas y en no concentrar el poder. Tu organización probablemente es más resiliente que el promedio. El riesgo: el liderazgo distribuido puede producir lentitud en decisiones que requieren rapidez, o difuminar la responsabilidad cuando algo sale mal. No toda decisión beneficia del consenso.',
+    ajuste: '<strong>Ajuste sugerido:</strong> Identifica dos o tres tipos de decisiones que actualmente se toman de forma colectiva pero que podrían delegarse a personas específicas con criterios claros. Prueba ese modelo durante un mes y evalúa.'
+  }
+};
+
+function calcDiag() {
+  const counts = {T:0,TR:0,S:0,D:0};
+  for (let i=0;i<8;i++){
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    if(sel) counts[sel.value]++;
+  }
+  const total = Object.values(counts).reduce((a,b)=>a+b,0);
+  if(total < 6){ alert('Responde al menos 6 preguntas para ver tu resultado.'); return; }
+  const top = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+  const e = estilos[top];
+  document.getElementById('diagResultTitle').textContent = e.title;
+  document.getElementById('diagResultDesc').textContent = e.desc;
+  document.getElementById('diagResultAjuste').innerHTML = e.ajuste;
+  document.getElementById('diagResult').classList.add('show');
+  document.getElementById('diagResult').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function resetDiag(){
+  document.querySelectorAll('.diag-opt').forEach(o=>o.classList.remove('selected'));
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  document.getElementById('diagResult').classList.remove('show');
+}
+
+document.querySelectorAll('.diag-opt').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    const radio = opt.querySelector('input');
+    const name = radio.name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r=>{
+      r.closest('.diag-opt').classList.remove('selected');
+    });
+    radio.checked = true;
+    opt.classList.add('selected');
+  });
+});
+
+/* ── TALLER ── */
+function saveTaller(id, savedId) {
+  const val = document.getElementById(id).value.trim();
+  if (!val) return;
+  try { localStorage.setItem('mc04_' + id, val); } catch(e){}
+  const s = document.getElementById(savedId);
+  s.classList.add('show');
+  setTimeout(()=>s.classList.remove('show'), 2500);
+}
+
+// Restore saved taller values
+['t1','t2','t3','t4'].forEach(id=>{
+  try{
+    const v = localStorage.getItem('mc04_'+id);
+    if(v) document.getElementById(id).value = v;
+  }catch(e){}
+});
+</script>
+</body>
+</html>
