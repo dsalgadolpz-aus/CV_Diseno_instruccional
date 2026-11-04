@@ -55,6 +55,7 @@
   --shadow-xs: 0 1px 2px rgba(24,28,46,.06);
   --shadow-sm: 0 1px 4px rgba(24,28,46,.08), 0 0 0 1px rgba(24,28,46,.04);
   --shadow-md: 0 4px 16px rgba(24,28,46,.10), 0 0 0 1px rgba(24,28,46,.04);
+  --logo-filter: none;
 
   color-scheme: light;
 }
@@ -75,6 +76,7 @@
     --shadow-xs: 0 1px 2px rgba(0,0,0,.3);
     --shadow-sm: 0 1px 4px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.04);
     --shadow-md: 0 4px 16px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.04);
+    --logo-filter: brightness(0) invert(1);
     color-scheme: dark;
   }
 }
@@ -86,6 +88,7 @@
   --shadow-xs: 0 1px 2px rgba(0,0,0,.3);
   --shadow-sm: 0 1px 4px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.04);
   --shadow-md: 0 4px 16px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.04);
+  --logo-filter: brightness(0) invert(1);
   color-scheme: dark;
 }
 
@@ -326,7 +329,8 @@ nav.tabs-bar {
 /* ═══════════════════════════════════════
    CURSO CARD — full design mockup feel
    ═══════════════════════════════════════ */
-.cursos-list { display: flex; flex-direction: column; gap: var(--s5); }
+.cursos-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: var(--s5); }
+@media (max-width: 820px) { .cursos-list { grid-template-columns: 1fr; } }
 
 .curso-card {
   background: var(--bg-surface);
@@ -368,10 +372,9 @@ nav.tabs-bar {
 /* Course body */
 .curso-body {
   display: grid;
-  grid-template-columns: 1fr 280px;
+  grid-template-columns: 1fr;
   gap: 0;
 }
-@media (max-width: 600px) { .curso-body { grid-template-columns: 1fr; } }
 
 .curso-main { padding: var(--s5) var(--s6); border-right: 1px solid var(--border); }
 .curso-main .t-body { max-width: none; font-size: 13px; margin-block: var(--s3) var(--s4); }
@@ -648,6 +651,23 @@ nav.tabs-bar {
   padding: 2px 7px;
   letter-spacing: .02em;
 }
+.modal-yt-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--r3);
+  margin-bottom: var(--s5);
+  background: #000;
+}
+.modal-yt-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--r3);
+}
 
 /* ═══════════════════════════════════════
    GENIALLY CARDS
@@ -868,6 +888,147 @@ footer .t-caption { max-width: none; }
   color: var(--fg-tertiary);
   flex-shrink: 0;
 }
+
+/* ═══════════════════════════════════════
+   PRESENTATIONS
+   ═══════════════════════════════════════ */
+.pres-selector {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+  margin-bottom: var(--s5);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--s3);
+}
+.pres-tab {
+  font-family: var(--ff-ui);
+  font-size: 13px;
+  font-weight: 500;
+  padding: var(--s2) var(--s4);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  background: var(--bg-surface);
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition: all .15s;
+}
+.pres-tab:hover { background: var(--bg-raised); color: var(--fg-primary); }
+.pres-tab.active {
+  background: var(--brand-subtle);
+  border-color: var(--blue-100);
+  color: var(--brand);
+  font-weight: 600;
+}
+.pres-viewer {
+  border: 1px solid var(--border);
+  border-radius: var(--r4);
+  overflow: hidden;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  min-height: 420px;
+}
+.pres-slide {
+  display: none;
+  min-height: 420px;
+  position: relative;
+}
+.pres-slide.active { display: flex; flex-direction: column; }
+/* Cover slide */
+.pres-slide-cover {
+  height: 220px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--s6);
+  flex-shrink: 0;
+}
+.pres-slide-cover canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+}
+.pres-slide-cover-content { position: relative; z-index: 1; }
+.pres-slide-cover-content .pres-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: rgba(255,255,255,.65);
+  margin-bottom: var(--s2);
+}
+.pres-slide-cover-content .pres-title {
+  font-family: var(--ff-display); font-size: clamp(20px, 4vw, 30px);
+  font-weight: 700; color: #fff; letter-spacing: -.02em; line-height: 1.15;
+  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.pres-slide-cover-content .pres-subtitle {
+  font-size: 14px; color: rgba(255,255,255,.8); margin-top: var(--s2);
+}
+/* Content slide */
+.pres-slide-body {
+  flex: 1; padding: var(--s5) var(--s6);
+  display: flex; flex-direction: column; gap: var(--s4);
+}
+.pres-slide-heading {
+  font-family: var(--ff-display); font-size: 18px; font-weight: 700;
+  color: var(--fg-primary); letter-spacing: -.01em;
+}
+.pres-slide-text {
+  font-size: 14px; color: var(--fg-secondary); line-height: 1.65; max-width: 60ch;
+}
+.pres-cards-row {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--s3);
+}
+.pres-card {
+  border: 1px solid var(--border); border-radius: var(--r3);
+  padding: var(--s4); background: var(--bg-raised);
+}
+.pres-card-num {
+  font-size: 11px; font-weight: 700; color: var(--brand);
+  font-variant-numeric: tabular-nums; margin-bottom: var(--s1);
+}
+.pres-card-title { font-size: 13px; font-weight: 600; color: var(--fg-primary); margin-bottom: 4px; }
+.pres-card-desc { font-size: 12px; color: var(--fg-secondary); line-height: 1.5; }
+.pres-quote {
+  border-left: 3px solid var(--brand);
+  padding-left: var(--s4);
+  font-size: 14px; color: var(--fg-secondary); font-style: italic; line-height: 1.6;
+}
+.pres-quote cite {
+  display: block; font-size: 12px; font-style: normal;
+  color: var(--fg-tertiary); margin-top: var(--s2); font-weight: 600;
+}
+.pres-steps-list {
+  display: flex; flex-direction: column; gap: var(--s3);
+}
+.pres-step-row {
+  display: flex; gap: var(--s3); align-items: flex-start;
+}
+.pres-step-badge {
+  min-width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.pres-step-body { flex: 1; }
+.pres-step-title { font-size: 13px; font-weight: 600; color: var(--fg-primary); margin-bottom: 2px; }
+.pres-step-desc { font-size: 12px; color: var(--fg-secondary); line-height: 1.5; }
+.pres-tag {
+  display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .05em;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 20px;
+  border: 1px solid var(--border); color: var(--fg-tertiary); background: var(--bg-raised);
+}
+.pres-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--s3) var(--s4);
+  border-top: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+.pres-nav-btn {
+  font-family: var(--ff-ui); font-size: 13px; font-weight: 500;
+  padding: var(--s2) var(--s4);
+  border: 1px solid var(--border); border-radius: var(--r2);
+  background: var(--bg-surface); color: var(--fg-secondary);
+  cursor: pointer; transition: all .15s;
+}
+.pres-nav-btn:hover { background: var(--bg-raised); color: var(--fg-primary); }
+.pres-nav-btn:disabled { opacity: .35; cursor: not-allowed; }
+.pres-counter { font-size: 12px; color: var(--fg-tertiary); font-variant-numeric: tabular-nums; }
 </style>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -957,19 +1118,11 @@ footer .t-caption { max-width: none; }
 
   <div class="timeline">
     <div class="tl-item">
-      <div class="tl-date"><span class="t-label">2026 – hoy</span></div>
+      <div class="tl-date"><span class="t-label">2025 – hoy</span></div>
       <div class="tl-content">
         <div class="tl-title">Consultor Fundador · Sintropía Social</div>
         <div class="tl-org">Diseño instruccional y formación organizacional</div>
         <div class="tl-desc">Cursos en Metodología de Práctica Social, Teoría de Cambio y Empleabilidad. LMS propio (SintropíaLearn). Publicaciones: <em>Aprender educando</em> (2024), <em>Análisis Conecta Empleo</em> (2023).</div>
-      </div>
-    </div>
-    <div class="tl-item">
-      <div class="tl-date"><span class="t-label">2022 – hoy</span></div>
-      <div class="tl-content">
-        <div class="tl-title">Docente · Licenciatura en Ciencias Sociales</div>
-        <div class="tl-org">Escuela SER</div>
-        <div class="tl-desc">Metodología de Investigación Social, Antropología y Corrientes del Pensamiento Social. Planeación didáctica por competencias para nivel superior.</div>
       </div>
     </div>
     <div class="tl-item">
@@ -1007,18 +1160,9 @@ footer .t-caption { max-width: none; }
       <div class="t-heading-sm" style="margin-top:var(--s4)">Lic. en Antropología Social</div>
       <div class="t-caption" style="margin-top:2px;">ENAH · 2010</div>
     </div>
-    <div>
-      <div class="t-label" style="margin-bottom:var(--s3)">Instituciones</div>
-      <div style="display:flex;flex-wrap:wrap;gap:var(--s2);">
-        <span class="badge">UNICEF México</span>
-        <span class="badge">ILCE</span>
-        <span class="badge">SEP</span>
-        <span class="badge">CONALEP</span>
-        <span class="badge">DIF</span>
-        <span class="badge">Escuela SER</span>
-        <span class="badge">Fnd. Telefónica</span>
-        <span class="badge">Fnd. Centro Histórico</span>
-      </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:var(--s3);">
+      <div class="t-label" style="margin-bottom:var(--s1)">Organización</div>
+      <img src="WhatsApp Image 2025-08-10 at 16.40.34 (2)" alt="Sintropía Social" style="max-height:56px;width:auto;max-width:200px;object-fit:contain;filter:var(--logo-filter);">
     </div>
   </div>
 </div>
@@ -1040,17 +1184,25 @@ footer .t-caption { max-width: none; }
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <div id="tab-genially" class="section frame section-hidden">
   <div class="section-header">
-    <div class="t-heading-lg">Propuestas para Genially</div>
-    <p>Tres blueprints estructurales para replicar en genially.com — concepto visual, navegación y bloques de contenido listos para ejecutar.</p>
+    <div class="t-heading-lg">Propuestas de presentación</div>
+    <p>Tres presentaciones interactivas como muestra del diseño instruccional visual — cada una con su estructura, flujo y contenido completo.</p>
   </div>
 
-  <div class="genially-grid" id="genially-cards"></div>
-  <div id="genially-detail" class="gen-detail-panel">
-    <div class="gen-detail-header">
-      <div class="t-heading-sm" id="gd-title"></div>
-      <button class="gen-close-btn" id="gd-close">Cerrar</button>
-    </div>
-    <div id="gd-content"></div>
+  <!-- Presentation selector tabs -->
+  <div class="pres-selector" id="pres-selector">
+    <button class="pres-tab active" data-pres="p1">🗺 Mapa de Ruta</button>
+    <button class="pres-tab" data-pres="p2">📊 Infografía Modular</button>
+    <button class="pres-tab" data-pres="p3">🎭 Escenario Situado</button>
+  </div>
+
+  <!-- Presentation viewer -->
+  <div class="pres-viewer" id="pres-viewer">
+    <!-- slides rendered by JS -->
+  </div>
+  <div class="pres-nav" id="pres-nav">
+    <button class="pres-nav-btn" id="pres-prev">← Anterior</button>
+    <span class="pres-counter" id="pres-counter"></span>
+    <button class="pres-nav-btn" id="pres-next">Siguiente →</button>
   </div>
 </div>
 
@@ -1225,8 +1377,9 @@ const cursos = [
     descripcion: 'Marco teórico-metodológico para organizaciones que intervienen en contextos comunitarios. 6 módulos con sesiones en vivo, bibliografía APA y materiales curados para facilitadores.',
     c1: '#2558C4', c2: '#0F2D6B',
     badges: ['30 horas','6 módulos','En línea + Live','SintropíaLearn'],
+    youtubeId: 'ipxPMemPAHk',
     modulo: {
-      num: 'Módulo 2 de 6',
+      num: 'Módulo 1 de 6',
       title: 'El campo social como espacio de práctica',
       objetivo: 'Que el participante distinga los elementos que constituyen un campo social —capital, habitus y posiciones relacionales— y los aplique al diagnóstico de su propio contexto de intervención comunitaria.',
       desc: 'En este módulo los participantes abandonan la mirada descriptiva del territorio para adoptar una mirada relacional. Usando los conceptos de Bourdieu como lentes analíticos, mapean las fuerzas, capitales y posiciones que estructuran el espacio donde trabajan. El caso documentado "Barrio Histórico 2021" (Sintropía Social) funciona como espejo: sirve para ver cómo otros equipos aplicaron estos conceptos antes de hacerlo en el propio contexto.',
@@ -1504,133 +1657,267 @@ cursos.forEach(c => {
 });
 
 /* ════════════════════════════════════════
-   GENIALLY DATA
+   PRESENTATIONS DATA
    ════════════════════════════════════════ */
-const geniallys = [
-  {
-    id: 'g1',
-    title: 'Mapa de Ruta del Aprendizaje',
-    tipo: 'Interactivo',
-    colors: ['#2558C4', '#0F2D6B'],
-    concepto: 'Un mapa geográfico estilizado donde cada "parada" es un módulo. El estudiante hace clic en cada punto para acceder a los contenidos. Ideal para cursos con secuencia narrativa.',
-    estructura: [
-      { label: 'Pantalla de bienvenida', desc: 'Mapa completo visible con objetivos generales' },
-      { label: '6 nodos interactivos', desc: 'Un nodo por módulo con icono y estado de avance' },
-      { label: 'Slide emergente por nodo', desc: 'Objetivo · materiales descargables · actividad' },
-      { label: 'Nodo de cierre', desc: 'Resumen de competencias y recurso de evaluación sumativa' },
+const presentations = {
+  p1: {
+    color1: '#2558C4', color2: '#0F2D6B',
+    slides: [
+      {
+        type: 'cover',
+        eyebrow: 'Diseño instruccional · Sintropía Social',
+        title: 'Mapa de Ruta del Aprendizaje',
+        subtitle: 'Presentación interactiva para Metodología de Práctica Social',
+      },
+      {
+        type: 'intro',
+        heading: '¿Qué es un Mapa de Ruta?',
+        text: 'Una representación visual del recorrido formativo donde cada "parada" es un módulo. El estudiante navega a su ritmo, accede a contenidos y registra su avance. Ideal para cursos con secuencia narrativa y aprendizaje autónomo.',
+        tags: ['Interactivo', '6 módulos', 'Autónomo'],
+      },
+      {
+        type: 'cards',
+        heading: 'Estructura de navegación',
+        cards: [
+          { num: '01', title: 'Pantalla de bienvenida', desc: 'Mapa completo con objetivos generales del curso y reglas de navegación.' },
+          { num: '02', title: '6 nodos interactivos', desc: 'Un nodo por módulo con icono, estado de avance y acceso a materiales.' },
+          { num: '03', title: 'Slide emergente', desc: 'Al clic: objetivo · lecturas descargables · actividad de transferencia.' },
+          { num: '04', title: 'Nodo de cierre', desc: 'Resumen de competencias adquiridas y enlace a evaluación sumativa.' },
+        ],
+      },
+      {
+        type: 'quote',
+        heading: 'Marco conceptual',
+        quote: 'El aprendizaje situado exige que el estudiante sepa dónde está, hacia dónde va y qué se espera de él en cada etapa del recorrido.',
+        cite: 'Principio de diseño — Sintropía Social',
+        text: 'El mapa no es solo estética: es un dispositivo cognitivo que reduce la carga mental al hacer visible la secuencia y el propósito de cada módulo.',
+      },
+      {
+        type: 'steps',
+        heading: 'Pasos para replicarlo en Genially',
+        color: '#2558C4',
+        steps: [
+          { title: 'Elige la plantilla "Mapa interactivo"', desc: 'Busca en la biblioteca de Genially por "mapa" o "journey map".' },
+          { title: 'Reemplaza los nodos con tus módulos', desc: 'Un nodo = un módulo. Ajusta título, color e ícono por temática.' },
+          { title: 'Vincula cada nodo a su slide de contenido', desc: 'Usa la función de hipervínculo interno para enlazar materiales.' },
+          { title: 'Publica y comparte el enlace', desc: 'Genially genera un URL único. Incorpóralo en tu LMS o grupo de WhatsApp.' },
+        ],
+      },
     ],
-    plantilla: 'Mapa interactivo',
-    cursoSugerido: 'Metodología de Práctica Social · Teoría de Cambio',
   },
-  {
-    id: 'g2',
-    title: 'Infografía Modular por Capas',
-    tipo: 'Presentación interactiva',
-    colors: ['#B85A14', '#5C2200'],
-    concepto: 'Infografía vertical con secciones que se despliegan al hacer clic. Cada bloque contiene un concepto clave. Efectiva para introducir módulos o como recurso de repaso.',
-    estructura: [
-      { label: 'Encabezado', desc: 'Título del módulo, objetivo e imagen de contexto' },
-      { label: '4–6 bloques desplegables', desc: 'Concepto · Ejemplo real · Utilidad · Recurso' },
-      { label: 'Elemento de reflexión', desc: 'Pregunta detonadora o caso práctico al final' },
-      { label: 'Cierre', desc: 'Conexión con el siguiente módulo y botón a evaluación' },
+  p2: {
+    color1: '#B85A14', color2: '#5C2200',
+    slides: [
+      {
+        type: 'cover',
+        eyebrow: 'Diseño instruccional · Sintropía Social',
+        title: 'Infografía Modular por Capas',
+        subtitle: 'Para Hablar para Influir · Itinerario Conecta Empleo',
+      },
+      {
+        type: 'intro',
+        heading: '¿Qué es una Infografía Modular?',
+        text: 'Una infografía vertical con bloques que se despliegan al hacer clic. Cada bloque contiene un concepto clave, un ejemplo real y un recurso. Efectiva para introducir módulos o como material de repaso antes de sesión en vivo.',
+        tags: ['Presentación interactiva', 'Repaso', 'Concepto + Ejemplo'],
+      },
+      {
+        type: 'cards',
+        heading: 'Bloques de contenido',
+        cards: [
+          { num: '01', title: 'Encabezado', desc: 'Título del módulo, objetivo de aprendizaje e imagen de contexto.' },
+          { num: '02', title: '4–6 bloques desplegables', desc: 'Concepto · Ejemplo real · Utilidad práctica · Recurso descargable.' },
+          { num: '03', title: 'Elemento de reflexión', desc: 'Pregunta detonadora o mini-caso práctico al final de la infografía.' },
+          { num: '04', title: 'Cierre', desc: 'Conexión con el siguiente módulo y botón directo a la actividad.' },
+        ],
+      },
+      {
+        type: 'quote',
+        heading: 'Principio instruccional',
+        quote: 'El conocimiento se consolida cuando se presenta en capas: primero el concepto, luego el ejemplo, luego la aplicación. La infografía modular externaliza esa secuencia.',
+        cite: 'Principio de diseño — Sintropía Social',
+        text: 'Diseñada para funcionar en pantalla y como impreso. El participante puede consultarla antes, durante y después de la sesión.',
+      },
+      {
+        type: 'steps',
+        heading: 'Pasos para replicarlo en Genially',
+        color: '#B85A14',
+        steps: [
+          { title: 'Elige la plantilla "Infografía interactiva"', desc: 'Filtra por "infografía" en la biblioteca de Genially.' },
+          { title: 'Define tus 4–6 conceptos clave del módulo', desc: 'Uno por bloque. No más de 3 líneas por concepto.' },
+          { title: 'Agrega animación de entrada a cada bloque', desc: 'Usa "aparecer al clic" para que el contenido se desplegue en secuencia.' },
+          { title: 'Incluye el botón de siguiente módulo al final', desc: 'Hipervínculo externo a la siguiente infografía o al LMS.' },
+        ],
+      },
     ],
-    plantilla: 'Infografía interactiva',
-    cursoSugerido: 'Hablar para Influir · Conecta Empleo',
   },
-  {
-    id: 'g3',
-    title: 'Escenario de Aprendizaje Situado',
-    tipo: 'Interactivo gamificado',
-    colors: ['#1A7A5E', '#0A3D2C'],
-    concepto: 'El participante asume el rol de un actor y toma decisiones en un escenario realista. Cada elección lleva a una consecuencia y un contenido formativo. Alto impacto en transferencia.',
-    estructura: [
-      { label: 'Pantalla de rol', desc: 'El participante elige un personaje con contexto y objetivo' },
-      { label: '3–4 bifurcaciones', desc: 'Situación real + 2–3 opciones de respuesta por nodo' },
-      { label: 'Consecuencia narrativa', desc: 'Resultado de la decisión + explicación conceptual + fuente' },
-      { label: 'Cierre reflexivo', desc: 'Resumen de decisiones y relación con objetivos del módulo' },
+  p3: {
+    color1: '#1A7A5E', color2: '#0A3D2C',
+    slides: [
+      {
+        type: 'cover',
+        eyebrow: 'Diseño instruccional · Sintropía Social',
+        title: 'Escenario de Aprendizaje Situado',
+        subtitle: 'Para Teoría de Cambio · Diagnóstico Comunitario',
+      },
+      {
+        type: 'intro',
+        heading: '¿Qué es un Escenario Situado?',
+        text: 'El participante asume un rol y toma decisiones en situaciones realistas. Cada elección conduce a una consecuencia y a un contenido formativo. Es la herramienta de mayor impacto en transferencia de aprendizajes a la práctica.',
+        tags: ['Gamificado', 'Toma de decisiones', 'Alta transferencia'],
+      },
+      {
+        type: 'cards',
+        heading: 'Estructura del escenario',
+        cards: [
+          { num: '01', title: 'Pantalla de rol', desc: 'El participante elige un personaje con contexto, objetivo y dilema inicial.' },
+          { num: '02', title: '3–4 bifurcaciones', desc: 'Situación real + 2–3 opciones de respuesta con consecuencias diferenciadas.' },
+          { num: '03', title: 'Consecuencia narrativa', desc: 'Resultado de la decisión + explicación conceptual + fuente APA.' },
+          { num: '04', title: 'Cierre reflexivo', desc: 'Resumen de decisiones tomadas y relación con los objetivos del módulo.' },
+        ],
+      },
+      {
+        type: 'quote',
+        heading: 'Por qué funciona',
+        quote: 'El aprendizaje experiencial no simula la realidad: la usa como material pedagógico. Cuando el error tiene consecuencias narrativas (no de calificación), el participante aprende sin miedo.',
+        cite: 'Principio de diseño — Sintropía Social',
+        text: 'Basado en la metodología de aprendizaje situado (Lave & Wenger, 1991) y en el diseño de escape rooms educativos. Aplicable en cualquier área donde las decisiones importen.',
+      },
+      {
+        type: 'steps',
+        heading: 'Pasos para replicarlo en Genially',
+        color: '#1A7A5E',
+        steps: [
+          { title: 'Elige la plantilla "Pregunta interactiva" o "Escape room"', desc: 'Ambas soportan bifurcaciones y navegación no lineal.' },
+          { title: 'Define el rol y el dilema inicial', desc: 'El participante debe sentirse identificado desde la primera pantalla.' },
+          { title: 'Diseña 3 bifurcaciones con consecuencias distintas', desc: 'No hay respuesta "correcta" visible. Cada camino lleva a un aprendizaje.' },
+          { title: 'Cierra con una pantalla de reflexión', desc: 'Muestra el resumen de decisiones y los conceptos que explican cada consecuencia.' },
+        ],
+      },
     ],
-    plantilla: 'Pregunta interactiva / Escape room',
-    cursoSugerido: 'Teoría de Cambio · Diagnóstico Comunitario',
   },
-];
+};
 
-/* ── RENDER GENIALLY CARDS ────────────────────────────────────────── */
-const gContainer = document.getElementById('genially-cards');
-const genCanvases = [];
+/* ── RENDER PRESENTATIONS ─────────────────────────────────────────── */
+const presViewer = document.getElementById('pres-viewer');
+const presCounter = document.getElementById('pres-counter');
+const presPrev = document.getElementById('pres-prev');
+const presNext = document.getElementById('pres-next');
+const presCanvases = [];
+let currentPres = 'p1';
+let currentSlide = 0;
 
-geniallys.forEach(g => {
-  const card = document.createElement('div');
-  card.className = 'gen-card';
-  card.innerHTML = `
-    <div class="gen-card-visual" style="height:148px;">
-      <canvas></canvas>
-      <div class="gen-card-visual-label">${g.title}</div>
-    </div>
-    <div class="gen-card-body">
-      <div class="t-label" style="margin-bottom:4px;">${g.tipo}</div>
-      <div class="t-heading-sm">${g.title}</div>
-      <div class="t-body" style="font-size:12px;margin-top:4px;max-width:none;">${g.concepto.substring(0,120)}…</div>
-      <div class="gen-structure">
-        ${g.estructura.slice(0,2).map(n => `
-          <div class="gen-node">
-            <div class="gen-node-dot" style="background:${g.colors[0]}"></div>
-            <span>${n.label}</span>
-          </div>`).join('')}
-      </div>
-      <button class="gen-cta" data-id="${g.id}">Ver blueprint completo</button>
-    </div>`;
-  gContainer.appendChild(card);
-  const cv = card.querySelector('canvas');
-  genCanvases.push({ canvas: cv, c1: g.colors[0], c2: g.colors[1] });
-  requestAnimationFrame(() => drawGradient(cv, g.colors[0], g.colors[1], 150));
-});
-
-/* ── GENIALLY DETAIL ──────────────────────────────────────────────── */
-const detail = document.getElementById('genially-detail');
-const gdTitle = document.getElementById('gd-title');
-const gdContent = document.getElementById('gd-content');
-
-gContainer.addEventListener('click', e => {
-  const btn = e.target.closest('.gen-cta');
-  if (!btn) return;
-  const g = geniallys.find(x => x.id === btn.dataset.id);
-  if (!g) return;
-  gdTitle.textContent = g.title;
-  gdContent.innerHTML = `
-    <div class="t-body" style="max-width:none;margin-bottom:var(--s4);">${g.concepto}</div>
-    <div class="t-label" style="margin-bottom:var(--s3);">Estructura de navegación</div>
-    <div class="gen-steps">
-      ${g.estructura.map((n, i) => `
-        <div class="gen-step">
-          <div class="gen-step-num">0${i+1}</div>
-          <div>
-            <div class="gen-step-title">${n.label}</div>
-            <div class="gen-step-desc">${n.desc}</div>
+function buildPresSlides(presId) {
+  const p = presentations[presId];
+  presViewer.innerHTML = '';
+  presCanvases.length = 0;
+  p.slides.forEach((slide, i) => {
+    const el = document.createElement('div');
+    el.className = 'pres-slide' + (i === 0 ? ' active' : '');
+    if (slide.type === 'cover') {
+      el.innerHTML = `
+        <div class="pres-slide-cover">
+          <canvas></canvas>
+          <div class="pres-slide-cover-content">
+            <div class="pres-eyebrow">${slide.eyebrow}</div>
+            <div class="pres-title">${slide.title}</div>
+            <div class="pres-subtitle">${slide.subtitle}</div>
           </div>
-        </div>`).join('')}
-    </div>
-    <div class="gen-spec-grid">
-      <div class="gen-spec-cell">
-        <div class="t-label">Plantilla sugerida</div>
-        <div class="t-body" style="font-size:12px;max-width:none;margin-top:4px;">${g.plantilla}</div>
-      </div>
-      <div class="gen-spec-cell">
-        <div class="t-label">Curso sugerido</div>
-        <div class="t-body" style="font-size:12px;max-width:none;margin-top:4px;">${g.cursoSugerido}</div>
-      </div>
-    </div>`;
-  detail.style.display = 'block';
-  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        </div>`;
+      presViewer.appendChild(el);
+      const cv = el.querySelector('canvas');
+      presCanvases.push({ canvas: cv, c1: p.color1, c2: p.color2 });
+      requestAnimationFrame(() => drawGradient(cv, p.color1, p.color2, 150));
+    } else if (slide.type === 'intro') {
+      el.innerHTML = `
+        <div class="pres-slide-cover" style="height:80px;">
+          <canvas></canvas>
+          <div class="pres-slide-cover-content" style="padding-bottom:var(--s3);">
+            <div class="pres-title" style="font-size:clamp(14px,2.5vw,18px);">${slide.heading}</div>
+          </div>
+        </div>
+        <div class="pres-slide-body">
+          <p class="pres-slide-text">${slide.text}</p>
+          <div style="display:flex;gap:var(--s2);flex-wrap:wrap;">
+            ${slide.tags.map(t => `<span class="pres-tag">${t}</span>`).join('')}
+          </div>
+        </div>`;
+      presViewer.appendChild(el);
+      const cv = el.querySelector('canvas');
+      presCanvases.push({ canvas: cv, c1: p.color1, c2: p.color2 });
+      requestAnimationFrame(() => drawGradient(cv, p.color1, p.color2, 150));
+    } else if (slide.type === 'cards') {
+      el.innerHTML = `
+        <div class="pres-slide-body">
+          <div class="pres-slide-heading">${slide.heading}</div>
+          <div class="pres-cards-row">
+            ${slide.cards.map(c => `
+              <div class="pres-card">
+                <div class="pres-card-num">${c.num}</div>
+                <div class="pres-card-title">${c.title}</div>
+                <div class="pres-card-desc">${c.desc}</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+      presViewer.appendChild(el);
+    } else if (slide.type === 'quote') {
+      el.innerHTML = `
+        <div class="pres-slide-body">
+          <div class="pres-slide-heading">${slide.heading}</div>
+          <div class="pres-quote">${slide.quote}<cite>${slide.cite}</cite></div>
+          <p class="pres-slide-text">${slide.text}</p>
+        </div>`;
+      presViewer.appendChild(el);
+    } else if (slide.type === 'steps') {
+      el.innerHTML = `
+        <div class="pres-slide-body">
+          <div class="pres-slide-heading">${slide.heading}</div>
+          <div class="pres-steps-list">
+            ${slide.steps.map((s, i) => `
+              <div class="pres-step-row">
+                <div class="pres-step-badge" style="background:${slide.color};">${i+1}</div>
+                <div class="pres-step-body">
+                  <div class="pres-step-title">${s.title}</div>
+                  <div class="pres-step-desc">${s.desc}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+      presViewer.appendChild(el);
+    }
+  });
+  currentSlide = 0;
+  updatePresNav();
+}
+
+function updatePresNav() {
+  const slides = presViewer.querySelectorAll('.pres-slide');
+  slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+  presCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+  presPrev.disabled = currentSlide === 0;
+  presNext.disabled = currentSlide === slides.length - 1;
+}
+
+presPrev.addEventListener('click', () => { if (currentSlide > 0) { currentSlide--; updatePresNav(); } });
+presNext.addEventListener('click', () => {
+  const slides = presViewer.querySelectorAll('.pres-slide');
+  if (currentSlide < slides.length - 1) { currentSlide++; updatePresNav(); }
 });
 
-document.getElementById('gd-close').addEventListener('click', () => {
-  detail.style.display = 'none';
+document.getElementById('pres-selector').addEventListener('click', e => {
+  const btn = e.target.closest('.pres-tab');
+  if (!btn) return;
+  document.querySelectorAll('.pres-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentPres = btn.dataset.pres;
+  buildPresSlides(currentPres);
 });
+
+buildPresSlides('p1');
 
 /* ── RESIZE ───────────────────────────────────────────────────────── */
 window.addEventListener('resize', () => {
   allCanvases.forEach(({canvas,c1,c2}) => drawGradient(canvas,c1,c2,135));
-  genCanvases.forEach(({canvas,c1,c2}) => drawGradient(canvas,c1,c2,150));
+  presCanvases.forEach(({canvas,c1,c2}) => drawGradient(canvas,c1,c2,150));
   if (modalCanvas) drawGradient(modalCanvas, modalCanvasC1, modalCanvasC2, 135);
 });
 
@@ -1670,6 +1957,21 @@ function openModuloModal(cursoId) {
       <div class="modal-modulo-title">${c.modulo.title}</div>
       <div class="modal-objetivo">${c.modulo.objetivo}</div>
       <div class="modal-desc">${c.modulo.desc}</div>
+
+      ${c.youtubeId ? `
+      <div class="modal-actividades-label" style="margin-top:var(--s5);">
+        <span class="t-label">Video del módulo</span>
+      </div>
+      <div class="modal-yt-wrap">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/${c.youtubeId}"
+          title="Video Módulo 1 — ${c.title}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>` : ''}
 
       <div class="modal-actividades-label">
         <span class="t-label">Secuencia de aprendizaje</span>
