@@ -301,7 +301,7 @@ body{
       <div style="margin-top:var(--s6)">
         <button class="pdf-btn" id="downloadPdf">
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          Descargar fragmento comentado (TXT)
+          Descargar lectura completa (PDF)
         </button>
       </div>
 
@@ -490,55 +490,140 @@ document.getElementById('stepTabs').querySelectorAll('.step-tab').forEach(btn =>
 });
 
 /* ══════════════════════════════════
-   PDF DOWNLOAD
+   PDF DOWNLOAD — jsPDF
 ══════════════════════════════════ */
-document.getElementById('downloadPdf').addEventListener('click', () => {
-  const content = `FRAGMENTO COMENTADO — TEORÍA DEL CAMPO SOCIAL
-Módulo 1 · Diseño instruccional Sintropía Social
-David Salgado López
+document.getElementById('downloadPdf').addEventListener('click', async () => {
+  // Load jsPDF from CDN if not already loaded
+  if (!window.jspdf) {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'letter' });
+  const W = doc.internal.pageSize.getWidth();
+  const margin = 20;
+  const tw = W - margin * 2;
+  let y = 20;
 
-REFERENCIAS APA:
-Bourdieu, P. (1984). Homo academicus. Les Éditions de Minuit.
-Bourdieu, P., & Wacquant, L. (1992). An invitation to reflexive sociology. University of Chicago Press.
-Bourdieu, P. (1990). The logic of practice (R. Nice, Trad.). Stanford University Press.
-Fligstein, N., & McAdam, D. (2012). A theory of fields. Oxford University Press.
+  function addPage() { doc.addPage(); y = 20; }
+  function checkY(h) { if (y + h > 265) addPage(); }
 
----
-FRAGMENTO 1 — La lógica del campo
-"Un campo puede ser definido como una red o configuración de relaciones objetivas entre posiciones históricamente constituidas." (Bourdieu & Wacquant, 1992, p. 97)
+  function heading(txt, size, color) {
+    checkY(size * 0.4 + 6);
+    doc.setFontSize(size);
+    doc.setTextColor(...color);
+    doc.setFont('helvetica','bold');
+    doc.text(txt, margin, y);
+    y += size * 0.4 + 4;
+  }
+  function body(txt, size) {
+    doc.setFontSize(size);
+    doc.setTextColor(50, 50, 60);
+    doc.setFont('helvetica','normal');
+    const lines = doc.splitTextToSize(txt, tw);
+    lines.forEach(line => { checkY(size * 0.4 + 2); doc.text(line, margin, y); y += size * 0.4 + 1.5; });
+    y += 2;
+  }
+  function quote(txt) {
+    checkY(10);
+    doc.setDrawColor(79, 70, 229);
+    doc.setFillColor(238, 242, 255);
+    const lines = doc.splitTextToSize(txt, tw - 10);
+    const h = lines.length * 6 + 8;
+    checkY(h);
+    doc.roundedRect(margin, y - 4, tw, h, 2, 2, 'FD');
+    doc.setFontSize(11);
+    doc.setTextColor(55, 48, 163);
+    doc.setFont('helvetica','italic');
+    lines.forEach(line => { doc.text(line, margin + 5, y + 2); y += 6; });
+    y += 6;
+  }
+  function divider() { checkY(6); doc.setDrawColor(210,213,227); doc.line(margin, y, W - margin, y); y += 6; }
 
-FRAGMENTO 2 — Tipos de campos
-"Los campos son el producto de un proceso de diferenciación social que confiere a cada uno una lógica propia." (Bourdieu, 1990, p. 87)
+  // ── PORTADA / ENCABEZADO
+  doc.setFillColor(49, 46, 129);
+  doc.rect(0, 0, W, 42, 'F');
+  doc.setFontSize(18); doc.setTextColor(255,255,255); doc.setFont('helvetica','bold');
+  doc.text('Teoría del Campo Social', margin, 18);
+  doc.setFontSize(11); doc.setFont('helvetica','normal');
+  doc.text('Módulo 1 de 6 · Metodología de la Práctica Social', margin, 26);
+  doc.setFontSize(10); doc.setTextColor(180, 180, 220);
+  doc.text('Sintropía Social · Diseño instruccional: David Salgado López', margin, 34);
+  y = 52;
 
-FRAGMENTO 3 — Campos de acción estratégica
-"Los actores en un SAF desarrollan habilidades sociales para percibir el campo, comprender a los otros actores y producir acciones cooperativas." (Fligstein & McAdam, 2012, p. 17)
+  // ── INTRODUCCIÓN AL MÓDULO
+  heading('Presentación del módulo', 14, [49, 46, 129]);
+  body('Este módulo introduce la Teoría del Campo Social de Pierre Bourdieu como herramienta conceptual y práctica para analizar los espacios comunitarios donde se desarrolla la facilitación social. Comprender la lógica de un campo —sus jerarquías, sus disputas, las formas de capital que circulan en él— es condición necesaria para intervenir con pertinencia y sin reproducir las asimetrías que se pretende transformar.', 11);
+  body('Al finalizar este módulo serás capaz de: identificar los campos sociales relevantes en un contexto comunitario específico; describir las posiciones que ocupan los distintos actores y el capital que concentran; y analizar críticamente tu propia posición como facilitador/investigador dentro de ese campo.', 11);
 
----
-NOTAS DE ESTUDIO:
-[ ] Identificar campos sociales en mi contexto de trabajo
-[ ] Mapear capital dominante y quién lo concentra
-[ ] Reflexionar sobre mi posición como facilitador/a
-[ ] ¿Qué está "en disputa" en el campo que intervengo?
-`;
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'CampoSocial_Fragmento_Modulo1.txt';
-  a.click(); URL.revokeObjectURL(url);
+  divider();
+
+  // ── SECCIÓN 1
+  heading('1. La lógica del campo: estructura y disputa', 13, [30, 60, 150]);
+  body('Para Bourdieu, un campo es una red o configuración de relaciones objetivas entre posiciones. Estas posiciones se definen por su situación actual y potencial en la estructura de distribución de las diferentes especies de capital (poder). El campo no es simplemente un espacio físico o institucional: es un espacio de fuerzas y, simultáneamente, un campo de luchas por la conservación o transformación de dicho espacio de fuerzas.', 11);
+  quote('"Un campo puede ser definido como una red o configuración de relaciones objetivas entre posiciones históricamente constituidas."\n— Bourdieu & Wacquant, 1992, p. 97');
+  body('Cada campo posee una lógica interna particular —su nomos— que define lo que está en juego y los principios de visión y división que organizan la competencia en su interior. Entrar en un campo implica aceptar, aunque sea tácitamente, sus reglas de juego: el illusio, la creencia en que el juego vale la pena ser jugado.', 11);
+
+  // ── SECCIÓN 2
+  heading('2. Tipos de campos y su autonomía relativa', 13, [30, 60, 150]);
+  body('Los campos sociales son relativamente autónomos entre sí: el campo científico, el artístico, el político, el religioso y el comunitario operan cada uno con sus propias jerarquías y formas de capital. No obstante, están articulados en la estructura social más amplia: el campo del poder —donde se concentra el capital económico y político— irradia efectos sobre todos los demás campos.', 11);
+  quote('"Los campos son el producto de un proceso de diferenciación social que confiere a cada uno una lógica propia."\n— Bourdieu, 1990, p. 87');
+  body('En el contexto del trabajo comunitario, esta autonomía relativa es crucial: una intervención que ignora la lógica interna del campo comunitario —sus jerarquías, sus disputas simbólicas, sus formas de legitimidad local— está condenada a reproducir o agravar las asimetrías existentes, por más bienintencionada que sea.', 11);
+
+  // ── SECCIÓN 3
+  heading('3. Homología estructural y efecto de campo', 13, [30, 60, 150]);
+  body('Fligstein y McAdam (2012) extienden la noción de campo hacia lo que denominan campos de acción estratégica (SAFs): unidades mesonivel del orden social en las que actores con recursos y marcos interpretativos negocian el significado de sus acciones. Esta extensión permite analizar campos emergentes, en disputa o en proceso de institucionalización, como los movimientos sociales o las redes de organizaciones civiles.', 11);
+  quote('"Los actores en un SAF desarrollan habilidades sociales para percibir el campo, comprender a los otros actores y producir acciones cooperativas."\n— Fligstein & McAdam, 2012, p. 17');
+  body('El efecto de campo refiere a la presión estructural que el campo ejerce sobre las prácticas de sus participantes, independientemente de sus intenciones conscientes. Un facilitador que entra a un barrio no es neutro: ocupa una posición en ese campo (outsider con capital cultural institucional), y esa posición condiciona lo que puede percibir, decir y hacer.', 11);
+
+  // ── SECCIÓN 4
+  heading('4. Capital en el campo: volumen y estructura', 13, [30, 60, 150]);
+  body('No todos los capitales son igualmente valorados en todos los campos. Lo que vale en el campo académico —el capital cultural institucionalizado, los títulos— puede no traducirse en capital simbólico en un campo comunitario donde la autoridad moral se gana por trayectoria de lucha local. Bourdieu distingue entre el volumen total de capital de un agente y la estructura de ese capital (qué tipo de capital predomina).', 11);
+  body('Mapear un campo implica, por tanto, identificar: (a) qué formas de capital circulan y cuál es la tasa de conversión entre ellas; (b) qué posiciones existen y quiénes las ocupan; (c) qué está en disputa (el capital específico del campo); y (d) cuáles son las estrategias de conservación versus subversión que despliegan los distintos agentes.', 11);
+
+  divider();
+
+  // ── REFERENCIAS
+  heading('Referencias APA', 12, [80, 80, 100]);
+  const refs = [
+    'Bourdieu, P. (1984). Homo academicus. Les Éditions de Minuit.',
+    'Bourdieu, P., & Wacquant, L. (1992). An invitation to reflexive sociology. University of Chicago Press.',
+    'Bourdieu, P. (1990). The logic of practice (R. Nice, Trad.). Stanford University Press.',
+    'Fligstein, N., & McAdam, D. (2012). A theory of fields. Oxford University Press.',
+  ];
+  refs.forEach(r => body(r, 10));
+
+  divider();
+
+  // ── GUÍA DE LECTURA REFLEXIVA
+  heading('Guía de lectura reflexiva', 12, [49, 46, 129]);
+  const preguntas = [
+    '¿Puedes identificar al menos dos campos sociales distintos en el contexto comunitario donde trabajas o has trabajado?',
+    '¿Qué formas de capital dominan en ese campo y quiénes las concentran?',
+    '¿Qué disputa central organiza las relaciones en ese campo (qué está verdaderamente "en juego")?',
+    '¿Cuál es tu posición como facilitador/investigador en ese campo? ¿Qué capital llevas contigo?',
+  ];
+  preguntas.forEach((p, i) => body(`${i + 1}. ${p}`, 11));
+
+  doc.save('CampoSocial_Lectura_Modulo1.pdf');
 });
 
 /* ══════════════════════════════════
    MAPA DE CAMPO — DRAG & DROP
 ══════════════════════════════════ */
 const ACTORS = [
-  { id:'a1', label:'🏛️ Gobierno municipal', capital:'político' },
-  { id:'a2', label:'🏘️ Líder vecinal', capital:'simbólico' },
-  { id:'a3', label:'🎓 ONG externa', capital:'cultural' },
-  { id:'a4', label:'👩‍👦 Madres organizadas', capital:'social' },
-  { id:'a5', label:'🏪 Comerciantes locales', capital:'económico' },
-  { id:'a6', label:'🧑‍🏫 Facilitador/a social', capital:'cultural' },
-  { id:'a7', label:'📿 Líderes religiosos', capital:'simbólico' },
-  { id:'a8', label:'🧒 Jóvenes en situación de riesgo', capital:'bajo' },
+  { id:'a1', label:'Gobierno municipal', capital:'político' },
+  { id:'a2', label:'Líder vecinal', capital:'simbólico' },
+  { id:'a3', label:'ONG externa', capital:'cultural' },
+  { id:'a4', label:'Madres organizadas', capital:'social' },
+  { id:'a5', label:'Comerciantes locales', capital:'económico' },
+  { id:'a6', label:'Facilitador/a social', capital:'cultural' },
+  { id:'a7', label:'Líderes religiosos', capital:'simbólico' },
+  { id:'a8', label:'Jóvenes en situación de riesgo', capital:'bajo' },
 ];
 
 const IDEAL_ZONES = {
@@ -547,7 +632,7 @@ const IDEAL_ZONES = {
 };
 
 const FEEDBACK = {
-  a1: 'El gobierno municipal concentra capital político y simbólico: tiene poder de decisión formal sobre el territorio.',
+  a1: 'Gobierno municipal: concentra capital político y simbólico: tiene poder de decisión formal sobre el territorio.',
   a2: 'El líder vecinal acumula capital simbólico local que puede superar al gobierno en términos de legitimidad comunitaria.',
   a3: 'La ONG externa lleva capital cultural (metodológico) pero parte de una posición periférica en las dinámicas de confianza locales.',
   a4: 'Las madres organizadas tienen capital social denso (redes de cuidado) y simbólico —pero a menudo invisibilizado.',
@@ -709,9 +794,15 @@ const qaData = [
 ];
 
 const qaContainer = document.getElementById('qaContainer');
+// Add sample-module notice
+const notice = document.createElement('div');
+notice.style.cssText = 'background:var(--brand-bg);border:1px solid var(--brand);border-radius:var(--r3);padding:var(--s3) var(--s5);margin-bottom:var(--s5);font-size:13px;color:var(--fg-secondary);line-height:1.6;';
+notice.innerHTML = '<strong style="color:var(--brand)">Módulo de muestra —</strong> Las respuestas ya están desplegadas para que puedas explorar el contenido del curso. En el módulo completo el participante las descubre al hacer clic en cada pregunta.';
+qaContainer.appendChild(notice);
+
 qaData.forEach(item => {
   const div = document.createElement('div');
-  div.className = 'qa-item';
+  div.className = 'qa-item open'; // open by default in sample
   div.innerHTML = `<button class="qa-question"><span>${item.q}</span><span class="qa-arrow">▾</span></button><div class="qa-answer">${item.a}</div>`;
   div.querySelector('.qa-question').addEventListener('click', () => div.classList.toggle('open'));
   qaContainer.appendChild(div);
