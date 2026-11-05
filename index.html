@@ -262,8 +262,11 @@ nav.tabs-bar {
 .tab-btn:hover { color: var(--fg-secondary); }
 .tab-btn.active {
   color: var(--brand);
-  border-bottom-color: var(--brand);
-  font-weight: 600;
+  border-bottom: 3px solid var(--brand);
+  font-weight: 700;
+  background: color-mix(in srgb, var(--brand) 8%, transparent);
+  border-radius: 6px 6px 0 0;
+  letter-spacing: .01em;
 }
 
 /* ═══════════════════════════════════════
@@ -330,7 +333,7 @@ nav.tabs-bar {
 /* ═══════════════════════════════════════
    CURSO CARD — full design mockup feel
    ═══════════════════════════════════════ */
-.cursos-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--s5); padding-top: 18px; }
+.cursos-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--s5); }
 @media (max-width: 820px) { .cursos-list { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); } }
 
 /* Show only the cover of each course card */
@@ -352,37 +355,12 @@ nav.tabs-bar {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--r4);
-  overflow: visible;
+  overflow: hidden;
   box-shadow: var(--shadow-xs);
   transition: box-shadow .15s;
-  position: relative;
 }
 .curso-card:hover { box-shadow: var(--shadow-md); }
 
-/* ── Etiqueta que sobresale del borde superior ── */
-.curso-tag {
-  position: absolute;
-  top: -13px;
-  left: 16px;
-  background: var(--accent);
-  color: #fff;
-  font-family: var(--ff-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  padding: 4px 10px 3px;
-  border-radius: 6px 6px 0 0;
-  box-shadow: 0 -2px 6px rgba(0,0,0,.18);
-  white-space: nowrap;
-  z-index: 2;
-  pointer-events: none;
-}
-/* la cover sigue recortando bordes internos */
-.curso-cover {
-  border-radius: var(--r4) var(--r4) 0 0;
-  overflow: hidden;
-}
 
 /* Cover band — course visual identity */
 .curso-cover {
@@ -1914,7 +1892,6 @@ cursos.forEach(c => {
   const card = document.createElement('div');
   card.className = 'curso-card';
   card.innerHTML = `
-    <div class="curso-tag">${c.categoria}</div>
     <div class="curso-cover" style="height:180px;">
       <canvas></canvas>
       <div class="curso-cover-content">
