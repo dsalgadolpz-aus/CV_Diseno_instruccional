@@ -206,7 +206,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-canvas);color:
       <div style="margin-top:24px">
         <button class="pdf-btn" id="downloadPdf">
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          Descargar fragmento comentado (TXT)
+          Descargar lectura completa (PDF)
         </button>
       </div>
 
@@ -478,9 +478,167 @@ function goToStep(next){
 }
 document.getElementById('stepTabs').querySelectorAll('.step-tab').forEach(b=>b.addEventListener('click',()=>goToStep(+b.dataset.step)));
 
-document.getElementById('downloadPdf').addEventListener('click',()=>{
-  const c=`FRAGMENTO — DIAGNÓSTICO COMUNITARIO\nMódulo 3 · Sintropía Social\n\nREFERENCIAS:\nMontañés, M. (2009). Metodología y técnica participativa. Editorial UOC.\nChambers, R. (1994). The origins and practice of participatory rural appraisal. World Development, 22(7), 953–969.\nRueda, E. (2011). Diagnóstico comunitario: guía metodológica. CREFAL.\nVillasante, T.R. (2006). Desbordes creativos. Catarata.\n\nFRAGMENTO 1\n"El diagnóstico participativo no descubre una realidad preexistente: la construye colectivamente." (Montañés, 2009, p. 78)\n\nFRAGMENTO 2\n"PRA enables local people to do their own appraisal, analysis and planning." (Chambers, 1994, p. 953)\n\nNOTAS:\n[ ] ¿Qué diferencia hay entre diagnóstico "para" y "con" la comunidad?\n[ ] ¿Cómo garantizo que los actores más silenciados tengan voz?\n[ ] Triangulación: ¿qué fuentes debo cruzar?\n`;
-  const blob=new Blob([c],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='DiagnosticoComunitario_Fragmento.txt';a.click();URL.revokeObjectURL(url);
+document.getElementById('downloadPdf').addEventListener('click', async () => {
+  if (!window.jspdf) {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'letter' });
+  const W = 215.9, H = 279.4;
+  const margin = 20, tw = W - margin * 2;
+  let y = margin;
+
+  const BRAND = [3, 105, 161]; // sky #0369A1
+  const GRAY_DARK = [30, 30, 30];
+  const GRAY_MED = [80, 80, 80];
+  const GRAY_LIGHT = [130, 130, 130];
+  const GRAY_LINE = [210, 210, 210];
+
+  function checkY(needed = 10) {
+    if (y + needed > H - margin) { doc.addPage(); y = margin; drawPageHeader(); }
+  }
+  function drawPageHeader() {
+    doc.setFontSize(7.5).setTextColor(...GRAY_LIGHT).setFont('helvetica','normal');
+    doc.text('SintropíaLearn · Módulo 3: Diagnóstico Comunitario · Lectura guiada', margin, 10);
+    doc.text('Aprende. Transforma. Impacta.', W - margin, 10, { align: 'right' });
+    doc.setDrawColor(...GRAY_LINE); doc.setLineWidth(0.3);
+    doc.line(margin, 12, W - margin, 12);
+    y = Math.max(y, 18);
+  }
+  function heading1(txt) {
+    checkY(14);
+    doc.setFontSize(16).setFont('helvetica','bold').setTextColor(...BRAND);
+    doc.text(txt, margin, y); y += 10;
+  }
+  function heading2(txt) {
+    checkY(10);
+    doc.setFontSize(12).setFont('helvetica','bold').setTextColor(...GRAY_DARK);
+    doc.text(txt, margin, y); y += 7;
+  }
+  function body(txt) {
+    checkY(8);
+    doc.setFontSize(10).setFont('helvetica','normal').setTextColor(...GRAY_MED);
+    const lines = doc.splitTextToSize(txt, tw);
+    lines.forEach(l => { checkY(5.5); doc.text(l, margin, y); y += 5.5; });
+    y += 2;
+  }
+  function quote(txt, source) {
+    checkY(16);
+    doc.setFillColor(224, 242, 254); // very light sky
+    const lines = doc.splitTextToSize(txt, tw - 10);
+    const srcLines = doc.splitTextToSize(source, tw - 10);
+    const h = (lines.length + srcLines.length) * 5.5 + 10;
+    doc.roundedRect(margin, y, tw, h, 2, 2, 'F');
+    doc.setDrawColor(...BRAND); doc.setLineWidth(1.2);
+    doc.line(margin, y, margin, y + h);
+    doc.setLineWidth(0.3);
+    y += 5;
+    doc.setFontSize(9.5).setFont('helvetica','italic').setTextColor(...GRAY_DARK);
+    lines.forEach(l => { checkY(5); doc.text(l, margin + 5, y); y += 5.5; });
+    y += 2;
+    doc.setFontSize(8.5).setFont('helvetica','normal').setTextColor(...BRAND);
+    srcLines.forEach(l => { doc.text(l, margin + 5, y); y += 5; });
+    y += 4;
+  }
+  function divider() {
+    checkY(6);
+    doc.setDrawColor(...GRAY_LINE); doc.setLineWidth(0.3);
+    doc.line(margin, y, W - margin, y);
+    y += 6;
+  }
+  function refLine(txt) {
+    checkY(6);
+    doc.setFontSize(9).setFont('helvetica','normal').setTextColor(...GRAY_MED);
+    const lines = doc.splitTextToSize(txt, tw - 5);
+    lines.forEach((l, i) => { checkY(5); doc.text(l, margin + (i === 0 ? 0 : 5), y); y += 5; });
+    y += 1;
+  }
+
+  // ── PORTADA ──
+  doc.setFillColor(...BRAND);
+  doc.rect(0, 0, W, 52, 'F');
+  doc.setFontSize(9).setFont('helvetica','normal').setTextColor(255,255,255);
+  doc.text('SINTROPIA SOCIAL  ·  SINTROPÍALEARN', margin, 20);
+  doc.setFontSize(18).setFont('helvetica','bold');
+  doc.text('Diagnóstico Comunitario', margin, 32);
+  doc.setFontSize(11).setFont('helvetica','normal');
+  doc.text('De la fotografía a la praxis participativa', margin, 41);
+  doc.setFontSize(8.5).setTextColor(186, 230, 253);
+  doc.text('Módulo 3  ·  Lectura guiada  ·  40 min  ·  Montañés · Chambers · Rueda · Villasante', margin, 49);
+  y = 65;
+
+  // ── REFERENCIAS APA ──
+  heading1('Referencias APA');
+  doc.setFontSize(9.5).setFont('helvetica','bold').setTextColor(...GRAY_DARK);
+  doc.text('Fuentes primarias citadas en esta lectura', margin, y); y += 7;
+  refLine('Montañés, M. (2009). Metodología y técnica participativa: teoría y práctica de una estrategia de investigación participativa. Editorial UOC.');
+  refLine('Chambers, R. (1994). The origins and practice of participatory rural appraisal. World Development, 22(7), 953–969. https://doi.org/10.1016/0305-750X(94)90141-4');
+  refLine('Rueda, E. (2011). Diagnóstico comunitario: guía metodológica. CREFAL.');
+  refLine('Villasante, T. R. (2006). Desbordes creativos: estilos y estrategias para la transformación social. Catarata.');
+  divider();
+
+  // ── SECCIÓN 1 ──
+  heading2('1. ¿Qué es y para qué sirve un diagnóstico comunitario?');
+  body('Un diagnóstico comunitario no es un estudio técnico externo sobre una comunidad. Es un proceso participativo mediante el cual la propia comunidad identifica, analiza y jerarquiza sus problemas, necesidades y potencialidades, con miras a orientar la acción colectiva. Rueda (2011) lo define como "el conocimiento colectivo de la realidad construido desde adentro" (p. 23), diferenciándolo radicalmente del diagnóstico de expertos.');
+  quote('"El diagnóstico participativo no descubre una realidad preexistente: la construye colectivamente. Esa construcción es ya, en sí misma, parte del proceso de transformación."', '— Montañés, M. (2009). Metodología y técnica participativa. Editorial UOC, p. 78');
+  body('Esta distinción es fundamental: el diagnóstico tradicional convierte a la comunidad en objeto de estudio; el diagnóstico participativo la convierte en sujeto del mismo. Desde la perspectiva de la educación popular, el acto de nombrar los propios problemas es ya un acto político.');
+  divider();
+
+  // ── SECCIÓN 2 ──
+  heading2('2. La observación participante como técnica central');
+  body('Chambers (1994) sistematizó el Diagnóstico Rural Participativo (DRP o PRA por sus siglas en inglés), un conjunto de métodos que permiten a comunidades rurales —y luego urbanas— analizar su propia situación. Entre las técnicas fundamentales, la observación participante ocupa un lugar privilegiado: el/la investigador/a no solo observa desde fuera sino que se involucra en la vida cotidiana de la comunidad, participando de sus actividades, espacios y relaciones.');
+  quote('"PRA enables local people to do their own appraisal, analysis and planning, and to implement and monitor their own projects."', '— Chambers, R. (1994). World Development, 22(7), p. 953');
+  body('La observación participante requiere un registro sistemático pero no mecánico: una ficha de observación que capture no solo hechos sino también las interpretaciones que los propios participantes hacen de ellos, las tensiones entre discurso y práctica, y las ausencias significativas —lo que no se dice, lo que no se ve, lo que no se hace en presencia del observador.');
+  divider();
+
+  // ── SECCIÓN 3 ──
+  heading2('3. Triangulación de fuentes y validación comunitaria');
+  body('Ningún diagnóstico se sostiene en una sola técnica o en una sola voz. Villasante (2006) propone la triangulación —cruce de distintas fuentes, métodos y perspectivas— como condición mínima de rigor en la investigación participativa. Un buen diagnóstico comunitario combina observación, entrevistas, grupos de discusión, revisión documental y cartografía social, contrastando lo que dicen distintos actores sobre la misma realidad.');
+  body('La validación comunitaria —devolver los hallazgos a la comunidad para que los contraste, corrija y enriquezca— cierra el ciclo y convierte el diagnóstico en un bien común, no en el informe de un técnico externo. Esta devolución es también un momento pedagógico: al verse reflejados en el análisis, los participantes acceden a una mirada sistémica de su propia situación.');
+  divider();
+
+  // ── SECCIÓN 4 ──
+  heading2('4. Del diagnóstico a la priorización: la matriz FODA comunitaria');
+  body('Una vez recogida la información, el diagnóstico requiere herramientas de análisis que sean accesibles a los participantes. La adaptación comunitaria de la matriz FODA —Fortalezas, Oportunidades, Debilidades, Amenazas— permite organizar colectivamente la información y priorizar las áreas de intervención. Lo crucial no es la herramienta sino la validez del proceso: que los actores más vulnerables de la comunidad tengan voz en la priorización, y que la jerarquización resultante sea legitimada colectivamente, no impuesta por los facilitadores.');
+  divider();
+
+  // ── NOTAS DE REFLEXIÓN ──
+  checkY(40);
+  heading1('Preguntas de reflexión');
+  doc.setFontSize(9.5).setFont('helvetica','normal').setTextColor(...GRAY_MED);
+  const preguntas = [
+    '1. ¿Qué diferencia hay entre hacer un diagnóstico "para" la comunidad y hacer uno "con" la comunidad? ¿Qué implica esa diferencia en el diseño del proceso?',
+    '2. ¿Cómo garantizarías que los actores más silenciados de una comunidad tengan voz en el diagnóstico? ¿Qué técnicas usarías?',
+    '3. Triangulación: ¿qué fuentes cruzarías para diagnosticar la situación de una organización social que conoces?',
+    '4. ¿Cuándo un diagnóstico participativo se convierte en extracción de información? ¿Cómo evitar ese riesgo ético?',
+  ];
+  preguntas.forEach(p => {
+    checkY(12);
+    doc.setFillColor(224, 242, 254);
+    const lines = doc.splitTextToSize(p, tw - 6);
+    const h = lines.length * 5.5 + 8;
+    doc.roundedRect(margin, y, tw, h, 2, 2, 'F');
+    y += 5;
+    lines.forEach(l => { doc.text(l, margin + 3, y); y += 5.5; });
+    y += 4;
+  });
+
+  // ── PIE ──
+  const pgs = doc.getNumberOfPages();
+  for (let i = 1; i <= pgs; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7.5).setFont('helvetica','normal').setTextColor(...GRAY_LIGHT);
+    doc.text(`Página ${i} de ${pgs}`, W / 2, H - 10, { align: 'center' });
+    doc.text('Sintropía Social © 2024 · Material académico de uso formativo', margin, H - 10);
+    doc.text('sintropia-social.com', W - margin, H - 10, { align: 'right' });
+  }
+
+  doc.save('DiagnosticoComunitario_LecturaGuiada_Modulo3.pdf');
 });
 
 function getV(id){return(document.getElementById(id)||{}).value||'';}
