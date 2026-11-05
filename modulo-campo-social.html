@@ -458,6 +458,16 @@ const done = new Set();
 
 function goToStep(next) {
   if (next === currentStep) return;
+  // Pause YouTube iframe when leaving step 1 (Presentación)
+  if (currentStep === 1) {
+    const ytFrame = document.querySelector('#step-1 iframe');
+    if (ytFrame) {
+      const src = ytFrame.src;
+      ytFrame.src = '';
+      ytFrame.src = src;
+    }
+  }
+
   const panels = document.querySelectorAll('.step-panel');
   const tabs = document.querySelectorAll('.step-tab');
   const prev = currentStep;
@@ -525,19 +535,34 @@ document.getElementById('downloadPdf').addEventListener('click', async () => {
     lines.forEach(line => { checkY(size * 0.4 + 2); doc.text(line, margin, y); y += size * 0.4 + 1.5; });
     y += 2;
   }
-  function quote(txt) {
-    checkY(10);
-    doc.setDrawColor(79, 70, 229);
+  function quote(txt, source) {
+    const bodyLines = doc.splitTextToSize(txt, tw - 14);
+    const srcLines = source ? doc.splitTextToSize(source, tw - 14) : [];
+    const totalLines = bodyLines.length + (srcLines.length ? srcLines.length + 0.5 : 0);
+    const h = totalLines * 6 + 12;
+    checkY(h + 4);
+    // reset colors explicitly before drawing
+    doc.setDrawColor(99, 91, 221);
     doc.setFillColor(238, 242, 255);
-    const lines = doc.splitTextToSize(txt, tw - 10);
-    const h = lines.length * 6 + 8;
-    checkY(h);
-    doc.roundedRect(margin, y - 4, tw, h, 2, 2, 'FD');
+    doc.roundedRect(margin, y, tw, h, 3, 3, 'FD');
+    // left accent bar
+    doc.setFillColor(79, 70, 229);
+    doc.rect(margin, y, 3, h, 'F');
+    // quote text
     doc.setFontSize(11);
     doc.setTextColor(55, 48, 163);
     doc.setFont('helvetica','italic');
-    lines.forEach(line => { doc.text(line, margin + 5, y + 2); y += 6; });
-    y += 6;
+    let ty = y + 7;
+    bodyLines.forEach(line => { doc.text(line, margin + 9, ty); ty += 6; });
+    // source line
+    if (srcLines.length) {
+      ty += 1;
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(9.5);
+      doc.setTextColor(99, 91, 221);
+      srcLines.forEach(line => { doc.text(line, margin + 9, ty); ty += 5; });
+    }
+    y += h + 5;
   }
   function divider() { checkY(6); doc.setDrawColor(210,213,227); doc.line(margin, y, W - margin, y); y += 6; }
 
@@ -562,19 +587,19 @@ document.getElementById('downloadPdf').addEventListener('click', async () => {
   // ── SECCIÓN 1
   heading('1. La lógica del campo: estructura y disputa', 13, [30, 60, 150]);
   body('Para Bourdieu, un campo es una red o configuración de relaciones objetivas entre posiciones. Estas posiciones se definen por su situación actual y potencial en la estructura de distribución de las diferentes especies de capital (poder). El campo no es simplemente un espacio físico o institucional: es un espacio de fuerzas y, simultáneamente, un campo de luchas por la conservación o transformación de dicho espacio de fuerzas.', 11);
-  quote('"Un campo puede ser definido como una red o configuración de relaciones objetivas entre posiciones históricamente constituidas."\n— Bourdieu & Wacquant, 1992, p. 97');
+  quote('"Un campo puede ser definido como una red o configuración de relaciones objetivas entre posiciones históricamente constituidas."', '— Bourdieu & Wacquant, 1992, p. 97');
   body('Cada campo posee una lógica interna particular —su nomos— que define lo que está en juego y los principios de visión y división que organizan la competencia en su interior. Entrar en un campo implica aceptar, aunque sea tácitamente, sus reglas de juego: el illusio, la creencia en que el juego vale la pena ser jugado.', 11);
 
   // ── SECCIÓN 2
   heading('2. Tipos de campos y su autonomía relativa', 13, [30, 60, 150]);
   body('Los campos sociales son relativamente autónomos entre sí: el campo científico, el artístico, el político, el religioso y el comunitario operan cada uno con sus propias jerarquías y formas de capital. No obstante, están articulados en la estructura social más amplia: el campo del poder —donde se concentra el capital económico y político— irradia efectos sobre todos los demás campos.', 11);
-  quote('"Los campos son el producto de un proceso de diferenciación social que confiere a cada uno una lógica propia."\n— Bourdieu, 1990, p. 87');
+  quote('"Los campos son el producto de un proceso de diferenciación social que confiere a cada uno una lógica propia."', '— Bourdieu, 1990, p. 87');
   body('En el contexto del trabajo comunitario, esta autonomía relativa es crucial: una intervención que ignora la lógica interna del campo comunitario —sus jerarquías, sus disputas simbólicas, sus formas de legitimidad local— está condenada a reproducir o agravar las asimetrías existentes, por más bienintencionada que sea.', 11);
 
   // ── SECCIÓN 3
   heading('3. Homología estructural y efecto de campo', 13, [30, 60, 150]);
   body('Fligstein y McAdam (2012) extienden la noción de campo hacia lo que denominan campos de acción estratégica (SAFs): unidades mesonivel del orden social en las que actores con recursos y marcos interpretativos negocian el significado de sus acciones. Esta extensión permite analizar campos emergentes, en disputa o en proceso de institucionalización, como los movimientos sociales o las redes de organizaciones civiles.', 11);
-  quote('"Los actores en un SAF desarrollan habilidades sociales para percibir el campo, comprender a los otros actores y producir acciones cooperativas."\n— Fligstein & McAdam, 2012, p. 17');
+  quote('"Los actores en un SAF desarrollan habilidades sociales para percibir el campo, comprender a los otros actores y producir acciones cooperativas."', '— Fligstein & McAdam, 2012, p. 17');
   body('El efecto de campo refiere a la presión estructural que el campo ejerce sobre las prácticas de sus participantes, independientemente de sus intenciones conscientes. Un facilitador que entra a un barrio no es neutro: ocupa una posición en ese campo (outsider con capital cultural institucional), y esa posición condiciona lo que puede percibir, decir y hacer.', 11);
 
   // ── SECCIÓN 4
